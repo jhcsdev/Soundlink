@@ -1,16 +1,17 @@
+using GamePieces;
 using UnityEngine;
 
-public class Inventory : MonoBehaviour
+namespace Inventory
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    public class Inventory : PlayerInteractableGrid
     {
-        
-    }
+        [SerializeField] private InventoryData inventoryData;
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+        void Awake()
+        {
+            // todo - foreach Piece p in inventoryData.pieces: 
+            // GameObject clone = Instantiate(p.gameObject)
+            // add to internal inventory data structures -- might just be able to call PutPiece()
+        }
     }
 }
