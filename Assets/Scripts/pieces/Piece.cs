@@ -1,16 +1,18 @@
 using UnityEngine;
 
-public class GamePiece : MonoBehaviour
+namespace GamePieces
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    public class Piece : MonoBehaviour
     {
         
-    }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+        public void InventoryMode()
+        {
+            
+        }
+        public void GridMode()
+        {
+            
+        }
     }
 }
