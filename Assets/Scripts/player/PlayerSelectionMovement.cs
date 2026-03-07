@@ -21,6 +21,8 @@ namespace Player
         private Vector2 _directionCurrent = Vector2.zero;
         private float _allowNextRapidMoveAt = Mathf.Infinity; 
 
+        private GamePieces.Piece heldPiece;
+
 
         private void Awake()
         {
@@ -29,11 +31,17 @@ namespace Player
 
         void Start()
         {
-            SetCurrentGrid(gameGrid);
+            SetCurrentGrid(inventoryGrid);
         }
 
         private void Update()
         {
+
+            if (playerInputWrapper.INVENTORY_BUTTON.WasPressedThisFrame()) {
+                Debug.Log("INVENTORY PRESSED");
+                TogglePickupPlace();
+            }
+
             if (currentGrid == null) return;
 
             Vector2 inputDirection = playerInputWrapper.MOVE.ReadValue<Vector2>();
@@ -67,6 +75,28 @@ namespace Player
         public void SetCurrentGrid(PlayerInteractableGrid grid)
         {
             currentGrid = grid;
+        }
+
+        private void TogglePickupPlace()
+        {
+            if (currentGrid is not Inventory.Inventory inv) return;
+
+            Vector2Int pos = new Vector2Int(0, 0);
+
+            if (heldPiece == null)
+            {
+                // pick up
+                heldPiece = inv.takePiece(pos);
+                Debug.Log(heldPiece != null ? $"Picked up {heldPiece.name} from {pos}" : $"Nothing to pick up at {pos}");
+            }
+            else
+            {
+                // place
+                bool placed = inv.putPiece(pos, heldPiece);
+                Debug.Log(placed ? $"Placed {heldPiece.name} at {pos}" : $"Could not place at {pos} (occupied?)");
+
+                if (placed) heldPiece = null;
+            }
         }
     }
 }

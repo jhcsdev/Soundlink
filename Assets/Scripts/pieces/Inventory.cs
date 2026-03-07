@@ -29,12 +29,13 @@ namespace Inventory
                 }
 
                 piecesLookup[square.position] = square.piece;
-
             }
+
+            PrintInventory();
         }
 
         // given Piece, put it in next available location or something like that? 
-        public bool PutPiece(Vector2Int position, Piece piece) {
+        public bool putPiece(Vector2Int position, Piece piece) {
             if (piece == null) {
                 Debug.Log("Error in PutPiece(): Piece cannot be null");
                 return false;
@@ -50,15 +51,47 @@ namespace Inventory
         }
 
         // given location, take a Piece from the board
-        public Piece takePiece(Vector2Int location) {
-            Piece piece = null;
-            piecesLookup.TryGetValue(location, out piece);
-            return piece;
-        }
+        public Piece takePiece(Vector2Int location)
+        {
+            if (piecesLookup.TryGetValue(location, out Piece piece))
+            {
+                piecesLookup.Remove(location);
+                return piece;
+            }
 
+            return null;
+        }
+        
         public override Vector2 ShiftFocusPosition(Vector2 direction)
         {
             return Vector2.zero;
+        }
+
+        public void PrintInventory()
+        {
+            if (piecesLookup == null)
+            {
+                Debug.Log("Inventory not initialized.");
+                return;
+            }
+
+            if (piecesLookup.Count == 0)
+            {
+                Debug.Log("Inventory is empty.");
+                return;
+            }
+
+            Debug.Log("=== Inventory Contents ===");
+
+            foreach (var kvp in piecesLookup)
+            {
+                Vector2Int position = kvp.Key;
+                Piece piece = kvp.Value;
+
+                string pieceName = piece != null ? piece.name : "NULL";
+
+                Debug.Log($"Position: {position} → Piece: {pieceName}");
+            }
         }
     }
 }
