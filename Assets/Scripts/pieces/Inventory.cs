@@ -1,5 +1,6 @@
 using GamePieces;
 using UnityEngine;
+using System.Collections.Generic;
 
 namespace Inventory
 {
@@ -22,12 +23,12 @@ namespace Inventory
 
             piecesLookup = new Dictionary<Vector2Int, Piece>();
 
-            foreach (var square in InventoryData.startingSquares) {
+            foreach (var square in inventoryData.startingSquares) {
                 if (square.piece == null) {
                     continue;
                 }
 
-                piecesLookup[sqaure.position] = square.piece;
+                piecesLookup[square.position] = square.piece;
 
             }
         }
@@ -35,16 +36,16 @@ namespace Inventory
         // given Piece, put it in next available location or something like that? 
         public bool PutPiece(Vector2Int position, Piece piece) {
             if (piece == null) {
-                Debug.Log("Error in PutPiece(): Piece cannot be null")
+                Debug.Log("Error in PutPiece(): Piece cannot be null");
                 return false;
             }
 
             if (piecesLookup.ContainsKey(position)) {
-                Debug.Log("Error in PutPiece(): Location already taken")
+                Debug.Log("Error in PutPiece(): Location already taken");
                 return false;
             }
 
-            posToPiece[position] = piece;
+            piecesLookup[position] = piece;
             return true;
         }
 
