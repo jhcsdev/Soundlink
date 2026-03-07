@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Grid
+namespace PuzzleGrid
 {
     public class GridTile : MonoBehaviour
     {

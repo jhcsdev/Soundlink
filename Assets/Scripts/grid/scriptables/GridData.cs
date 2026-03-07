@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using GamePieces;
 using UnityEngine;
 
-namespace Grid
+namespace PuzzleGrid
 {
     [CreateAssetMenu(fileName = "GridData", menuName = "Gameplay/Grid Data")]
     public class GridData : ScriptableObject

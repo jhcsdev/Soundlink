@@ -13,5 +13,10 @@ namespace Inventory
             // GameObject clone = Instantiate(p.gameObject)
             // add to internal inventory data structures -- might just be able to call PutPiece()
         }
+
+        public override Vector2 ShiftFocusPosition(Vector2 direction)
+        {
+            return Vector2.zero;
+        }
     }
 }
