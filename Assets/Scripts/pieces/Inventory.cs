@@ -54,5 +54,10 @@ namespace Inventory
             piecesLookup.TryGetValue(location, out piece);
             return piece;
         }
+
+        public override Vector2 ShiftFocusPosition(Vector2 direction)
+        {
+            return Vector2.zero;
+        }
     }
 }
