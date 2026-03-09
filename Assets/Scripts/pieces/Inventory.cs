@@ -20,10 +20,6 @@ namespace Inventory
 
             foreach (var piece in inventoryData.startingPieces) {
                 Vector2Int location = putPiece(piece);
-
-                if (location != new Vector2Int(-1, -1)) {
-                    piecesLookup[location] = piece;
-                }
             }
 
             PrintInventory();
@@ -86,7 +82,7 @@ namespace Inventory
 
             Vector2Int emptyLocation = FindOpenPosition();
             piecesLookup[emptyLocation] = piece;
-            return new Vector2Int(-1, -1);
+            return emptyLocation;
         }
 
         // given location, take a Piece from the board

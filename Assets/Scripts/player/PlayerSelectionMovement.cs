@@ -28,11 +28,8 @@ namespace Player
         private Vector2 _directionCurrent = Vector2.zero;
         private float _allowNextRapidMoveAt = Mathf.Infinity; 
 
-<<<<<<< HEAD
         private GamePieces.Piece heldPiece;
-=======
         private Piece referencedPiece = null;
->>>>>>> main
 
 
         private void Awake()
@@ -48,21 +45,11 @@ namespace Player
 
         void Start()
         {
-<<<<<<< HEAD
             SetCurrentGrid(inventoryGrid);
-=======
-            SetCurrentGrid(puzzleGrid);
->>>>>>> main
         }
 
         private void Update()
         {
-
-            if (playerInputWrapper.INVENTORY_BUTTON.WasPressedThisFrame()) {
-                Debug.Log("INVENTORY PRESSED");
-                // TODO: add something for the inventory to work
-            }
-
             if (currentGrid == null) return;
 
             Vector2 inputDirection = playerInputWrapper.MOVE.ReadValue<Vector2>();
