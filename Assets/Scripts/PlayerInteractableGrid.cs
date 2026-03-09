@@ -24,4 +24,6 @@ public abstract class PlayerInteractableGrid : MonoBehaviour
     /// <param name="p">the piece</param>
     /// <returns>true if successful, false if not</returns>
     public abstract Vector2Int PlaceAtFocusPosition(Piece p);
+    public virtual void FocusGrid() => isFocused = true;
+    public virtual void UnfocusGrid() => isFocused = false;
 }
