@@ -8,17 +8,10 @@ namespace Inventory
     public class InventoryData : ScriptableObject
     {
         // NOTE: ChatGPT told me this was a good architecture but I want to hear your opinion
-        [SerializeField] private List<InventorySquare> inventorySquares = new();
-        public IReadOnlyList<InventorySquare> startingSquares => inventorySquares;
+        [SerializeField] private List<Piece> pieces = new();
+        public IReadOnlyList<Piece> startingPieces => pieces;
 
         // how many pieces should be displayed on each row of the inventory
         public int rowSize = 6;
-    }
-
-    [System.Serializable]
-    public struct InventorySquare
-    {
-        public Vector2Int position;
-        public Piece piece;
     }
 }

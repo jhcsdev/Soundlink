@@ -4,7 +4,7 @@ using UnityEngine;
 public abstract class PlayerInteractableGrid : MonoBehaviour
 {
 
-    protected Vector2 focusPosition = Vector2.zero;
+    protected Vector2Int focusPosition = Vector2Int.zero;
     protected bool isFocused = false;
 
     /// <summary>
@@ -23,5 +23,5 @@ public abstract class PlayerInteractableGrid : MonoBehaviour
     /// </summary>
     /// <param name="p">the piece</param>
     /// <returns>true if successful, false if not</returns>
-    public abstract bool PlaceAtFocusPosition(Piece p);
+    public abstract Vector2Int PlaceAtFocusPosition(Piece p);
 }

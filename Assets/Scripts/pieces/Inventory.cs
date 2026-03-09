@@ -9,11 +9,6 @@ namespace Inventory
         [SerializeField] private InventoryData inventoryData;
         private Dictionary<Vector2Int, Piece> piecesLookup;
 
-        // NOTE: these are jonathan's original comments ... could prob remove at some point
-        // todo - foreach Piece p in inventoryData.pieces: 
-        // GameObject clone = Instantiate(p.gameObject)
-        // add to internal inventory data structures -- might just be able to call PutPiece()
-
         void Awake()
         {
             if (inventoryData == null) {
@@ -23,34 +18,79 @@ namespace Inventory
 
             piecesLookup = new Dictionary<Vector2Int, Piece>();
 
-            foreach (var square in inventoryData.startingSquares) {
-                if (square.piece == null) {
-                    continue;
-                }
+            foreach (var piece in inventoryData.startingPieces) {
+                Vector2Int location = putPiece(piece);
 
-                piecesLookup[square.position] = square.piece;
+                if (location != new Vector2Int(-1, -1)) {
+                    piecesLookup[location] = piece;
+                }
             }
 
             PrintInventory();
         }
 
-        // given Piece, put it in next available location or something like that? 
-        public bool putPiece(Vector2Int position, Piece piece) {
+        // check if current position is the max position, or something like that
+        public bool isMaxPosition(Vector2Int currentPosition, Vector2Int maxPosition) {
+            if (currentPosition.y > maxPosition.y) {
+                return true;
+            }
+            else if (currentPosition.y < maxPosition.y) {
+                return false;
+            }
+            else {
+                return (currentPosition.x > maxPosition.x);
+            }
+        }
+
+        // find next open position in inventory
+        // NOTE: we should ALWAYS be able to find an open position and add to inventory
+        public Vector2Int FindOpenPosition() {
+            Vector2Int maxPosition = new Vector2Int(-1, -1);
+            
+            // iterate through all pieces in inventory, return first empty location
+            foreach (KeyValuePair<Vector2Int, Piece> kvp in piecesLookup)
+            {
+                Vector2Int position = kvp.Key;
+                Piece piece = kvp.Value;
+
+                if (piece == null) {
+                    return position;
+                }
+
+                if (isMaxPosition(position, maxPosition)) {
+                    maxPosition = position;
+                }
+            }
+            
+            // if there are no empty locations, need to append to inventory's dictionary
+            // however, also need to check if we are currently at end of row 
+            // if end of row, create a new row object
+            // otherwise: just place in next new space
+            int inventorySize = maxPosition.x + (maxPosition.y * inventoryData.rowSize);
+
+            if (inventorySize % (inventoryData.rowSize - 1) == 0) {
+                return new Vector2Int(0, maxPosition.y + 1);
+                // TODO: add visualization
+            }
+            else {
+                return new Vector2Int(maxPosition.x + 1, maxPosition.y);
+            }
+        }
+
+        // put Piece in next available position
+        public Vector2Int putPiece(Piece piece) {
             if (piece == null) {
                 Debug.Log("Error in PutPiece(): Piece cannot be null");
-                return false;
+                return new Vector2Int(-1, -1);
             }
 
-            if (piecesLookup.ContainsKey(position)) {
-                Debug.Log("Error in PutPiece(): Location already taken");
-                return false;
-            }
-
-            piecesLookup[position] = piece;
-            return true;
+            Vector2Int emptyLocation = FindOpenPosition();
+            piecesLookup[emptyLocation] = piece;
+            return new Vector2Int(-1, -1);
         }
 
         // given location, take a Piece from the board
+        // TODO; change this so there 
         public Piece takePiece(Vector2Int location)
         {
             if (piecesLookup.TryGetValue(location, out Piece piece))
@@ -62,9 +102,18 @@ namespace Inventory
             return null;
         }
         
+        // TODO; do this later
         public override Vector2 ShiftFocusPosition(Vector2 direction)
         {
             return Vector2.zero;
+        }
+
+        public override Piece TakeAtFocusPosition() {
+            return takePiece(focusPosition);
+        }
+
+        public override Vector2Int PlaceAtFocusPosition(Piece piece) {
+            return putPiece(piece);
         }
 
         public void PrintInventory()
