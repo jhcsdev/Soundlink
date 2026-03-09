@@ -7,7 +7,10 @@ namespace Inventory
     [CreateAssetMenu(fileName = "InventoryData", menuName = "Gameplay/Inventory Data")]
     public class InventoryData : ScriptableObject
     {
-        public List<Piece> pieces = new();
+        // NOTE: ChatGPT told me this was a good architecture but I want to hear your opinion
+        [SerializeField] private List<Piece> pieces = new();
+        public IReadOnlyList<Piece> startingPieces => pieces;
+
         // how many pieces should be displayed on each row of the inventory
         public int rowSize = 6;
     }

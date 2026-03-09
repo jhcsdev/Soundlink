@@ -28,6 +28,7 @@ namespace Player
         private Vector2 _directionCurrent = Vector2.zero;
         private float _allowNextRapidMoveAt = Mathf.Infinity; 
 
+        private GamePieces.Piece heldPiece;
         private Piece referencedPiece = null;
 
 
@@ -44,7 +45,7 @@ namespace Player
 
         void Start()
         {
-            SetCurrentGrid(puzzleGrid);
+            SetCurrentGrid(inventoryGrid);
         }
 
         private void Update()
