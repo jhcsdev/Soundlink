@@ -17,7 +17,7 @@ public abstract class PlayerInteractableGrid : MonoBehaviour
     /// select the object
     /// </summary>
     /// <returns>the piece you select (or nothing if there was nothing there)</returns>
-    public abstract Piece SelectFocusPosition();
+    public abstract Piece TakeAtFocusPosition();
     /// <summary>
     /// places given piece at current focus position
     /// </summary>
