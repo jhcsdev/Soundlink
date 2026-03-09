@@ -17,11 +17,15 @@ public abstract class PlayerInteractableGrid : MonoBehaviour
     /// select the object
     /// </summary>
     /// <returns>the piece you select (or nothing if there was nothing there)</returns>
-    public abstract Piece SelectFocusPosition();
+    public abstract Piece TakeAtFocusPosition();
     /// <summary>
     /// places given piece at current focus position
     /// </summary>
     /// <param name="p">the piece</param>
     /// <returns>true if successful, false if not</returns>
-    public abstract bool PlaceAtFocusPosition(Piece p);
+    public abstract Vector2Int? PlaceAtFocusPosition(Piece p);
+
+
+    public virtual void FocusGrid() => isFocused = true;
+    public virtual void UnfocusGrid() => isFocused = false;
 }

@@ -1,5 +1,8 @@
 
+using System;
+using GamePieces;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace Player
 {
@@ -8,8 +11,12 @@ namespace Player
     {
         [Header("grids")]
         [SerializeField] private PlayerInteractableGrid inventoryGrid;
-        [SerializeField] private PlayerInteractableGrid gameGrid;
+        [SerializeField] private PlayerInteractableGrid puzzleGrid;
         private PlayerInteractableGrid currentGrid;
+
+        private bool IsCurrentGridInventory() => currentGrid == inventoryGrid;
+        private bool IsCurrentGridPuzzleGrid() => currentGrid == puzzleGrid;
+        private void SwapGrid() => SetCurrentGrid(IsCurrentGridInventory() ? puzzleGrid : inventoryGrid); 
 
         [Header("input related")]
         [SerializeField, Tooltip("Move input acts like a button. If you hold, it starts rapidly moving.")] 
@@ -21,15 +28,23 @@ namespace Player
         private Vector2 _directionCurrent = Vector2.zero;
         private float _allowNextRapidMoveAt = Mathf.Infinity; 
 
+        private Piece referencedPiece = null;
+
 
         private void Awake()
         {
             playerInputWrapper = GetComponent<PlayerInputWrapper>();
         }
 
+        void OnEnable()
+        {
+            playerInputWrapper.SELECT.performed += OnSelect;
+            playerInputWrapper.INVENTORY_BUTTON.performed += OnInventoryButton;
+        }
+
         void Start()
         {
-            SetCurrentGrid(gameGrid);
+            SetCurrentGrid(puzzleGrid);
         }
 
         private void Update()
@@ -61,12 +76,69 @@ namespace Player
                 movement = currentGrid.ShiftFocusPosition(inputDirection);
             }
 
-            if (movement != Vector2.zero) SetCurrentGrid(currentGrid == inventoryGrid ? gameGrid : inventoryGrid);
+            if (movement != Vector2.zero) SwapGrid();
         }
 
         public void SetCurrentGrid(PlayerInteractableGrid grid)
         {
+            if (grid == null) return;
+            if (currentGrid != null) currentGrid.UnfocusGrid();
             currentGrid = grid;
+            currentGrid.FocusGrid();
+        }
+
+        /// <summary>
+        /// if in inventory - grabs a piece at your focus position
+        /// if in grid - 
+        ///     if you have a piece selected - place that piece
+        ///     if not - try to grab the piece at your current spot
+        /// </summary>
+        /// <param name="ctx"></param>
+        private void OnSelect(InputAction.CallbackContext ctx)
+        {   
+            if (IsCurrentGridInventory()) // grabbing piece from inventory
+            {
+                referencedPiece = currentGrid.TakeAtFocusPosition();
+                SwapGrid();
+            }
+
+            if (!IsCurrentGridPuzzleGrid()) return;
+
+            if (referencedPiece == null) // grabbing piece from grid; stay in grid, i think?
+            {
+                referencedPiece = currentGrid.TakeAtFocusPosition();
+            }
+            else // you are holding a piece and are not in the inventory; place the piece
+            {
+                Vector2? placedAt = currentGrid.PlaceAtFocusPosition(referencedPiece);
+                if (placedAt != null)
+                {
+                    referencedPiece = null; // reset referenced piece; grid owns that now
+                }
+            }
+        }
+
+        /// <summary>
+        /// only works while in the grid - instantly returns the piece you are holding to the grid, or returns the piece at your focus position
+        /// </summary>
+        /// <param name="ctx"></param>
+        private void OnInventoryButton(InputAction.CallbackContext ctx)
+        {
+            if (!IsCurrentGridPuzzleGrid()) return;
+
+            if (referencedPiece != null) 
+            {
+                inventoryGrid.PlaceAtFocusPosition(referencedPiece);
+                referencedPiece = null;
+            }
+            else
+            {
+                Piece p = currentGrid.TakeAtFocusPosition();
+                if (p != null)
+                {
+                    inventoryGrid.PlaceAtFocusPosition(p);
+                }
+            }
         }
     }
 }
