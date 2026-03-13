@@ -15,7 +15,8 @@ namespace PuzzleGrid
 
         public override Piece TakeAtFocusPosition() {
             // filler for now
-            Piece p = new Piece();
+            GameObject go = new();
+            Piece p = go.AddComponent<Piece>();
             return p;
         }
 
