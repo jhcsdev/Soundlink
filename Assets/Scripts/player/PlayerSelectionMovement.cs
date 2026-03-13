@@ -31,28 +31,25 @@ namespace Player
         private GamePieces.Piece heldPiece;
         private Piece referencedPiece = null;
 
-
         private void Awake()
         {
             playerInputWrapper = GetComponent<PlayerInputWrapper>();
-        }
-
-        void OnEnable()
-        {
         }
 
         void Start()
         {
             playerInputWrapper.SELECT.performed += OnSelect;
             playerInputWrapper.INVENTORY_BUTTON.performed += OnInventoryButton;
-            SetCurrentGrid(inventoryGrid);
+            SetCurrentGrid(puzzleGrid);
         }
 
         private void Update()
         {
             if (currentGrid == null) return;
 
-            Vector2 inputDirection = playerInputWrapper.MOVE.ReadValue<Vector2>();
+            Vector2 inputDirectionFloat = playerInputWrapper.MOVE.ReadValue<Vector2>();
+            // rn the below just omits diagonal direction
+            Vector2Int inputDirection = new((int)Mathf.Abs(inputDirectionFloat.x), (int)Mathf.Abs(inputDirectionFloat.y));
 
             if (inputDirection == Vector2.zero)
             {
@@ -96,7 +93,8 @@ namespace Player
         /// </summary>
         /// <param name="ctx"></param>
         private void OnSelect(InputAction.CallbackContext ctx)
-        {     
+        {   
+            Debug.Log("hello select");
             if (IsCurrentGridInventory()) // grabbing piece from inventory
             {
                 referencedPiece = currentGrid.TakeAtFocusPosition();

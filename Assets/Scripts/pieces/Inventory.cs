@@ -99,16 +99,16 @@ namespace Inventory
         }
         
         // TODO; do this later
-        public override Vector2 ShiftFocusPosition(Vector2 direction)
+        public override Vector2Int ShiftFocusPosition(Vector2Int direction)
         {
-            return Vector2.zero;
+            return Vector2Int.zero;
         }
 
         public override Piece TakeAtFocusPosition() {
             return takePiece(focusPosition);
         }
 
-        public override Vector2Int PlaceAtFocusPosition(Piece piece) {
+        public override Vector2Int? PlaceAtFocusPosition(Piece piece) {
             return putPiece(piece);
         }
 
