@@ -38,24 +38,25 @@ namespace PuzzleGrid
             Debug.Log("grid setup");
         }
 
-        public override Vector2 ShiftFocusPosition(Vector2Int direction)
+        public override Vector2Int ShiftFocusPosition(Vector2Int direction)
         {
-            if (direction == Vector2.zero) return Vector2.zero;
+            if (direction == Vector2.zero) return Vector2Int.zero;
 
             Vector2Int intended = focusPosition + direction;
 
             // check x pos, y up
-            if (intended.x < 0 || intended.x >= data.width || intended.y >= data.height) { OnFailedLeavingGrid?.Invoke(direction); return Vector2.zero; }
+            if (intended.x < 0 || intended.x >= data.width || intended.y >= data.height) { OnFailedLeavingGrid?.Invoke(direction); return Vector2Int.zero; }
             // check y down - are we going back to the inventory?
-            if (intended.y < 0) { OnMoved?.Invoke(direction); return Vector2.down; }
+            if (intended.y < 0) { OnMoved?.Invoke(direction); return Vector2Int.down; }
 
             // otherwise movement is ok
             focusPosition = intended;
             OnMoved?.Invoke(direction);
             OnNewFocusPosition?.Invoke(intended);
 
-            return Vector2.zero;
+            return Vector2Int.zero;
         }
+
         public override Vector2Int? PlaceAtFocusPosition(Piece p)
         {
             if (!CanPieceBePlaced(p)) return null;

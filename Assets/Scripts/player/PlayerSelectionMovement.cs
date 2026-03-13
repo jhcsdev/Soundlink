@@ -28,6 +28,7 @@ namespace Player
         private Vector2 _directionCurrent = Vector2.zero;
         private float _allowNextRapidMoveAt = Mathf.Infinity; 
 
+        private GamePieces.Piece heldPiece;
         private Piece referencedPiece = null;
 
         private void Awake()
@@ -97,7 +98,9 @@ namespace Player
             if (IsCurrentGridInventory()) // grabbing piece from inventory
             {
                 referencedPiece = currentGrid.TakeAtFocusPosition();
+                Debug.Log("referenced piece: " + referencedPiece.gameObject.name);
                 SwapGrid();
+                return;
             }
 
             if (!IsCurrentGridPuzzleGrid()) return;
@@ -109,6 +112,7 @@ namespace Player
             else // you are holding a piece and are not in the inventory; place the piece
             {
                 Vector2? placedAt = currentGrid.PlaceAtFocusPosition(referencedPiece);
+                Debug.Log("placed at: " + placedAt);
                 if (placedAt != null)
                 {
                     referencedPiece = null; // reset referenced piece; grid owns that now
@@ -121,7 +125,7 @@ namespace Player
         /// </summary>
         /// <param name="ctx"></param>
         private void OnInventoryButton(InputAction.CallbackContext ctx)
-        {
+        {   
             if (!IsCurrentGridPuzzleGrid()) return;
 
             if (referencedPiece != null) 
