@@ -39,12 +39,12 @@ namespace Player
 
         void OnEnable()
         {
-            playerInputWrapper.SELECT.performed += OnSelect;
-            playerInputWrapper.INVENTORY_BUTTON.performed += OnInventoryButton;
         }
 
         void Start()
         {
+            playerInputWrapper.SELECT.performed += OnSelect;
+            playerInputWrapper.INVENTORY_BUTTON.performed += OnInventoryButton;
             SetCurrentGrid(inventoryGrid);
         }
 
@@ -96,11 +96,13 @@ namespace Player
         /// </summary>
         /// <param name="ctx"></param>
         private void OnSelect(InputAction.CallbackContext ctx)
-        {   
+        {     
             if (IsCurrentGridInventory()) // grabbing piece from inventory
             {
                 referencedPiece = currentGrid.TakeAtFocusPosition();
+                Debug.Log("referenced piece: " + referencedPiece.gameObject.name);
                 SwapGrid();
+                return;
             }
 
             if (!IsCurrentGridPuzzleGrid()) return;
@@ -112,6 +114,7 @@ namespace Player
             else // you are holding a piece and are not in the inventory; place the piece
             {
                 Vector2? placedAt = currentGrid.PlaceAtFocusPosition(referencedPiece);
+                Debug.Log("placed at: " + placedAt);
                 if (placedAt != null)
                 {
                     referencedPiece = null; // reset referenced piece; grid owns that now
@@ -124,7 +127,7 @@ namespace Player
         /// </summary>
         /// <param name="ctx"></param>
         private void OnInventoryButton(InputAction.CallbackContext ctx)
-        {
+        {   
             if (!IsCurrentGridPuzzleGrid()) return;
 
             if (referencedPiece != null) 

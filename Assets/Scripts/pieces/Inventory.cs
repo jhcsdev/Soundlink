@@ -18,7 +18,7 @@ namespace Inventory
 
             piecesLookup = new Dictionary<Vector2Int, Piece>();
 
-            foreach (var piece in inventoryData.startingPieces) {
+            foreach (var piece in inventoryData.pieces) {
                 Vector2Int location = putPiece(piece);
             }
 
