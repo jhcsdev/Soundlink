@@ -1,4 +1,5 @@
 using GamePieces;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Inventory
@@ -14,9 +15,18 @@ namespace Inventory
             // add to internal inventory data structures -- might just be able to call PutPiece()
         }
 
-        public override Vector2 ShiftFocusPosition(Vector2 direction)
+        public override Vector2 ShiftFocusPosition(Vector2Int direction)
         {
             return Vector2.zero;
+        }
+
+        public override Vector2Int? PlaceAtFocusPosition(Piece p)
+        {
+            throw new System.NotImplementedException();
+        }
+        public override Piece TakeAtFocusPosition()
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

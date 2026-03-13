@@ -7,7 +7,7 @@ namespace Player
 {
     public class PlayerInputWrapper : MonoBehaviour
     {
-        private PlayerInputActions playerInput;
+        public PlayerInputActions playerInput;
         public InputAction SELECT, INVENTORY_BUTTON, MAP, LEFT_CLICK, MOVE, ROTATE;
 
         private void Awake()

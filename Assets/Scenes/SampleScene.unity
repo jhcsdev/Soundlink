@@ -371,7 +371,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Player.PlayerSelectionMovement
   inventoryGrid: {fileID: 1762153998}
-  gameGrid: {fileID: 1771607251}
+  puzzleGrid: {fileID: 0}
   holdTimeBeforeRapidMove: 1.5
   rapidMoveInterval: 0.5
 --- !u!114 &1424401738
@@ -529,6 +529,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 36ca6301bd3014d7ea3859d3634944df, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PuzzleGrid.PuzzleGrid
+  data: {fileID: 11400000, guid: 794c9530f0fa342628c4662286ddd402, type: 2}
+  tileRealsize: 1
 --- !u!4 &1771607252
 Transform:
   m_ObjectHideFlags: 0
