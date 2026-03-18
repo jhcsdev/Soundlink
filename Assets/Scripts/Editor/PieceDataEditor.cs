@@ -6,7 +6,6 @@ using System.Collections.Generic;
 [CustomEditor(typeof(PieceData))]
 public class PieceDataEditor : Editor
 {
-    private float cellSize = 16f;
     public override void OnInspectorGUI()
     {
         if (GUILayout.Button("Open in Piece Editor", GUILayout.Height(28)))
@@ -23,7 +22,7 @@ public class PieceDataEditor : Editor
 
     private void DrawGridPreview()
     {
-        float previewCellSize = 8f;
+        float previewCellSize = 16f;
         float previewSize = PieceEditorWindow.GridSize * previewCellSize;
 
         Rect gridArea = GUILayoutUtility.GetRect(previewSize, previewSize, GUILayout.ExpandWidth(false));
@@ -31,8 +30,11 @@ public class PieceDataEditor : Editor
         gridArea.x = (EditorGUIUtility.currentViewWidth - previewSize) * 0.5f;
 
         Dictionary<Vector2Int, PieceTileType> lookupByOffset = new();
+        Vector2Int originLocation = Vector2Int.zero;
         foreach (PieceTileData tile in ((PieceData)target).tiles)
+        {
             lookupByOffset[tile.relativeOffset] = tile.type;
+        }
 
         EditorGUI.DrawRect(
             new Rect(gridArea.x - 2, gridArea.y - 2, gridArea.width + 4, gridArea.height + 4),
