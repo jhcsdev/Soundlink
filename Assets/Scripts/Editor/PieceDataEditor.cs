@@ -22,20 +22,19 @@ public class PieceDataEditor : Editor
 
     private void DrawGridPreview()
     {
-        float previewCellSize = 16f;
-        float previewSize = PieceEditorWindow.GridSize * previewCellSize;
+        const float previewCellSize  = 16f;
+        const float glueThickness    = 2f;
+        float       previewSize      = PieceEditorWindow.GridSize * previewCellSize;
 
         Rect gridArea = GUILayoutUtility.GetRect(previewSize, previewSize, GUILayout.ExpandWidth(false));
-
         gridArea.x = (EditorGUIUtility.currentViewWidth - previewSize) * 0.5f;
 
-        Dictionary<Vector2Int, PieceTileType> lookupByOffset = new();
-        Vector2Int originLocation = Vector2Int.zero;
+        // Build lookup: relative offset → PieceTileData
+        Dictionary<Vector2Int, PieceTileData> lookup = new();
         foreach (PieceTileData tile in ((PieceData)target).tiles)
-        {
-            lookupByOffset[tile.relativeOffset] = tile.type;
-        }
+            lookup[tile.relativeOffset] = tile;
 
+        // Border + background
         EditorGUI.DrawRect(
             new Rect(gridArea.x - 2, gridArea.y - 2, gridArea.width + 4, gridArea.height + 4),
             new Color(0.08f, 0.08f, 0.08f));
@@ -54,16 +53,35 @@ public class PieceDataEditor : Editor
                     previewCellSize - 1);
 
                 Vector2Int adjustedCoord = new Vector2Int(x, y) - center;
-                Color fill = lookupByOffset.TryGetValue(adjustedCoord, out PieceTileType t)
-                    ? (
-                        t == PieceTileType.PASSTHROUGH ? PieceEditorWindow.PassthroughCell :
-                        t == PieceTileType.SWITCH ? PieceEditorWindow.SwitchCell :
-                        PieceEditorWindow.NormalCell
-                    ) : PieceEditorWindow.ColCellEmpty;
+                bool active = lookup.TryGetValue(adjustedCoord, out PieceTileData data);
+
+                Color fill = active
+                    ? data.type switch
+                      {
+                          PieceTileType.PASSTHROUGH => PieceEditorWindow.PassthroughCell,
+                          PieceTileType.SWITCH      => PieceEditorWindow.SwitchCell,
+                          _                         => PieceEditorWindow.NormalCell
+                      }
+                    : PieceEditorWindow.ColCellEmpty;
 
                 EditorGUI.DrawRect(cellRect, fill);
-                EditorGUI.DrawRect(new Rect(cellRect.xMax, cellRect.y, 1, cellRect.height), PieceEditorWindow.ColGridLine);
-                EditorGUI.DrawRect(new Rect(cellRect.x, cellRect.yMax, cellRect.width, 1), PieceEditorWindow.ColGridLine);
+                EditorGUI.DrawRect(new Rect(cellRect.xMax, cellRect.y,    1,              cellRect.height), PieceEditorWindow.ColGridLine);
+                EditorGUI.DrawRect(new Rect(cellRect.x,    cellRect.yMax, cellRect.width, 1),               PieceEditorWindow.ColGridLine);
+
+                // Glue edge bars
+                if (!active || data.glue == null) continue;
+                foreach (GlueCardinality g in data.glue)
+                {
+                    Rect edge = g switch
+                    {
+                        GlueCardinality.NORTH => new Rect(cellRect.x,                      cellRect.y,                      cellRect.width, glueThickness),
+                        GlueCardinality.SOUTH => new Rect(cellRect.x,                      cellRect.yMax - glueThickness,   cellRect.width, glueThickness),
+                        GlueCardinality.WEST  => new Rect(cellRect.x,                      cellRect.y,                      glueThickness,  cellRect.height),
+                        GlueCardinality.EAST  => new Rect(cellRect.xMax - glueThickness,   cellRect.y,                      glueThickness,  cellRect.height),
+                        _                    => default
+                    };
+                    EditorGUI.DrawRect(edge, PieceEditorWindow.ColGlueEdge);
+                }
             }
         }
     }
