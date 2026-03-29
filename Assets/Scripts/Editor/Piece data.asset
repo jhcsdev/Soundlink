@@ -13,27 +13,729 @@ MonoBehaviour:
   m_Name: Piece data
   m_EditorClassIdentifier: Assembly-CSharp::GamePieces.PieceData
   tiles:
-  - relativeOffset: {x: -1, y: 0}
+  - relativeOffset: {x: -5, y: -5}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 3
+    spriteDirection: 2
+  - relativeOffset: {x: -5, y: -4}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 1
+    spriteDirection: 3
+  - relativeOffset: {x: -5, y: -3}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 1
+    spriteDirection: 3
+  - relativeOffset: {x: -5, y: -2}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 1
+    spriteDirection: 3
+  - relativeOffset: {x: -5, y: -1}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 1
+    spriteDirection: 3
+  - relativeOffset: {x: -5, y: 0}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 1
+    spriteDirection: 3
+  - relativeOffset: {x: -5, y: 1}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 1
+    spriteDirection: 3
+  - relativeOffset: {x: -5, y: 2}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 1
+    spriteDirection: 3
+  - relativeOffset: {x: -5, y: 3}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 1
+    spriteDirection: 3
+  - relativeOffset: {x: -5, y: 4}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 1
+    spriteDirection: 3
+  - relativeOffset: {x: -5, y: 5}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 3
+    spriteDirection: 3
+  - relativeOffset: {x: -4, y: -5}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 1
+    spriteDirection: 2
+  - relativeOffset: {x: -4, y: -4}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 0
+    spriteDirection: 0
+  - relativeOffset: {x: -4, y: -3}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 0
+    spriteDirection: 0
+  - relativeOffset: {x: -4, y: -2}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 0
+    spriteDirection: 0
+  - relativeOffset: {x: -4, y: -1}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 0
+    spriteDirection: 0
+  - relativeOffset: {x: -4, y: 0}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 0
+    spriteDirection: 0
+  - relativeOffset: {x: -4, y: 1}
     isOrigin: 0
     type: 0
     glue: 0300000001000000
-  - relativeOffset: {x: -1, y: 1}
+    tileType: 0
+    spriteDirection: 0
+  - relativeOffset: {x: -4, y: 2}
     isOrigin: 0
     type: 0
     glue: 0300000000000000
-  - relativeOffset: {x: 0, y: 0}
-    isOrigin: 1
-    type: 0
-    glue: 01000000
-  - relativeOffset: {x: 0, y: 1}
+    tileType: 0
+    spriteDirection: 0
+  - relativeOffset: {x: -4, y: 3}
     isOrigin: 0
     type: 0
+    glue: 
+    tileType: 0
+    spriteDirection: 0
+  - relativeOffset: {x: -4, y: 4}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 0
+    spriteDirection: 0
+  - relativeOffset: {x: -4, y: 5}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 1
+    spriteDirection: 0
+  - relativeOffset: {x: -3, y: -5}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 1
+    spriteDirection: 2
+  - relativeOffset: {x: -3, y: -4}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 0
+    spriteDirection: 0
+  - relativeOffset: {x: -3, y: -3}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 0
+    spriteDirection: 0
+  - relativeOffset: {x: -3, y: -2}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 0
+    spriteDirection: 0
+  - relativeOffset: {x: -3, y: -1}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 0
+    spriteDirection: 0
+  - relativeOffset: {x: -3, y: 0}
+    isOrigin: 0
+    type: 2
+    glue: 
+    tileType: 0
+    spriteDirection: 0
+  - relativeOffset: {x: -3, y: 1}
+    isOrigin: 0
+    type: 0
+    glue: 01000000
+    tileType: 0
+    spriteDirection: 0
+  - relativeOffset: {x: -3, y: 2}
+    isOrigin: 0
+    type: 1
     glue: 00000000
-  - relativeOffset: {x: 1, y: 0}
+    tileType: 0
+    spriteDirection: 0
+  - relativeOffset: {x: -3, y: 3}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 0
+    spriteDirection: 0
+  - relativeOffset: {x: -3, y: 4}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 0
+    spriteDirection: 0
+  - relativeOffset: {x: -3, y: 5}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 1
+    spriteDirection: 0
+  - relativeOffset: {x: -2, y: -5}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 1
+    spriteDirection: 2
+  - relativeOffset: {x: -2, y: -4}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 0
+    spriteDirection: 0
+  - relativeOffset: {x: -2, y: -3}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 0
+    spriteDirection: 0
+  - relativeOffset: {x: -2, y: -2}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 0
+    spriteDirection: 0
+  - relativeOffset: {x: -2, y: -1}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 0
+    spriteDirection: 0
+  - relativeOffset: {x: -2, y: 0}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 0
+    spriteDirection: 0
+  - relativeOffset: {x: -2, y: 1}
     isOrigin: 0
     type: 0
     glue: 0100000002000000
-  - relativeOffset: {x: 1, y: 1}
+    tileType: 0
+    spriteDirection: 0
+  - relativeOffset: {x: -2, y: 2}
     isOrigin: 0
     type: 0
     glue: 0000000002000000
+    tileType: 0
+    spriteDirection: 0
+  - relativeOffset: {x: -2, y: 3}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 0
+    spriteDirection: 0
+  - relativeOffset: {x: -2, y: 4}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 0
+    spriteDirection: 0
+  - relativeOffset: {x: -2, y: 5}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 1
+    spriteDirection: 0
+  - relativeOffset: {x: -1, y: -5}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 1
+    spriteDirection: 2
+  - relativeOffset: {x: -1, y: -4}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 0
+    spriteDirection: 0
+  - relativeOffset: {x: -1, y: -3}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 0
+    spriteDirection: 0
+  - relativeOffset: {x: -1, y: -2}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 0
+    spriteDirection: 0
+  - relativeOffset: {x: -1, y: -1}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 0
+    spriteDirection: 0
+  - relativeOffset: {x: -1, y: 0}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 0
+    spriteDirection: 0
+  - relativeOffset: {x: -1, y: 1}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 0
+    spriteDirection: 0
+  - relativeOffset: {x: -1, y: 2}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 0
+    spriteDirection: 0
+  - relativeOffset: {x: -1, y: 3}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 0
+    spriteDirection: 0
+  - relativeOffset: {x: -1, y: 4}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 0
+    spriteDirection: 0
+  - relativeOffset: {x: -1, y: 5}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 1
+    spriteDirection: 0
+  - relativeOffset: {x: 0, y: -5}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 1
+    spriteDirection: 2
+  - relativeOffset: {x: 0, y: -4}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 0
+    spriteDirection: 0
+  - relativeOffset: {x: 0, y: -3}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 0
+    spriteDirection: 0
+  - relativeOffset: {x: 0, y: -2}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 0
+    spriteDirection: 0
+  - relativeOffset: {x: 0, y: -1}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 0
+    spriteDirection: 0
+  - relativeOffset: {x: 0, y: 0}
+    isOrigin: 1
+    type: 0
+    glue: 
+    tileType: 0
+    spriteDirection: 0
+  - relativeOffset: {x: 0, y: 1}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 0
+    spriteDirection: 0
+  - relativeOffset: {x: 0, y: 2}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 0
+    spriteDirection: 0
+  - relativeOffset: {x: 0, y: 3}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 0
+    spriteDirection: 0
+  - relativeOffset: {x: 0, y: 4}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 0
+    spriteDirection: 0
+  - relativeOffset: {x: 0, y: 5}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 1
+    spriteDirection: 0
+  - relativeOffset: {x: 1, y: -5}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 1
+    spriteDirection: 2
+  - relativeOffset: {x: 1, y: -4}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 0
+    spriteDirection: 0
+  - relativeOffset: {x: 1, y: -3}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 0
+    spriteDirection: 0
+  - relativeOffset: {x: 1, y: -2}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 0
+    spriteDirection: 0
+  - relativeOffset: {x: 1, y: -1}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 0
+    spriteDirection: 0
+  - relativeOffset: {x: 1, y: 0}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 0
+    spriteDirection: 0
+  - relativeOffset: {x: 1, y: 1}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 0
+    spriteDirection: 0
+  - relativeOffset: {x: 1, y: 2}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 0
+    spriteDirection: 0
+  - relativeOffset: {x: 1, y: 3}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 0
+    spriteDirection: 0
+  - relativeOffset: {x: 1, y: 4}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 0
+    spriteDirection: 0
+  - relativeOffset: {x: 1, y: 5}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 1
+    spriteDirection: 0
+  - relativeOffset: {x: 2, y: -5}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 1
+    spriteDirection: 2
+  - relativeOffset: {x: 2, y: -4}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 0
+    spriteDirection: 0
+  - relativeOffset: {x: 2, y: -3}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 0
+    spriteDirection: 0
+  - relativeOffset: {x: 2, y: -2}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 0
+    spriteDirection: 0
+  - relativeOffset: {x: 2, y: -1}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 0
+    spriteDirection: 0
+  - relativeOffset: {x: 2, y: 0}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 0
+    spriteDirection: 0
+  - relativeOffset: {x: 2, y: 1}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 0
+    spriteDirection: 0
+  - relativeOffset: {x: 2, y: 2}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 0
+    spriteDirection: 0
+  - relativeOffset: {x: 2, y: 3}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 0
+    spriteDirection: 0
+  - relativeOffset: {x: 2, y: 4}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 0
+    spriteDirection: 0
+  - relativeOffset: {x: 2, y: 5}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 1
+    spriteDirection: 0
+  - relativeOffset: {x: 3, y: -5}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 1
+    spriteDirection: 2
+  - relativeOffset: {x: 3, y: -4}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 0
+    spriteDirection: 0
+  - relativeOffset: {x: 3, y: -3}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 0
+    spriteDirection: 0
+  - relativeOffset: {x: 3, y: -2}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 0
+    spriteDirection: 0
+  - relativeOffset: {x: 3, y: -1}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 0
+    spriteDirection: 0
+  - relativeOffset: {x: 3, y: 0}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 0
+    spriteDirection: 0
+  - relativeOffset: {x: 3, y: 1}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 0
+    spriteDirection: 0
+  - relativeOffset: {x: 3, y: 2}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 0
+    spriteDirection: 0
+  - relativeOffset: {x: 3, y: 3}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 0
+    spriteDirection: 0
+  - relativeOffset: {x: 3, y: 4}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 0
+    spriteDirection: 0
+  - relativeOffset: {x: 3, y: 5}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 1
+    spriteDirection: 0
+  - relativeOffset: {x: 4, y: -5}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 1
+    spriteDirection: 2
+  - relativeOffset: {x: 4, y: -4}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 0
+    spriteDirection: 0
+  - relativeOffset: {x: 4, y: -3}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 0
+    spriteDirection: 0
+  - relativeOffset: {x: 4, y: -2}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 0
+    spriteDirection: 0
+  - relativeOffset: {x: 4, y: -1}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 0
+    spriteDirection: 0
+  - relativeOffset: {x: 4, y: 0}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 0
+    spriteDirection: 0
+  - relativeOffset: {x: 4, y: 1}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 0
+    spriteDirection: 0
+  - relativeOffset: {x: 4, y: 2}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 0
+    spriteDirection: 0
+  - relativeOffset: {x: 4, y: 3}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 0
+    spriteDirection: 0
+  - relativeOffset: {x: 4, y: 4}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 0
+    spriteDirection: 0
+  - relativeOffset: {x: 4, y: 5}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 1
+    spriteDirection: 0
+  - relativeOffset: {x: 5, y: -5}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 3
+    spriteDirection: 1
+  - relativeOffset: {x: 5, y: -4}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 1
+    spriteDirection: 1
+  - relativeOffset: {x: 5, y: -3}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 1
+    spriteDirection: 1
+  - relativeOffset: {x: 5, y: -2}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 1
+    spriteDirection: 1
+  - relativeOffset: {x: 5, y: -1}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 1
+    spriteDirection: 1
+  - relativeOffset: {x: 5, y: 0}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 1
+    spriteDirection: 1
+  - relativeOffset: {x: 5, y: 1}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 1
+    spriteDirection: 1
+  - relativeOffset: {x: 5, y: 2}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 1
+    spriteDirection: 1
+  - relativeOffset: {x: 5, y: 3}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 1
+    spriteDirection: 1
+  - relativeOffset: {x: 5, y: 4}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 1
+    spriteDirection: 1
+  - relativeOffset: {x: 5, y: 5}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 3
+    spriteDirection: 0

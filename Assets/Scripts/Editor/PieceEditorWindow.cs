@@ -26,6 +26,12 @@ public class PieceEditorWindow : EditorWindow
     public static readonly Color ColGridLine     = new(0.10f, 0.10f, 0.10f);
     public static readonly Color ColGlueEdge     = Color.red;
     private const float GlueThickness            = 3f;
+
+    // Lighter tints drawn on exposed (neighbourless) edges — drawn before glue so red sits on top
+    public static readonly Color NormalEdge      = new(0.52f, 0.74f, 1.00f);
+    public static readonly Color PassthroughEdge = new(0.45f, 0.98f, 0.68f);
+    public static readonly Color SwitchEdge      = new(1.00f, 0.76f, 0.52f);
+    private const float EdgeThickness            = 5f;
     #endregion
 
     #region tracking state
@@ -120,7 +126,7 @@ public class PieceEditorWindow : EditorWindow
             tp.FindPropertyRelative("relativeOffset").vector2IntValue = relOffset;
             tp.FindPropertyRelative("isOrigin").boolValue             = cell == originCell;
             tp.FindPropertyRelative("type").enumValueIndex            = (int)data.type;
-            tp.FindPropertyRelative("spriteType").enumValueIndex      = (int)data.spriteType;
+            tp.FindPropertyRelative("tileType").enumValueIndex      = (int)data.spriteType;
             tp.FindPropertyRelative("spriteDirection").enumValueIndex = (int)data.spriteDirection;
 
             SerializedProperty glueDir = tp.FindPropertyRelative("glue");
@@ -389,6 +395,18 @@ public class PieceEditorWindow : EditorWindow
                 EditorGUI.DrawRect(new Rect(cellRect.xMax, cellRect.y,    1,              cellRect.height), ColGridLine);
                 EditorGUI.DrawRect(new Rect(cellRect.x,    cellRect.yMax, cellRect.width, 1),               ColGridLine);
 
+                // --- Exposed edge highlights (drawn before glue so red sits on top) ---
+                if (active)
+                {
+                    Color edgeColor = activeCells[coord].type switch
+                    {
+                        PieceTileType.PASSTHROUGH => PassthroughEdge,
+                        PieceTileType.SWITCH      => SwitchEdge,
+                        _                         => NormalEdge
+                    };
+                    DrawExposedEdges(cellRect, coord, edgeColor);
+                }
+
                 // --- Glue edge bars ---
                 if (active)
                     DrawGlueEdges(cellRect, activeCells[coord].glueDirections);
@@ -474,6 +492,24 @@ public class PieceEditorWindow : EditorWindow
     }
 
     /// <summary>
+    /// Draws a light-tinted bar on each side of the cell that has no active neighbour,
+    /// giving a visual indication of exposed piece edges.  Drawn before glue bars so
+    /// the red glue overlay is always fully visible on top.
+    /// </summary>
+    private void DrawExposedEdges(Rect r, Vector2Int coord, Color edgeColor)
+    {
+        // Grid Y-up: Vector2Int.up → higher y index → screen-top (NORTH in screen space)
+        if (!activeCells.ContainsKey(coord + Vector2Int.up))
+            EditorGUI.DrawRect(new Rect(r.x,                    r.y,                    r.width,       EdgeThickness), edgeColor);
+        if (!activeCells.ContainsKey(coord + Vector2Int.down))
+            EditorGUI.DrawRect(new Rect(r.x,                    r.yMax - EdgeThickness, r.width,       EdgeThickness), edgeColor);
+        if (!activeCells.ContainsKey(coord + Vector2Int.left))
+            EditorGUI.DrawRect(new Rect(r.x,                    r.y,                    EdgeThickness, r.height),      edgeColor);
+        if (!activeCells.ContainsKey(coord + Vector2Int.right))
+            EditorGUI.DrawRect(new Rect(r.xMax - EdgeThickness, r.y,                    EdgeThickness, r.height),      edgeColor);
+    }
+
+    /// <summary>
     /// Draws a bright-red bar flush against each edge that has an active glue.
     /// NORTH = screen-top edge, SOUTH = screen-bottom, WEST = left, EAST = right.
     /// </summary>
@@ -511,7 +547,7 @@ public class PieceEditorWindow : EditorWindow
 
         EditorGUILayout.LabelField(
             "LMB: paint / drag / erase  |  RMB: cycle tile type  |  G (hover active tile): toggle glue edge  |  ● = centroid\n" +
-            "blue = normal  |  orange = switch  |  green = passthrough  |  red bar = glue edge",
+            "blue = normal  |  orange = switch  |  green = passthrough  |  red bar = glue edge  |  light edge = exposed side",
             EditorStyles.miniLabel);
 
         EditorGUILayout.EndVertical();
