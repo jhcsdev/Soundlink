@@ -7,6 +7,16 @@ namespace GamePieces
     {
         [SerializeField] private PieceData data;
 
+        private List<PieceTile> tileObjects;
+
+        void Awake()
+        {
+            foreach (PieceTileData ptd in data.tiles)
+            {
+                PieceTile t = PieceTileBuilder.Instance.CreateTile();
+            }
+        }
+
         public void InventoryMode()
         {
             

@@ -15,12 +15,15 @@ namespace GamePieces
         public void SetRelativeOffset(Vector2Int vint) => relativeOffset = vint;
         public void RotateRelativeOffsetClockwise()
         {
-            // todo
+            int x = relativeOffset.y * 1;
+            int y = relativeOffset.x * -1;
+            relativeOffset = new(x, y);
         }
         public void RotateRelativeOffsetCounterClockwise()
         {
-            // todo
+            int x = relativeOffset.y * -1;
+            int y = relativeOffset.x * 1;
+            relativeOffset = new(x, y);
         }
-        
     }
 }

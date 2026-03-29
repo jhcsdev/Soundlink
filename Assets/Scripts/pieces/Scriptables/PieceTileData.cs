@@ -11,5 +11,7 @@ namespace GamePieces
         public bool isOrigin;
         public PieceTileType type;
         public List<GlueCardinality> glue;
+        public PieceTileSpriteType tileType;
+        public TileSpriteDirection spriteDirection;
     }
 }

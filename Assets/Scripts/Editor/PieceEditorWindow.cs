@@ -92,6 +92,10 @@ public class PieceEditorWindow : EditorWindow
             };
         }
 
+        // Recalculate sprite data for all loaded tiles
+        foreach (var coord in activeCells.Keys.ToList())
+            RecalculateTileSprite(coord);
+
         RecalculateOrigin();
     }
 
@@ -107,8 +111,8 @@ public class PieceEditorWindow : EditorWindow
 
         for (int i = 0; i < sorted.Count; i++)
         {
-            Vector2Int    cell      = sorted[i].Key;
-            Vector2Int    relOffset = cell - originCell;
+            Vector2Int          cell      = sorted[i].Key;
+            Vector2Int          relOffset = cell - originCell;
             PieceEditorTileData data      = sorted[i].Value;
 
             tilesProp.InsertArrayElementAtIndex(i);
@@ -116,6 +120,8 @@ public class PieceEditorWindow : EditorWindow
             tp.FindPropertyRelative("relativeOffset").vector2IntValue = relOffset;
             tp.FindPropertyRelative("isOrigin").boolValue             = cell == originCell;
             tp.FindPropertyRelative("type").enumValueIndex            = (int)data.type;
+            tp.FindPropertyRelative("spriteType").enumValueIndex      = (int)data.spriteType;
+            tp.FindPropertyRelative("spriteDirection").enumValueIndex = (int)data.spriteDirection;
 
             SerializedProperty glueDir = tp.FindPropertyRelative("glue");
             glueDir.ClearArray();
@@ -148,6 +154,128 @@ public class PieceEditorWindow : EditorWindow
             .ThenBy(c => c.Key.x).ThenBy(c => c.Key.y)
             .First().Key;
     }
+    #endregion
+
+    #region sprite type calculation
+
+    /// <summary>
+    /// Recalculates the sprite type and facing direction for the tile at <paramref name="coord"/>,
+    /// then does the same for each of its four cardinal neighbours.  Call this whenever a tile is
+    /// added or removed so every affected cell stays up-to-date.
+    /// </summary>
+    private void RecalculateNeighborSprites(Vector2Int coord)
+    {
+        // The tile itself (may have just been removed, so guard inside)
+        RecalculateTileSprite(coord);
+
+        // The four neighbours whose edge-counts may have changed
+        RecalculateTileSprite(coord + Vector2Int.up);
+        RecalculateTileSprite(coord + Vector2Int.down);
+        RecalculateTileSprite(coord + Vector2Int.left);
+        RecalculateTileSprite(coord + Vector2Int.right);
+    }
+
+    /// <summary>
+    /// Counts the occupied cardinal neighbours of <paramref name="coord"/> and sets
+    /// <see cref="PieceEditorTileData.spriteType"/> and <see cref="PieceEditorTileData.spriteDirection"/>
+    /// accordingly.
+    ///
+    /// Neighbour layout used to determine direction (Unity Y-up, same as grid):
+    ///
+    ///         [UP]
+    ///   [LEFT] [coord] [RIGHT]
+    ///         [DOWN]
+    ///
+    /// "Edge" means an exposed side with no neighbour.
+    ///
+    ///   0 neighbours → ALL_EDGE   (isolated tile, direction irrelevant → FACES_UP)
+    ///   4 neighbours → NO_EDGE    (fully interior,  direction irrelevant → FACES_UP)
+    ///   1 neighbour  → TRIPLE_EDGE;  the one neighbour sits on the BOTTOM side when FACES_UP,
+    ///                                so rotate to put that neighbour at the "bottom" of the sprite.
+    ///   3 neighbours → SINGLE_EDGE; the one exposed edge is the TOP side when FACES_UP,
+    ///                                so rotate to put that gap at the "top".
+    ///   2 neighbours (opposite)    → DOUBLE_OPPOSING_EDGE; horizontal pair → FACES_RIGHT.
+    ///   2 neighbours (adjacent)    → DOUBLE_CORNER_EDGE;   the TWO EXPOSED edges are top+right
+    ///                                when FACES_UP, so we rotate until the open corner matches.
+    /// </summary>
+    private void RecalculateTileSprite(Vector2Int coord)
+    {
+        if (!activeCells.TryGetValue(coord, out var data)) return;
+
+        bool hasUp    = activeCells.ContainsKey(coord + Vector2Int.up);
+        bool hasDown  = activeCells.ContainsKey(coord + Vector2Int.down);
+        bool hasLeft  = activeCells.ContainsKey(coord + Vector2Int.left);
+        bool hasRight = activeCells.ContainsKey(coord + Vector2Int.right);
+
+        int neighborCount = (hasUp    ? 1 : 0)
+                          + (hasDown  ? 1 : 0)
+                          + (hasLeft  ? 1 : 0)
+                          + (hasRight ? 1 : 0);
+
+        switch (neighborCount)
+        {
+            case 0:
+                data.spriteType      = PieceTileSpriteType.ALL_EDGE;
+                data.spriteDirection = TileSpriteDirection.FACES_UP;
+                break;
+
+            case 4:
+                data.spriteType      = PieceTileSpriteType.NO_EDGE;
+                data.spriteDirection = TileSpriteDirection.FACES_UP;
+                break;
+
+            // ── 3 neighbours: one exposed edge ──────────────────────────────────────
+            // The sprite shows its single edge on TOP when FACES_UP, so we point the
+            // direction toward the missing neighbour.
+            case 3:
+                data.spriteType = PieceTileSpriteType.SINGLE_EDGE;
+                data.spriteDirection =
+                    !hasUp    ? TileSpriteDirection.FACES_UP    :
+                    !hasRight ? TileSpriteDirection.FACES_RIGHT :
+                    !hasDown  ? TileSpriteDirection.FACES_DOWN  :
+                                TileSpriteDirection.FACES_LEFT;
+                break;
+
+            // ── 1 neighbour: three exposed edges ────────────────────────────────────
+            // The sprite leaves the BOTTOM closed (neighbour there) when FACES_UP, so
+            // we rotate until the single neighbour sits at the "bottom" of the sprite.
+            case 1:
+                data.spriteType = PieceTileSpriteType.TRIPLE_EDGE;
+                data.spriteDirection =
+                    hasDown  ? TileSpriteDirection.FACES_UP    :   // neighbour below  → bottom closed
+                    hasLeft  ? TileSpriteDirection.FACES_RIGHT :   // neighbour left   → rotate so left = bottom
+                    hasUp    ? TileSpriteDirection.FACES_DOWN  :   // neighbour above  → rotate so top  = bottom
+                               TileSpriteDirection.FACES_LEFT;     // neighbour right  → rotate so right = bottom
+                break;
+
+            // ── 2 neighbours ─────────────────────────────────────────────────────────
+            case 2:
+                if ((hasUp && hasDown) || (hasLeft && hasRight))
+                {
+                    // Opposing neighbours → straight corridor
+                    data.spriteType      = PieceTileSpriteType.DOUBLE_OPPOSING_EDGE;
+                    data.spriteDirection = (hasUp && hasDown)
+                        ? TileSpriteDirection.FACES_UP    // vertical corridor
+                        : TileSpriteDirection.FACES_RIGHT; // horizontal corridor
+                }
+                else
+                {
+                    // Adjacent neighbours → corner piece.
+                    // FACES_UP  exposes top  + right  → neighbours are DOWN  + LEFT
+                    // FACES_RIGHT exposes right + bottom → neighbours are LEFT  + UP
+                    // FACES_DOWN  exposes bottom + left  → neighbours are UP   + RIGHT
+                    // FACES_LEFT  exposes left  + top    → neighbours are RIGHT + DOWN
+                    data.spriteType = PieceTileSpriteType.DOUBLE_CORNER_EDGE;
+                    data.spriteDirection =
+                        (hasDown  && hasLeft)  ? TileSpriteDirection.FACES_UP    :
+                        (hasLeft  && hasUp)    ? TileSpriteDirection.FACES_RIGHT :
+                        (hasUp    && hasRight) ? TileSpriteDirection.FACES_DOWN  :
+                                                 TileSpriteDirection.FACES_LEFT;  // hasRight && hasDown
+                }
+                break;
+        }
+    }
+
     #endregion
 
     #region glue helpers
@@ -301,6 +429,8 @@ public class PieceEditorWindow : EditorWindow
 
                         if (dragAdding) activeCells[coord] = new PieceEditorTileData { type = PieceTileType.NORMAL };
                         else            activeCells.Remove(coord);
+
+                        RecalculateNeighborSprites(coord);
                     }
                     else if (e.button == 1 && active)
                     {
@@ -322,6 +452,7 @@ public class PieceEditorWindow : EditorWindow
                     if (dragAdding) { if (!activeCells.ContainsKey(coord)) activeCells[coord] = new PieceEditorTileData { type = PieceTileType.NORMAL }; }
                     else            activeCells.Remove(coord);
 
+                    RecalculateNeighborSprites(coord);
                     RecalculateOrigin();
                     e.Use();
                     Repaint();
@@ -391,6 +522,8 @@ public class PieceEditorWindow : EditorWindow
 [System.Serializable]
 public class PieceEditorTileData
 {
-    public PieceTileType         type;
-    public List<GlueCardinality> glueDirections = new();
+    public PieceTileType          type;
+    public List<GlueCardinality>  glueDirections  = new();
+    public PieceTileSpriteType    spriteType      = PieceTileSpriteType.ALL_EDGE;
+    public TileSpriteDirection    spriteDirection = TileSpriteDirection.FACES_UP;
 }
