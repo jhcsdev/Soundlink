@@ -28,7 +28,6 @@ namespace Player
         private Vector2 _directionCurrent = Vector2.zero;
         private float _allowNextRapidMoveAt = Mathf.Infinity; 
 
-        private GamePieces.Piece heldPiece;
         private Piece referencedPiece = null;
 
         private void Awake()
@@ -40,7 +39,7 @@ namespace Player
         {
             playerInputWrapper.SELECT.performed += OnSelect;
             playerInputWrapper.INVENTORY_BUTTON.performed += OnInventoryButton;
-            SetCurrentGrid(puzzleGrid);
+            SetCurrentGrid(inventoryGrid);
         }
 
         private void Update()
@@ -49,7 +48,7 @@ namespace Player
 
             Vector2 inputDirectionFloat = playerInputWrapper.MOVE.ReadValue<Vector2>();
             // rn the below just omits diagonal direction
-            Vector2Int inputDirection = new((int)Mathf.Abs(inputDirectionFloat.x), (int)Mathf.Abs(inputDirectionFloat.y));
+            Vector2Int inputDirection = new(Mathf.RoundToInt(inputDirectionFloat.x), Mathf.RoundToInt(inputDirectionFloat.y));
 
             if (inputDirection == Vector2.zero)
             {
@@ -67,6 +66,7 @@ namespace Player
                 _directionCurrent = inputDirection;
                 _allowNextRapidMoveAt = curTime + holdTimeBeforeRapidMove;
                 movement = currentGrid.ShiftFocusPosition(inputDirection);
+                if (referencedPiece != null) currentGrid.Hover(referencedPiece);
             } 
             else if (curTime > _allowNextRapidMoveAt) // otherwise, check if we are rapid moving
             {
@@ -99,7 +99,12 @@ namespace Player
             {
                 referencedPiece = currentGrid.TakeAtFocusPosition();
                 Debug.Log("referenced piece: " + referencedPiece.gameObject.name);
+
+                referencedPiece.LimboMode();
                 SwapGrid();
+
+                currentGrid.Hover(referencedPiece);
+
                 return;
             }
 

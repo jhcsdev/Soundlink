@@ -58,7 +58,7 @@ namespace PuzzleGrid
 
         private void Rerender()
         {
-            throw new System.NotImplementedException();
+            // throw new System.NotImplementedException();
         }
     }
 }

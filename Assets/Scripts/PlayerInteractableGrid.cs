@@ -26,4 +26,5 @@ public abstract class PlayerInteractableGrid : MonoBehaviour
     public abstract Vector2Int? PlaceAtFocusPosition(Piece p);
     public virtual void FocusGrid() => isFocused = true;
     public virtual void UnfocusGrid() => isFocused = false;
+    public virtual void Hover(Piece p) {}
 }

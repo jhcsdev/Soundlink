@@ -1,11 +1,12 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering.Universal;
 
 namespace GamePieces
 {
     public class Piece : MonoBehaviour
     {
-        private static float inventoryScale = 0.5f;
+        private static float inventoryScale = 0.6f;
         private static float tileScale = 1;
         private static float gridTileScale = 1f;
 
@@ -43,13 +44,35 @@ namespace GamePieces
             }
         }
 
-        public void InventoryMode()
+        public Piece InventoryMode()
         {
             transform.localScale = Vector2.one * inventoryScale;
+
+            return this;
         }
-        public void GridMode()
+        public Piece LimboMode()
+        {
+            transform.localScale = Vector2.one * gridTileScale; 
+            // todo (temporary): separate into own visual class; for now just makes tiles slightly transparent
+            foreach (PieceTile pt in tileObjects)
+            {
+                SpriteRenderer temp = pt.gameObject.GetComponent<SpriteRenderer>();
+                temp.color = new(temp.color.r, temp.color.g, temp.color.b, 0.5f);
+            }
+
+            return this;
+        }
+        public Piece GridMode()
         {
             transform.localScale = Vector2.one * gridTileScale;
+            // todo (temporary): separate into own visual class; for now just makes tiles fully visible
+            foreach (PieceTile pt in tileObjects)
+            {
+                SpriteRenderer temp = pt.gameObject.GetComponent<SpriteRenderer>();
+                temp.color = new(temp.color.r, temp.color.g, temp.color.b, 1f);
+            }
+
+            return this;
         }
         public List<PieceTile> GetPieceTiles()
         {
@@ -60,12 +83,15 @@ namespace GamePieces
         {
             foreach (PieceTile pt in tileObjects)
             {
-                // change the local position of the object based on where it is currently; need to just change local x/y
+                pt.RotateRelativeOffsetClockwise();
             }
         }
         public void RotatePieceCounterClockwise()
         {
-            
+            foreach (PieceTile pt in tileObjects)
+            {
+                pt.RotateRelativeOffsetCounterClockwise();
+            }
         }
     }
 }

@@ -1,4 +1,6 @@
 using GamePieces;
+using Unity.Collections;
+using UnityEditor.Tilemaps;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -12,6 +14,10 @@ namespace PuzzleGrid
         [SerializeField] private Vector2 gridBottomLeftPosition = Vector2.zero;
         [SerializeField] private GridData data; 
         [SerializeField] private float tileRealsize = 1f;
+        [SerializeField] private Sprite GridTileSprite;
+        // todo - temporary colors
+        private Color gridTileUnfocusedColor = new(0.2f, 0.2f, 0.2f, 0.2f);
+        private Color gridTileFocusedColor = new(0.2f, 0.2f, 0.2f, 0.4f);
 
         private GridTile[,] tiles; // index via [x,y]
 
@@ -30,8 +36,12 @@ namespace PuzzleGrid
                 {
                     GameObject tileObj = new($"Tile {x}, {y}");
                     tileObj.transform.parent = transform;
-                    tileObj.transform.position = gridBottomLeftPosition + new Vector2(x * tileRealsize, y * tileRealsize);
+                    tileObj.transform.localPosition = gridBottomLeftPosition + new Vector2(x * tileRealsize, y * tileRealsize);
                     GridTile gridTile = tileObj.AddComponent<GridTile>();
+                    SpriteRenderer sr = tileObj.AddComponent<SpriteRenderer>(); // todo: probably temporary visuals
+                    sr.sprite = GridTileSprite;
+                    sr.color = gridTileUnfocusedColor;
+                    sr.sortingOrder = -1; // put it behind everything
                     tiles[x,y] = gridTile;
                 }
             }
@@ -50,16 +60,22 @@ namespace PuzzleGrid
             if (intended.y < 0) { OnMoved?.Invoke(direction); return Vector2Int.down; }
 
             // otherwise movement is ok
+            tiles[focusPosition.x, focusPosition.y].GetComponent<SpriteRenderer>().color = gridTileUnfocusedColor;
+
             focusPosition = intended;
             OnMoved?.Invoke(direction);
             OnNewFocusPosition?.Invoke(intended);
+
+            // todo - this is just temporary to show where we are on the grid
+            tiles[focusPosition.x, focusPosition.y].GetComponent<SpriteRenderer>().color = gridTileFocusedColor;
 
             return Vector2Int.zero;
         }
 
         public override Vector2Int? PlaceAtFocusPosition(Piece p)
         {
-            if (!CanPieceBePlaced(p)) return null;
+            if (!CanPieceBePlaced(p)) return null; // yes, must first CHECK then SET, because we check incrementally - if we bulldozed straight to 
+            // setting, then we might have to "unset" which is kinda complicated.
 
             foreach(PieceTile checkPiece in p.GetPieceTiles())
             {
@@ -68,7 +84,17 @@ namespace PuzzleGrid
                 if (!tileAtPosition.TrySetPieceTile(checkPiece)) return null;
             }
 
+            p.GridMode();
+            p.transform.parent = transform;
+
+            SetPieceToFocusPosition(p);
+
             return Vector2Int.zero;
+        }
+
+        private void SetPieceToFocusPosition(Piece p)
+        {
+            p.transform.position = tiles[focusPosition.x, focusPosition.y].transform.position;
         }
 
         private bool CanPieceBePlaced(Piece p)
@@ -76,7 +102,9 @@ namespace PuzzleGrid
             // iterate through piecetiles relative to origin, compare them to gridtiles
             foreach (PieceTile checkPiece in p.GetPieceTiles())
             {
+                // todo: getunrotatedrelativeoffset means that this function will not properly check rotated tiles
                 Vector2Int checkingPosition = focusPosition + checkPiece.GetUnrotatedRelativeOffset();
+                if (checkingPosition.x < 0 || checkingPosition.x >= tiles.GetLength(0) || checkingPosition.y < 0 || checkingPosition.y >= tiles.GetLength(1)) return false;
                 GridTile tileAtPosition = tiles[checkingPosition.x, checkingPosition.y];
                 if (!tileAtPosition.CanSetPieceTile(checkPiece)) return false;
             }
@@ -105,7 +133,14 @@ namespace PuzzleGrid
                 }
             }
 
-            return atFocus.GetPiece();
+            return atFocus.GetPiece().GridMode();
+        }
+
+        public override void Hover(Piece p)
+        {
+            // todo: lock all PieceTiles in p.GetTiles() to grid offset tiles
+            // temporary: just manually set position to focusposition
+            SetPieceToFocusPosition(p);
         }
     }
 }
