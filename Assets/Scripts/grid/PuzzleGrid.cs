@@ -63,7 +63,7 @@ namespace PuzzleGrid
 
             foreach(PieceTile checkPiece in p.GetPieceTiles())
             {
-                Vector2Int checkingPosition = focusPosition + checkPiece.GetRelativeOffset();
+                Vector2Int checkingPosition = focusPosition + checkPiece.GetUnrotatedRelativeOffset();
                 GridTile tileAtPosition = tiles[checkingPosition.x, checkingPosition.y];
                 if (!tileAtPosition.TrySetPieceTile(checkPiece)) return null;
             }
@@ -76,7 +76,7 @@ namespace PuzzleGrid
             // iterate through piecetiles relative to origin, compare them to gridtiles
             foreach (PieceTile checkPiece in p.GetPieceTiles())
             {
-                Vector2Int checkingPosition = focusPosition + checkPiece.GetRelativeOffset();
+                Vector2Int checkingPosition = focusPosition + checkPiece.GetUnrotatedRelativeOffset();
                 GridTile tileAtPosition = tiles[checkingPosition.x, checkingPosition.y];
                 if (!tileAtPosition.CanSetPieceTile(checkPiece)) return false;
             }
@@ -90,13 +90,13 @@ namespace PuzzleGrid
             PieceTile atFocus = focus.TryGrabBottomTile();
             if (atFocus == null) return null;
 
-            Vector2Int atFocusOffset = atFocus.GetRelativeOffset(); // might not be starting from 0,0 this time
+            Vector2Int atFocusOffset = atFocus.GetUnrotatedRelativeOffset(); // might not be starting from 0,0 this time
 
             // need to remove the rest of the piece tiles
             foreach (PieceTile checkTile in atFocus.GetPiece().GetPieceTiles())
             {
                 if (checkTile == atFocus) continue;
-                Vector2Int checkingPosition = focusPosition - atFocusOffset + checkTile.GetRelativeOffset();
+                Vector2Int checkingPosition = focusPosition - atFocusOffset + checkTile.GetUnrotatedRelativeOffset();
                 GridTile testing = tiles[checkingPosition.x, checkingPosition.y];
                 if (!testing.RemovePieceTile(checkTile))
                 {

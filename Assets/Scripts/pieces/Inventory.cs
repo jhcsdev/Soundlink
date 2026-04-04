@@ -18,8 +18,15 @@ namespace Inventory
 
             piecesLookup = new Dictionary<Vector2Int, Piece>();
 
-            foreach (var piece in inventoryData.pieces) {
-                Vector2Int location = putPiece(piece);
+            int pieceNumber = 0;
+            foreach (var pieceData in inventoryData.pieces) {
+                GameObject pieceObj = new($"Piece {pieceNumber++}");
+                Piece pieceObjComp = pieceObj.AddComponent<Piece>();
+
+                pieceObjComp.Initialize(pieceData);
+                pieceObjComp.InventoryMode();
+
+                Vector2Int location = putPiece(pieceObjComp);
             }
 
             PrintInventory();
@@ -86,7 +93,6 @@ namespace Inventory
         }
 
         // given location, take a Piece from the board
-        // TODO; change this so there 
         public Piece takePiece(Vector2Int location)
         {
             if (piecesLookup.TryGetValue(location, out Piece piece))
