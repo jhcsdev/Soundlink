@@ -12,6 +12,6 @@ namespace PuzzleGrid
         public int height;
         // todo - this should probably be a custom editor, for now it's just a list of pieces
         // that start on the grid at a certain position. no guarantees that initial pieces dont collide.
-        public List<Tuple<Vector2, Piece>> initialPieces;
+        public List<Tuple<Vector2, PieceData>> initialPieces;
     }
 }

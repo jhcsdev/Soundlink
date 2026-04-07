@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace GamePieces
@@ -41,6 +42,7 @@ namespace GamePieces
         }
         #endregion
 
+        public List<GlueCardinality> GetGlue => ptd.glue;
         public PieceTileType GetTileType() => type;
         public Piece GetPiece() => piece;
         public void SetPiece(Piece p) => piece = p;
