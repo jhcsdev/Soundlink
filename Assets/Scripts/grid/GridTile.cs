@@ -30,6 +30,12 @@ namespace PuzzleGrid
             isEndTile = true;
         }
 
+        public bool HasPieceTile() => linkedTiles.Count > 0;
+
+        public List<PieceTile> GetPieceTiles()
+        {
+            return linkedTiles;
+        }
 
         public bool CanSetPieceTile(PieceTile settingTile)
         {

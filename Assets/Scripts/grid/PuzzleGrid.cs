@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Xml.Serialization;
 using GamePieces;
 using Unity.Collections;
 using UnityEditor.Tilemaps;
@@ -44,6 +46,8 @@ namespace PuzzleGrid
                     GridTile gridTile = tileObj.AddComponent<GridTile>();
                     SpriteRenderer sr = tileObj.AddComponent<SpriteRenderer>(); // todo: probably temporary visuals
 
+                    // TODO: this is super simple and basic implementation of start and end tiles, but how are we going to LINK
+                    // them to a particular sound? in particular when we have multiple sounds on the grid? 
                     // set start and end tile
                     if (x == 0 && y == 0)
                     {
@@ -112,19 +116,122 @@ namespace PuzzleGrid
             return Vector2Int.zero;
         }
 
+        // get grid tile that is adjacent to current tile, based on direction of focus (ie North, South, East, or West)
+        public GridTile GetNeighborTile(GlueCardinality gc,  GridTile[,] tiles, Vector2Int checkingPosition)
+        {
+            if (gc == GlueCardinality.NORTH)
+            {
+                if (checkingPosition.y + 1 >= tiles.GetLength(1)) return null;
+                return tiles[checkingPosition.x, checkingPosition.y + 1];
+            }
+            if (gc == GlueCardinality.SOUTH)
+            {
+                if (checkingPosition.y -1 < 0) return null;
+                return tiles[checkingPosition.x, checkingPosition.y - 1];
+            }
+            if (gc == GlueCardinality.WEST)
+            {
+                if (checkingPosition.x -1 < 0) return null;
+                return tiles[checkingPosition.x - 1, checkingPosition.y];
+            }
+
+            // EAST
+            if (checkingPosition.y + 1 >= tiles.GetLength(0)) return null;
+            return tiles[checkingPosition.x + 1, checkingPosition.y];
+        }
+
+        public bool GlueCardinalitiesCompatabile(GlueCardinality glueOne, GlueCardinality glueTwo)
+        {
+            if (glueOne == GlueCardinality.NORTH && glueTwo == GlueCardinality.SOUTH)
+            {
+                return true;
+            }
+            if (glueOne == GlueCardinality.SOUTH && glueTwo == GlueCardinality.NORTH)
+            {
+                return true;
+            }
+            if (glueOne == GlueCardinality.WEST && glueTwo == GlueCardinality.EAST)
+            {
+                return true;
+            }
+            if (glueOne == GlueCardinality.EAST && glueTwo == GlueCardinality.WEST)
+            {
+                return true;
+            }
+            return false;
+        }
+
         public override Vector2Int? PlaceAtFocusPosition(Piece p)
         {
-            if (!CanPieceBePlaced(p)) return null; // yes, must first CHECK then SET, because we check incrementally - if we bulldozed straight to 
+            // yes, must first CHECK then SET, because we check incrementally - if we bulldozed straight to 
             // setting, then we might have to "unset" which is kinda complicated.
+            if (!CanPieceBePlaced(p)) return null; 
 
             // int connectedTracks = 0;
+            int connectedTracks = 0;
+
             foreach(PieceTile checkPiece in p.GetPieceTiles())
             {
-                // var temp = checkPiece.GetGlue()    dont try to connect if connected tracks is > 2
-                // if temp is empty, don't need to do anything
-                // otherwise, check tiles in direction of glue
-                // if tiles[checkingPosition.x + 1, checkingPosition.y] exists && tiles[...].GetPieceTiles() // match the lgue to one another, connecteTracks += 1;
+                // limit of 2 connected tracks
+                if (connectedTracks >= 2)
+                {
+                    Debug.Log("Too many tracks connected to this piece already");
+                    continue;
+                }
+
+                // get the glue at this piecetile
+                List<GlueCardinality> pieceTileGlue = checkPiece.GetGlue;
+                if (pieceTileGlue == null || pieceTileGlue.Count == 0)
+                {
+                    Debug.Log("Piece tile did not have any glue");
+                    continue;
+                }
+
+                // get the relative position of this pieceTile
                 Vector2Int checkingPosition = focusPosition + checkPiece.GetUnrotatedRelativeOffset();
+
+                // otherwise, check all tiles adjacent to glue
+                foreach (GlueCardinality gc in pieceTileGlue)
+                {
+                    Debug.Log("This piece tile has some glue!");
+
+                    // grab the neighboring tile
+                    GridTile neighborGridTile = GetNeighborTile(gc, tiles, checkingPosition);
+
+                    // make sure it exists
+                    if (neighborGridTile == null) {
+                        Debug.Log("no neighbor tiles!");
+                        continue;
+                    }
+
+                    // if that grid tile has a piece on it, check all those glues
+                    List<PieceTile> neighborPieceTiles = neighborGridTile.GetPieceTiles();
+
+                    // NOTE: it appears that grids can have multiple pieces on them? should confer ... 
+                    foreach (PieceTile neighborPiece in neighborPieceTiles) {
+                        // make sure piece exists
+                        if (neighborPiece == null) continue;  
+
+                        // grab the glues of this neighboring piece!
+                        List<GlueCardinality> neighborGC = neighborPiece.GetGlue;     
+
+                        // check the glues .. if cardinality matches, then create a link
+                        foreach (GlueCardinality someGC in neighborGC)
+                        {
+                            if (GlueCardinalitiesCompatabile(gc, someGC))
+                            {
+                                // TODO: create a link! (actually)
+                                Debug.Log("A link would be greated here!");
+                                connectedTracks++;
+                                continue;
+                            }
+                            
+                        }             
+                    }
+                }
+
+                // TODO: something about checking that what i am connecting with is not already a link, or something like that ...
+
                 GridTile tileAtPosition = tiles[checkingPosition.x, checkingPosition.y];
                 if (!tileAtPosition.TrySetPieceTile(checkPiece)) return null;
             }
