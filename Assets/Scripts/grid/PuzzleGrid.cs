@@ -117,8 +117,13 @@ namespace PuzzleGrid
             if (!CanPieceBePlaced(p)) return null; // yes, must first CHECK then SET, because we check incrementally - if we bulldozed straight to 
             // setting, then we might have to "unset" which is kinda complicated.
 
+            // int connectedTracks = 0;
             foreach(PieceTile checkPiece in p.GetPieceTiles())
             {
+                // var temp = checkPiece.GetGlue()    dont try to connect if connected tracks is > 2
+                // if temp is empty, don't need to do anything
+                // otherwise, check tiles in direction of glue
+                // if tiles[checkingPosition.x + 1, checkingPosition.y] exists && tiles[...].GetPieceTiles() // match the lgue to one another, connecteTracks += 1;
                 Vector2Int checkingPosition = focusPosition + checkPiece.GetUnrotatedRelativeOffset();
                 GridTile tileAtPosition = tiles[checkingPosition.x, checkingPosition.y];
                 if (!tileAtPosition.TrySetPieceTile(checkPiece)) return null;
