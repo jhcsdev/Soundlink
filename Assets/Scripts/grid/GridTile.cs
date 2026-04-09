@@ -15,6 +15,21 @@ namespace PuzzleGrid
     {
         [SerializeField] private List<PieceTile> linkedTiles = new(2);
         [SerializeField] private bool isStartTile;
+        [SerializeField] private bool isEndTile;
+
+        public bool IsStartTile => isStartTile;
+        public bool IsEndTile => isEndTile;
+
+        public void setStartTile()
+        {
+            isStartTile = true;
+        }
+
+        public void setEndTile()
+        {
+            isEndTile = true;
+        }
+
 
         public bool CanSetPieceTile(PieceTile settingTile)
         {

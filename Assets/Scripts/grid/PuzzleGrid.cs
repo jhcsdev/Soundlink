@@ -3,6 +3,7 @@ using Unity.Collections;
 using UnityEditor.Tilemaps;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.Tilemaps;
 
 namespace PuzzleGrid
 {
@@ -29,7 +30,10 @@ namespace PuzzleGrid
 
         void Awake()
         {
+            Debug.Log("width: " + data.width);
+            Debug.Log("height: " + data.height);
             tiles = new GridTile[data.width, data.height];
+
             for (int x = 0; x < data.width; x++)
             {
                 for (int y = 0; y < data.height; y++)
@@ -39,13 +43,48 @@ namespace PuzzleGrid
                     tileObj.transform.localPosition = gridBottomLeftPosition + new Vector2(x * tileRealsize, y * tileRealsize);
                     GridTile gridTile = tileObj.AddComponent<GridTile>();
                     SpriteRenderer sr = tileObj.AddComponent<SpriteRenderer>(); // todo: probably temporary visuals
-                    sr.sprite = GridTileSprite;
+
+                    // set start and end tile
+                    if (x == 0 && y == 0)
+                    {
+                        gridTile.setStartTile();
+                    }
+
+                    if (x == 5 && y == 3)
+                    {
+                        gridTile.setEndTile();
+                    }
+                
                     sr.color = gridTileUnfocusedColor;
+                    if (gridTile.IsStartTile)
+                    {
+                        sr.color = Color.green;
+                    }
+                    if (gridTile.IsEndTile)
+                    {
+                        sr.color = Color.red;
+                    }
+                    sr.sprite = GridTileSprite;
                     sr.sortingOrder = -1; // put it behind everything
                     tiles[x,y] = gridTile;
                 }
             }
             Debug.Log("grid setup");
+        }
+
+        private Color GetRestingColor(GridTile tile)
+        {
+            if (tile.IsStartTile)
+            {
+                return Color.green;
+            }
+
+            if (tile.IsEndTile)
+            {
+                return Color.red;
+            }
+
+            return gridTileUnfocusedColor;
         }
 
         public override Vector2Int ShiftFocusPosition(Vector2Int direction)
@@ -60,7 +99,8 @@ namespace PuzzleGrid
             if (intended.y < 0) { OnMoved?.Invoke(direction); return Vector2Int.down; }
 
             // otherwise movement is ok
-            tiles[focusPosition.x, focusPosition.y].GetComponent<SpriteRenderer>().color = gridTileUnfocusedColor;
+
+            tiles[focusPosition.x, focusPosition.y].GetComponent<SpriteRenderer>().color = GetRestingColor(tiles[focusPosition.x, focusPosition.y]);
 
             focusPosition = intended;
             OnMoved?.Invoke(direction);
