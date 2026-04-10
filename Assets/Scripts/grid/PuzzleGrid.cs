@@ -28,6 +28,8 @@ namespace PuzzleGrid
         public UnityAction<Vector2> OnFailedLeavingGrid;
         public UnityAction<Vector2> OnMoved;
         public UnityAction<Vector2Int> OnNewFocusPosition;
+
+        // TODO: create a list of links ..
         #endregion
 
         void Awake()
@@ -46,28 +48,13 @@ namespace PuzzleGrid
                     GridTile gridTile = tileObj.AddComponent<GridTile>();
                     SpriteRenderer sr = tileObj.AddComponent<SpriteRenderer>(); // todo: probably temporary visuals
 
-                    // TODO: this is super simple and basic implementation of start and end tiles, but how are we going to LINK
-                    // them to a particular sound? in particular when we have multiple sounds on the grid? 
-                    // set start and end tile
-                    if (x == 0 && y == 0)
-                    {
-                        gridTile.setStartTile();
-                    }
+                    // TODO: at this point will have the tile type, then can set the color based on that ? 
+                    GridTileType tileType = data.GetTileInfo(x, y, out int soundID);
+                    gridTile.tileType = tileType;
+                    
 
-                    if (x == 5 && y == 3)
-                    {
-                        gridTile.setEndTile();
-                    }
-                
-                    sr.color = gridTileUnfocusedColor;
-                    if (gridTile.IsStartTile)
-                    {
-                        sr.color = Color.green;
-                    }
-                    if (gridTile.IsEndTile)
-                    {
-                        sr.color = Color.red;
-                    }
+                    // set color based on tile type
+                    sr.color = GetTileColor(tileType);
                     sr.sprite = GridTileSprite;
                     sr.sortingOrder = -1; // put it behind everything
                     tiles[x,y] = gridTile;
@@ -76,14 +63,16 @@ namespace PuzzleGrid
             Debug.Log("grid setup");
         }
 
-        private Color GetRestingColor(GridTile tile)
+        // get color based on tile type
+        private Color GetTileColor(GridTileType tileType)
         {
-            if (tile.IsStartTile)
+
+            if (tileType == GridTileType.START)
             {
                 return Color.green;
             }
 
-            if (tile.IsEndTile)
+            if (tileType == GridTileType.END)
             {
                 return Color.red;
             }
@@ -103,14 +92,16 @@ namespace PuzzleGrid
             if (intended.y < 0) { OnMoved?.Invoke(direction); return Vector2Int.down; }
 
             // otherwise movement is ok
-
-            tiles[focusPosition.x, focusPosition.y].GetComponent<SpriteRenderer>().color = GetRestingColor(tiles[focusPosition.x, focusPosition.y]);
+            // TODO: some error here when I am visiting a start tile I am making it a start tile
+            GridTileType tileType = tiles[focusPosition.x, focusPosition.y].GetGridTileType();
+            tiles[focusPosition.x, focusPosition.y].GetComponent<SpriteRenderer>().color = GetTileColor(tileType);
 
             focusPosition = intended;
             OnMoved?.Invoke(direction);
             OnNewFocusPosition?.Invoke(intended);
 
             // todo - this is just temporary to show where we are on the grid
+            // TODO: we are not showin
             tiles[focusPosition.x, focusPosition.y].GetComponent<SpriteRenderer>().color = gridTileFocusedColor;
 
             return Vector2Int.zero;
@@ -161,6 +152,7 @@ namespace PuzzleGrid
             return false;
         }
 
+        // TODO: when successful, should add to a link ... 
         public override Vector2Int? PlaceAtFocusPosition(Piece p)
         {
             // yes, must first CHECK then SET, because we check incrementally - if we bulldozed straight to 
@@ -222,6 +214,8 @@ namespace PuzzleGrid
                             {
                                 // TODO: create a link! (actually)
                                 Debug.Log("A link would be greated here!");
+
+                                // at this point, create a link ... what does that mean though? should check if there is an existing link, right?
                                 connectedTracks++;
                                 continue;
                             }
@@ -231,7 +225,6 @@ namespace PuzzleGrid
                 }
 
                 // TODO: something about checking that what i am connecting with is not already a link, or something like that ...
-
                 GridTile tileAtPosition = tiles[checkingPosition.x, checkingPosition.y];
                 if (!tileAtPosition.TrySetPieceTile(checkPiece)) return null;
             }
@@ -264,6 +257,7 @@ namespace PuzzleGrid
             return true;
         }
 
+        // TODO: when successful, remove piece from any links that it is a part of .. 
         public override Piece TakeAtFocusPosition()
         {
             GridTile focus = tiles[focusPosition.x, focusPosition.y];

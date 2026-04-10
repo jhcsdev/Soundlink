@@ -13,21 +13,24 @@ namespace PuzzleGrid
     [RequireComponent(typeof(GridTileVisuals))]
     public class GridTile : MonoBehaviour
     {
+
         [SerializeField] private List<PieceTile> linkedTiles = new(2);
-        [SerializeField] private bool isStartTile;
-        [SerializeField] private bool isEndTile;
+        public GridTileType tileType;
 
-        public bool IsStartTile => isStartTile;
-        public bool IsEndTile => isEndTile;
-
-        public void setStartTile()
+        public GridTileType GetGridTileType()
         {
-            isStartTile = true;
+            return tileType;
         }
 
-        public void setEndTile()
+        // TODO: could probably remove this set functions but we can keep them for now ...
+        public void SetStartTile()
         {
-            isEndTile = true;
+            tileType = GridTileType.START;
+        }
+
+        public void SetEndTile()
+        {
+            tileType = GridTileType.END;
         }
 
         public bool HasPieceTile() => linkedTiles.Count > 0;
