@@ -551,6 +551,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1238564586}
+  - {fileID: 1762153999}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1238564585
@@ -772,12 +773,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1762153997}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -7.56, y: -3.04, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -7.30362, y: -2.92396, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 847595326}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1762154000
 MonoBehaviour:
@@ -791,10 +792,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e3310d0cbda0347dc923de7bab3fe87b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Inventory.InventoryVisuals
-  maxRowsDisplayedAtOnce: 0
-  columnsDisplayedAtOnce: 0
-  inventoryCanvas: {fileID: 1944012034}
-  focusObject: {fileID: 0}
+  maxRowsDisplayedAtOnce: 4
+  columnsDisplayedAtOnce: 3
+  minRowAnchorX: 0.13
+  maxRowAnchorX: 0.87
+  inventoryAnchorWidth: 0.45
+  piecePositionWhileInInventory: {x: -1000, y: -1000}
+  pieceScalingMultiplier: 0.3
+  focusedAnchorX: 0.55
+  unfocusedAnchorX: 0.8
+  focusUnfocusAnimationTime: 0.2
+  pointerMoveTime: 0.1
+  pointerSquishTo: 0.8
+  pointerNormalSize: 1
+  pointerVanishTime: 0.3
+  pointerReappearTime: 0.3
+  pointerFailedMovementTime: 0.2
+  pointerFailedMovementColor: {r: 0.9, g: 0.5, b: 0.5, a: 1}
+  pointerAppearAtRatioTime: 0.7
+  pointerDisappearAtRatioTime: 0.3
+  inventoryCanvas: {fileID: 1944012035}
+  pointerObject: {fileID: 1915616669}
 --- !u!1 &1771607250
 GameObject:
   m_ObjectHideFlags: 0
@@ -875,10 +893,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1944012035}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.05, y: 0.74}
-  m_AnchorMax: {x: 0.33, y: 0.966}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -122.5, y: 163.5}
+  m_SizeDelta: {x: 111, y: 105}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1915616670
 MonoBehaviour:
@@ -951,8 +969,8 @@ RectTransform:
   - {fileID: 1915616669}
   m_Father: {fileID: 244024416}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.55, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMin: {x: 0.8, y: 0}
+  m_AnchorMax: {x: 1.25, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -1002,7 +1020,6 @@ SceneRoots:
   - {fileID: 619394802}
   - {fileID: 1424401739}
   - {fileID: 1771607252}
-  - {fileID: 1762153999}
   - {fileID: 847595326}
   - {fileID: 244024416}
   - {fileID: 730133862}
