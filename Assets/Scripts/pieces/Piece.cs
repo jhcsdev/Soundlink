@@ -12,8 +12,12 @@ namespace GamePieces
 
         [SerializeField] private PieceData data;
 
-        private List<PieceTile> tileObjects = new();
+        private readonly List<PieceTile> tileObjects = new();
         private bool initialized = false;
+
+        // this is a canvas object that is exclusively used for visuals / the inventory. it is not a child object. 
+        private GameObject canvasPiece;
+        public GameObject GetCanvasPiece() => canvasPiece;
 
         void Awake()
         {
@@ -34,13 +38,21 @@ namespace GamePieces
 
         private void CreateTiles()
         {
+            canvasPiece = new GameObject("CanvasPiece", typeof(RectTransform));
+
             foreach (PieceTileData ptd in data.tiles)
             {
-                PieceTile t = TileManager.Instance.CreateTile(ptd)
+                PieceTile t = TileManager.Instance.CreatePieceAndCanvasTile(ptd, out GameObject canvasVisual)
                     .Initialize(ptd, this)
                     .SetParent(transform)
                     .SetLocalPositionAndScaleByTileSize(tileScale);
                 tileObjects.Add(t);
+                
+                canvasVisual.transform.SetParent(canvasPiece.transform, false);
+
+                RectTransform rt = canvasVisual.GetComponent<RectTransform>();
+                float tileSize = rt.sizeDelta.x; 
+                rt.anchoredPosition = new Vector2(ptd.relativeOffset.x * tileSize, ptd.relativeOffset.y * tileSize);
             }
         }
 
