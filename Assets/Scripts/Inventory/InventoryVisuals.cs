@@ -53,6 +53,9 @@ namespace Inventory
         [SerializeField, Tooltip("vice-versa to above")] 
         private float pointerDisappearAtRatioTime = 0.3f;
 
+        [Header("pieces")]
+        [SerializeField] float pointerScaleDownTime = 0.2f;
+
         #endregion
 
         #region objs
@@ -74,6 +77,7 @@ namespace Inventory
         Sequence focusSequence;
         Sequence activeFocusObjectMovementSequence;
         Sequence activeFailedMovement;
+        Sequence takingPieceOut;
         #endregion
         #endregion
 
@@ -160,9 +164,13 @@ namespace Inventory
                         pointerObject.DOScale(Vector3.zero, pointerVanishTime)
                             .ChangeStartValue(Vector3.one * pointerNormalSize)
                             .SetEase(Ease.OutCubic)
-                    ).SetAutoKill(false);
-                unfocusSequence.Play();
-            } else unfocusSequence.Restart();
+                    ).SetAutoKill(false).Pause();
+            } 
+
+            if (takingPieceOut != null)
+                takingPieceOut.OnComplete(() => unfocusSequence.Restart());
+            else
+                unfocusSequence.Restart();
         }
 
         /// <summary>
@@ -245,7 +253,11 @@ namespace Inventory
 
         void PieceTakenOut(Piece piece)
         {
-            // Thought: Shrink the piece's canvas representation.
+            if (takingPieceOut != null) takingPieceOut.Complete();
+            takingPieceOut = DOTween.Sequence()
+                .Append(((RectTransform)piece.GetCanvasPiece().transform).DOScale(0, pointerScaleDownTime))
+                .Play();
+            
         }
 
         #endregion
