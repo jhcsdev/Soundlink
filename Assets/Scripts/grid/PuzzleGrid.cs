@@ -1,8 +1,12 @@
+using System.Collections.Generic;
+using System.Xml.Serialization;
 using GamePieces;
 using Unity.Collections;
 using UnityEditor.Tilemaps;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.Tilemaps;
+using UnityEngine.UI;
 
 namespace PuzzleGrid
 {
@@ -25,11 +29,15 @@ namespace PuzzleGrid
         public UnityAction<Vector2> OnFailedLeavingGrid;
         public UnityAction<Vector2> OnMoved;
         public UnityAction<Vector2Int> OnNewFocusPosition;
+        public List<GridLink> gridLinks = new();
         #endregion
 
         void Awake()
         {
+            Debug.Log("width: " + data.width);
+            Debug.Log("height: " + data.height);
             tiles = new GridTile[data.width, data.height];
+
             for (int x = 0; x < data.width; x++)
             {
                 for (int y = 0; y < data.height; y++)
@@ -39,13 +47,56 @@ namespace PuzzleGrid
                     tileObj.transform.localPosition = gridBottomLeftPosition + new Vector2(x * tileRealsize, y * tileRealsize);
                     GridTile gridTile = tileObj.AddComponent<GridTile>();
                     SpriteRenderer sr = tileObj.AddComponent<SpriteRenderer>(); // todo: probably temporary visuals
+
+                    // grab and set color based on tiletype
+                    GridTileType tileType = data.GetTileInfo(x, y, out int soundID);
+                    gridTile.tileType = tileType;
+                    sr.color = GetTileColor(tileType);
                     sr.sprite = GridTileSprite;
-                    sr.color = gridTileUnfocusedColor;
                     sr.sortingOrder = -1; // put it behind everything
                     tiles[x,y] = gridTile;
                 }
             }
             Debug.Log("grid setup");
+        }
+
+        // TODO: delete the visuals and just do logging stuff 
+        public void LogLinks()
+        {
+            Debug.Log("Logging Links ... ");
+            Debug.Log($"{gridLinks.Count} links exist");
+
+            for (int i = 0; i < gridLinks.Count; i++)
+            {
+                Debug.Log($"Link {i} has {gridLinks[i].GetPieces().Count} pieces");
+
+                foreach (Piece piece in gridLinks[i].GetPieces())
+                {
+                    Debug.Log($"  Piece {piece.name} has {piece.GetPieceTiles().Count} piecetiles");
+                    foreach (PieceTile pt in piece.GetPieceTiles())
+                    {
+                        Vector2Int pos = GetPositionOfPieceTile(pt);
+                        Debug.Log($"    PieceTile {pt.name} found at pos {pos}");
+                    }
+                }
+            }
+        }
+
+        private Vector2Int GetPositionOfPieceTile(PieceTile pt)
+        {
+            for (int x = 0; x < data.width; x++)
+                for (int y = 0; y < data.height; y++)
+                    if (tiles[x, y].GetPieceTiles().Contains(pt))
+                        return new Vector2Int(x, y);
+            return new Vector2Int(-1, -1); // not found
+        }
+
+        // get color based on tile type
+        private Color GetTileColor(GridTileType tileType)
+        {
+            if (tileType == GridTileType.START) return Color.green;
+            if (tileType == GridTileType.END) return Color.red;
+            return gridTileUnfocusedColor;
         }
 
         public override Vector2Int ShiftFocusPosition(Vector2Int direction)
@@ -60,39 +111,249 @@ namespace PuzzleGrid
             if (intended.y < 0) { OnMoved?.Invoke(direction); return Vector2Int.down; }
 
             // otherwise movement is ok
-            tiles[focusPosition.x, focusPosition.y].GetComponent<SpriteRenderer>().color = gridTileUnfocusedColor;
+            GridTileType tileType = tiles[focusPosition.x, focusPosition.y].GetGridTileType();
+            tiles[focusPosition.x, focusPosition.y].GetComponent<SpriteRenderer>().color = GetTileColor(tileType);
 
             focusPosition = intended;
             OnMoved?.Invoke(direction);
             OnNewFocusPosition?.Invoke(intended);
 
             // todo - this is just temporary to show where we are on the grid
+            // TODO: we are not showin
             tiles[focusPosition.x, focusPosition.y].GetComponent<SpriteRenderer>().color = gridTileFocusedColor;
 
             return Vector2Int.zero;
         }
 
-        public override Vector2Int? PlaceAtFocusPosition(Piece p)
+        // get grid tile that is adjacent to current tile, based on direction of focus (ie North, South, East, or West)
+        public GridTile GetNeighborTile(GlueCardinality gc,  GridTile[,] tiles, Vector2Int checkingPosition)
         {
-            if (!CanPieceBePlaced(p)) return null; // yes, must first CHECK then SET, because we check incrementally - if we bulldozed straight to 
-            // setting, then we might have to "unset" which is kinda complicated.
-
-            // int connectedTracks = 0;
-            foreach(PieceTile checkPiece in p.GetPieceTiles())
+            if (gc == GlueCardinality.NORTH)
             {
-                // var temp = checkPiece.GetGlue()    dont try to connect if connected tracks is > 2
-                // if temp is empty, don't need to do anything
-                // otherwise, check tiles in direction of glue
-                // if tiles[checkingPosition.x + 1, checkingPosition.y] exists && tiles[...].GetPieceTiles() // match the lgue to one another, connecteTracks += 1;
-                Vector2Int checkingPosition = focusPosition + checkPiece.GetUnrotatedRelativeOffset();
-                GridTile tileAtPosition = tiles[checkingPosition.x, checkingPosition.y];
-                if (!tileAtPosition.TrySetPieceTile(checkPiece)) return null;
+                if (checkingPosition.y + 1 >= tiles.GetLength(1)) return null;
+                return tiles[checkingPosition.x, checkingPosition.y + 1];
+            }
+            if (gc == GlueCardinality.SOUTH)
+            {
+                if (checkingPosition.y -1 < 0) return null;
+                return tiles[checkingPosition.x, checkingPosition.y - 1];
+            }
+            if (gc == GlueCardinality.WEST)
+            {
+                if (checkingPosition.x -1 < 0) return null;
+                return tiles[checkingPosition.x - 1, checkingPosition.y];
             }
 
+            // EAST
+            if (checkingPosition.x + 1 >= tiles.GetLength(0)) return null;
+            return tiles[checkingPosition.x + 1, checkingPosition.y];
+        }
+
+        public bool GlueCardinalitiesCompatabile(GlueCardinality glueOne, GlueCardinality glueTwo)
+        {
+            if (glueOne == GlueCardinality.NORTH && glueTwo == GlueCardinality.SOUTH)
+            {
+                return true;
+            }
+            if (glueOne == GlueCardinality.SOUTH && glueTwo == GlueCardinality.NORTH)
+            {
+                return true;
+            }
+            if (glueOne == GlueCardinality.WEST && glueTwo == GlueCardinality.EAST)
+            {
+                return true;
+            }
+            if (glueOne == GlueCardinality.EAST && glueTwo == GlueCardinality.WEST)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        // determine if Piece exists in GridLinks, return that link if true
+        // TODO: this could actually be a list, since a piece can be contained in multiple GridLinks
+        public List<GridLink> GetGridLinks(Piece piece)
+        {
+            List<GridLink> gridsContainedIn = new();
+
+            foreach (GridLink link in gridLinks)
+            {
+                if (link.ContainsPiece(piece))
+                {
+                    gridsContainedIn.Add(link);
+                }
+            }
+            return gridsContainedIn;
+        }
+
+        // remove Piece from all GridLinks that contain it
+        public void RemoveFromGridLinks(Piece piece)
+        {
+            List<GridLink> gridsContainedIn = GetGridLinks(piece);
+
+            foreach (GridLink link in gridsContainedIn)
+            {
+                Debug.Log("Removing Piece from Link");
+                int numPiecesLeft = link.RemovePiece(piece);
+
+                // if link now invalid, just delete it entirely
+                if (numPiecesLeft < 2)
+                {
+                    Debug.Log("Number of pieces insufficient, deleting link ...");
+                    gridLinks.Remove(link);
+                }
+            }
+        }
+
+        // TODO: associate a link with a sound ...
+        public GridLink CreateNewLink(Piece pieceOne, Piece pieceTwo)
+        {
+            GridLink newLink = new();
+            newLink.AddPiece(pieceOne);
+            newLink.AddPiece(pieceTwo);
+            return newLink;
+        }
+
+        public bool GridLinksContainsPiece(Piece piece)
+        {
+            foreach (GridLink gridLink in gridLinks)
+            {
+                if (gridLink.ContainsPiece(piece)) return true;
+            }
+            
+            return false;
+        }
+
+        public bool CheckIfGameWon()
+        {
+            List<Vector2> coveredPositions = new();
+            // iterate through all the possible positions on the board
+            for (int x = 0; x < data.width; x++)
+            {
+                for (int y = 0; y < data.height; y++)
+                {
+                    // if piece at that position, and piece is in a LINK, create vector 2 and add to list
+                    if (tiles[x, y].HasPieceTile()) {
+                        List<PieceTile> pieceTiles = tiles[x, y].GetPieceTiles();
+
+                        foreach(PieceTile pieceTile in pieceTiles)
+                        {
+                            Piece somePiece = pieceTile.GetPiece();
+                            if (GridLinksContainsPiece(somePiece)) {
+                                coveredPositions.Add(new Vector2(x, y));
+                            }
+                        }
+                    }
+                }
+            }
+
+            // now, we have list of Vector2 that is positions covered by linked tiles
+            if (data.CheckIfCovered(coveredPositions)) return true;
+            return false;        
+        }
+
+        public override Vector2Int? PlaceAtFocusPosition(Piece p)
+        {
+            // yes, must first CHECK then SET, because we check incrementally - if we bulldozed straight to 
+            // setting, then we might have to "unset" which is kinda complicated.
+            if (!CanPieceBePlaced(p)) return null; 
+
+            // int connectedTracks = 0;
+            int connectedTracks = 0;
+
+            foreach(PieceTile checkPiece in p.GetPieceTiles())
+            {
+                // limit of 2 connected tracks
+                if (connectedTracks >= 2)
+                {
+                    Debug.Log("Too many tracks connected to this piece already");
+                    continue;
+                }
+
+                // get the relative position of this pieceTile
+                Vector2Int checkingPosition = focusPosition + checkPiece.GetUnrotatedRelativeOffset();
+
+                // set tile BEFORE checking glue ...
+                GridTile tileAtPosition = tiles[checkingPosition.x, checkingPosition.y];
+                if (!tileAtPosition.TrySetPieceTile(checkPiece)) return null;
+
+                // get the glue at this piecetile
+                List<GlueCardinality> pieceTileGlue = checkPiece.GetGlue;
+                if (pieceTileGlue == null || pieceTileGlue.Count == 0) continue;
+
+                // otherwise, check all tiles adjacent to glue
+                foreach (GlueCardinality gc in pieceTileGlue)
+                {
+                    // grab the neighboring tile
+                    GridTile neighborGridTile = GetNeighborTile(gc, tiles, checkingPosition);
+
+                    // make sure it exists
+                    if (neighborGridTile == null) {
+                        continue;
+                    }
+
+                    // if that grid tile has a piece on it, check all those glues
+                    List<PieceTile> neighborPieceTiles = neighborGridTile.GetPieceTiles();
+
+                    // TODO: it appears that grids can have multiple pieces on them? should confer ... 
+                    foreach (PieceTile neighborPieceTile in neighborPieceTiles) {
+                        // grab the glues of this neighboring piece!
+                        if (neighborPieceTile == null) continue;  
+                        List<GlueCardinality> neighborGC = neighborPieceTile.GetGlue;     
+
+                        // check the glues .. if cardinality matches, then create a link
+                        // TODO: can improve naming convention here .. iterating through Glue Cardinalities in the neighbor piecetile
+                        foreach (GlueCardinality someGC in neighborGC)
+                        {
+                            if (GlueCardinalitiesCompatabile(gc, someGC))
+                            {
+                                // grab Piece that neighbor PieceTile belongs to
+                                Piece neighborPiece = neighborPieceTile.GetPiece();
+
+                                // if neighbor piece belongs to any Link(s), add our Piece to that Link(s)
+                                List<GridLink> existingLinks = GetGridLinks(neighborPiece);
+                                if (existingLinks.Count > 0)
+                                {
+                                    foreach (GridLink existingLink in existingLinks)
+                                    {
+                                        // should not add Piece to link is already there 
+                                        if (GetGridLinks(p).Contains(existingLink))
+                                        {
+                                            Debug.Log("Current piece already belongs to neighbor link");
+                                            continue;
+                                        }
+                                        Debug.Log("Neighbor Piece belongs to link already, adding current piece to that link ...");
+                                        existingLink.AddPiece(p);
+                                        continue;
+                                    }
+                                } else
+                                {
+                                    // if neighbor Piece does not belong to link, then create a new one with the two piece
+                                    Debug.Log("Neighbor Piece belongs to link already, creating new link with the pieces ...");
+                                    GridLink newLink = CreateNewLink(p, neighborPiece);
+                                    gridLinks.Add(newLink);
+                                    connectedTracks++;
+                                    continue;
+                                }
+                            }
+                        }             
+                    }
+                }
+            }
             p.GridMode();
             p.transform.parent = transform;
-
             SetPieceToFocusPosition(p);
+            LogLinks();
+
+            // TODO: check if game won
+            // for now, this can just be a debug.log i guess ..
+            if (CheckIfGameWon()) {
+                Debug.Log("YOU HAVE WON THE GAME!");
+            }
+            else
+            {
+                Debug.Log("you have not yet won the game ... but good luck :D");
+            }
 
             return Vector2Int.zero;
         }
@@ -138,7 +399,14 @@ namespace PuzzleGrid
                 }
             }
 
-            return atFocus.GetPiece().GridMode();
+            // remove piece from all links
+            Piece toBeRemoved = atFocus.GetPiece();
+            RemoveFromGridLinks(toBeRemoved);
+
+            LogLinks();
+
+            // return
+            return toBeRemoved.GridMode();
         }
 
         public override void Hover(Piece p)

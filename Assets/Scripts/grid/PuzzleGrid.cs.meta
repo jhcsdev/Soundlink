@@ -1,2 +1,13 @@
 fileFormatVersion: 2
 guid: 36ca6301bd3014d7ea3859d3634944df
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - data: {fileID: 11400000, guid: 794c9530f0fa342628c4662286ddd402, type: 2}
+  - GridTileSprite: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
