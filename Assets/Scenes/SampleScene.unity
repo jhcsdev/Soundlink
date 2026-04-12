@@ -302,7 +302,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_BackGroundColor: {r: 0.21698111, g: 0.21698111, b: 0.21698111, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -811,6 +811,7 @@ MonoBehaviour:
   pointerFailedMovementColor: {r: 0.9, g: 0.5, b: 0.5, a: 1}
   pointerAppearAtRatioTime: 0.7
   pointerDisappearAtRatioTime: 0.3
+  pointerScaleDownTime: 0.2
   inventoryCanvas: {fileID: 1944012035}
   pointerObject: {fileID: 1915616669}
 --- !u!1 &1771607250

@@ -118,7 +118,6 @@ namespace Inventory
         {
             Debug.Log("focus grid");
             unfocusSequence?.Pause();
-            // Todo - pull to the left and do some sort of visuals
             if (focusSequence == null)
             {
                 Debug.Log("setting up focus sequence");
@@ -145,8 +144,6 @@ namespace Inventory
         {
             Debug.Log("unfocus grid");
             focusSequence.Pause();
-            // todo - fade visuals slightly, push back to right
-
             if (unfocusSequence == null)
             {
                 Debug.Log("setting up unfocus sequence");

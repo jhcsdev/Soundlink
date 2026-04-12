@@ -4,6 +4,7 @@ using UnityEngine;
 using PuzzleGrid.Visuals;
 using UnityEngine.Tilemaps;
 using System.Linq;
+using UnityEngine.Events;
 
 namespace PuzzleGrid
 {
@@ -14,23 +15,17 @@ namespace PuzzleGrid
     public class GridTile : MonoBehaviour
     {
 
+        #region notifs
+        public UnityAction OnJoinedLink;
+        public UnityAction OnRerender;
+        #endregion
+
         [SerializeField] private List<PieceTile> linkedTiles = new(2);
         public GridTileType tileType;
 
         public GridTileType GetGridTileType()
         {
             return tileType;
-        }
-
-        // TODO: could probably remove this set functions but we can keep them for now ...
-        public void SetStartTile()
-        {
-            tileType = GridTileType.START;
-        }
-
-        public void SetEndTile()
-        {
-            tileType = GridTileType.END;
         }
 
         public bool HasPieceTile() => linkedTiles.Count > 0;
@@ -82,7 +77,7 @@ namespace PuzzleGrid
 
         private void Rerender()
         {
-            // throw new System.NotImplementedException();
+            OnRerender?.Invoke();
         }
     }
 }

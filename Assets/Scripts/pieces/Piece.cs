@@ -10,6 +10,8 @@ namespace GamePieces
         private static float tileScale = 1;
         private static float gridTileScale = 1f;
 
+        private PieceState currentState;
+
         [SerializeField] private PieceData data;
 
         private readonly List<PieceTile> tileObjects = new();
@@ -58,12 +60,14 @@ namespace GamePieces
 
         public Piece InventoryMode()
         {
-            transform.localScale = Vector2.one * inventoryScale;
-
+            currentState = PieceState.INVENTORY;
             return this;
         }
         public Piece LimboMode()
         {
+            if (currentState == PieceState.HOVER_GRID) return this;
+            currentState = PieceState.HOVER_GRID;
+
             transform.localScale = Vector2.one * gridTileScale; 
             // todo (temporary): separate into own visual class; for now just makes tiles slightly transparent
             foreach (PieceTile pt in tileObjects)
@@ -76,6 +80,8 @@ namespace GamePieces
         }
         public Piece GridMode()
         {
+            if (currentState == PieceState.PLACED_GRID) return this;
+            currentState = PieceState.PLACED_GRID;
             transform.localScale = Vector2.one * gridTileScale;
             // todo (temporary): separate into own visual class; for now just makes tiles fully visible
             foreach (PieceTile pt in tileObjects)
@@ -105,5 +111,12 @@ namespace GamePieces
                 pt.RotateRelativeOffsetCounterClockwise();
             }
         }
+    }
+
+    public enum PieceState
+    {
+        INVENTORY,
+        PLACED_GRID, 
+        HOVER_GRID
     }
 }
