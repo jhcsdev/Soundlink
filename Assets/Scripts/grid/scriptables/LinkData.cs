@@ -18,6 +18,8 @@ namespace PuzzleGrid
             return startPos;
         }
 
+        // should the link manager be here?
+
         public Vector2 GetEndPos()
         {
             return endPos;

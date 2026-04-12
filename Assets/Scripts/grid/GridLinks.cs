@@ -13,13 +13,27 @@ namespace PuzzleGrid
     public class GridLink
     {
         // list of pieces 
-        [SerializeField] private List<PieceTile> pieces = new();
+        [SerializeField] private List<Piece> pieces = new();
     
-        // TODO: function to create new link
 
-        // TODO: add Piece to existing link
-        
-        // TODO: remove Piece from existing Link
+        // add Piece to link    
+        public void AddPiece(Piece piece)
+        {
+            pieces.Add(piece);
+        }
+
+        // remove Piece from link.
+        // returns number of elements left in link
+        public int RemovePiece(Piece piece)
+        {
+            pieces.Remove(piece);
+            return pieces.Count;
+        }
+
+        public List<Piece> GetPieces()
+        {
+            return pieces;
+        }
 
         // TODO: delete link?
 
@@ -28,11 +42,10 @@ namespace PuzzleGrid
         // TODO: split links (and then delete if the size is only one)
         // NOTE: there should never be a link with only one Piece in it ...
 
-
         // determine if Piece exists within Link
-        public bool ContainsPiece(List<PieceTile> link, PieceTile piece)
+        public bool ContainsPiece(Piece piece)
         {
-            return link.Contains(piece);
+            return pieces.Contains(piece);
         } 
 
     }
