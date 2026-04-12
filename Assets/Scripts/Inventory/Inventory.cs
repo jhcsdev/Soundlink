@@ -1,16 +1,24 @@
 using GamePieces;
 using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine.Events;
 
 namespace Inventory
 {
+    [RequireComponent(typeof(InventoryVisuals))]
     public class Inventory : PlayerInteractableGrid
     {
+        #region visual events
+        public UnityAction<int /*number of pieces that are going to be put into the inventory*/> OnInitializingGrid;
+        public UnityAction<Vector2Int /*focusPosition*/> OnInventoryFocused;
+        public UnityAction OnInventoryUnfocused;
+        public UnityAction<Vector2Int /*direction*/, Vector2Int /*new focus position*/> OnFocusMovementSuccess;
+        public UnityAction<Vector2Int /*direction*/> OnFocusMovementFailure;
+        public UnityAction<Piece> OnPieceTakenOutOfInventory; 
+        public UnityAction<Piece, Vector2Int /*position of placement*/> OnPiecePutIntoInventory;
+        #endregion
+
         [SerializeField] private InventoryData inventoryData;
-        [SerializeField] private float inventorySpacing;
-        [SerializeField] private GameObject focusVisualObject; // todo: a temporary visual for now, helping to see selection positon
-        private Color focusVisualInactiveColor = new(0.9f, 0.2f, 0.9f, 0.1f);
-        private Color focusVisualActiveColor = new(0.9f, 0.2f, 0.9f, 0.4f);
         private Dictionary<Vector2Int, Piece> piecesLookup;
 
         void Awake()
@@ -21,7 +29,10 @@ namespace Inventory
             }
 
             piecesLookup = new Dictionary<Vector2Int, Piece>();
+        }
 
+        void Start()
+        {
             int pieceNumber = 0;
             foreach (var pieceData in inventoryData.pieces) {
                 GameObject pieceObj = new($"Piece {pieceNumber++}");
@@ -31,10 +42,10 @@ namespace Inventory
                 pieceObjComp.InventoryMode();
                 pieceObjComp.transform.parent = transform;
 
-                Vector2Int location = putPiece(pieceObjComp);
+                putPiece(pieceObjComp);
             }
 
-            PrintInventory();
+            // PrintInventory();
         }
 
         // check if current position is the max position, or something like that
@@ -93,55 +104,73 @@ namespace Inventory
 
             Vector2Int emptyLocation = FindOpenPosition();
             piecesLookup[emptyLocation] = piece;
-            Vector2 shiftedLoc = new(emptyLocation.x * inventorySpacing, emptyLocation.y * inventorySpacing);
-            piece.transform.localPosition = shiftedLoc;
+
+            OnPiecePutIntoInventory?.Invoke(piece, emptyLocation);
+
             return emptyLocation;
         }
 
-        // given location, take a Piece from the board
-        public Piece takePiece(Vector2Int location)
-        {
-            if (piecesLookup.TryGetValue(location, out Piece piece))
-            {
-                piecesLookup.Remove(location);
-                return piece;
-            }
-
-            return null;
-        }
-        
-        // TODO: currently allows movement outside of bounds bc it doesn't know what the max inventory position is, we probably should store that somewhere
         public override Vector2Int ShiftFocusPosition(Vector2Int direction)
         {
             if (direction == Vector2.zero) return Vector2Int.zero;
+            direction.y *= -1;
 
-            Vector2Int intended = focusPosition + direction;
+            // going back to the game grid
+            if ((focusPosition + direction).x < 0) return Vector2Int.up;
 
-            // check y down - are we going back to the grid?
-            if (intended.y < 0) { return Vector2Int.up; }
+            int maxY = 0;
+            foreach (var key in piecesLookup.Keys)
+                if (key.y > maxY) maxY = key.y;
 
-            // otherwise movement is ok
-            focusPosition = intended;
+            Vector2Int candidate = focusPosition + direction;
 
-            focusVisualObject.transform.localPosition = Vec2IntToNormal(focusPosition) * inventorySpacing;
+            while (true)
+            {
+                // out of bounds, hence movement fails
+                if (candidate.x < 0 || candidate.x >= inventoryData.rowSize || 
+                    candidate.y < 0 || candidate.y > maxY)
+                {
+                    OnFocusMovementFailure?.Invoke(direction);
+                    return Vector2Int.zero;
+                }
 
-            return Vector2Int.zero;
+                // occupied spot is what we want, yoink
+                if (piecesLookup.TryGetValue(candidate, out Piece piece) && piece != null)
+                {
+                    focusPosition = candidate;
+                    OnFocusMovementSuccess?.Invoke(direction, focusPosition);
+                    return Vector2Int.zero;
+                }
+
+                // otherwise it's an empty spot and we're gonna skip it
+                candidate += direction;
+            }
         }
 
         public override void FocusGrid()
         {
             base.FocusGrid();
-            focusVisualObject.GetComponent<SpriteRenderer>().color = focusVisualActiveColor;
+            OnInventoryFocused?.Invoke(focusPosition);
         }
         public override void UnfocusGrid()
         {
             base.UnfocusGrid();
-            focusVisualObject.GetComponent<SpriteRenderer>().color = focusVisualInactiveColor;
+            OnInventoryUnfocused?.Invoke();
         }
 
+        /// <summary>
+        /// try to take piece at focus position
+        /// </summary>
+        /// <returns>piece if there is a piece at the focus position, nothing otherwise</returns>
         public override Piece TakeAtFocusPosition() {
-            Debug.Log("Attempting to take piece");
-            return takePiece(focusPosition);
+            if (piecesLookup.TryGetValue(focusPosition, out Piece piece))
+            {
+                piecesLookup.Remove(focusPosition);
+                OnPieceTakenOutOfInventory?.Invoke(piece);
+                return piece;
+            }
+
+            return null;
         }
 
         public override Vector2Int? PlaceAtFocusPosition(Piece piece) {
@@ -174,7 +203,5 @@ namespace Inventory
                 Debug.Log($"Position: {position} → Piece: {pieceName}");
             }
         }
-
-        private Vector2 Vec2IntToNormal(Vector2Int v) => new(v.x, v.y);
     }
 }

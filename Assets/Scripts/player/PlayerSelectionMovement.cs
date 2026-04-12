@@ -94,7 +94,6 @@ namespace Player
         /// <param name="ctx"></param>
         private void OnSelect(InputAction.CallbackContext ctx)
         {   
-            Debug.Log("hello select");
             if (IsCurrentGridInventory()) // grabbing piece from inventory
             {
                 referencedPiece = currentGrid.TakeAtFocusPosition();
