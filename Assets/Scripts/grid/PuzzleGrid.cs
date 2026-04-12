@@ -6,6 +6,7 @@ using UnityEditor.Tilemaps;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Tilemaps;
+using UnityEngine.UI;
 
 namespace PuzzleGrid
 {
@@ -204,6 +205,7 @@ namespace PuzzleGrid
             }
         }
 
+        // TODO: associate a link with a sound ...
         public GridLink CreateNewLink(Piece pieceOne, Piece pieceTwo)
         {
             GridLink newLink = new();
@@ -212,7 +214,43 @@ namespace PuzzleGrid
             return newLink;
         }
 
-        // TODO: should add some sort of logging with all of the links
+        public bool GridLinksContainsPiece(Piece piece)
+        {
+            foreach (GridLink gridLink in gridLinks)
+            {
+                if (gridLink.ContainsPiece(piece)) return true;
+            }
+            
+            return false;
+        }
+
+        public bool CheckIfGameWon()
+        {
+            List<Vector2> coveredPositions = new();
+            // iterate through all the possible positions on the board
+            for (int x = 0; x < data.width; x++)
+            {
+                for (int y = 0; y < data.height; y++)
+                {
+                    // if piece at that position, and piece is in a LINK, create vector 2 and add to list
+                    if (tiles[x, y].HasPieceTile()) {
+                        List<PieceTile> pieceTiles = tiles[x, y].GetPieceTiles();
+
+                        foreach(PieceTile pieceTile in pieceTiles)
+                        {
+                            Piece somePiece = pieceTile.GetPiece();
+                            if (GridLinksContainsPiece(somePiece)) {
+                                coveredPositions.Add(new Vector2(x, y));
+                            }
+                        }
+                    }
+                }
+            }
+
+            // now, we have list of Vector2 that is positions covered by linked tiles
+            if (data.CheckIfCovered(coveredPositions)) return true;
+            return false;        
+        }
 
         public override Vector2Int? PlaceAtFocusPosition(Piece p)
         {
@@ -306,6 +344,17 @@ namespace PuzzleGrid
             p.transform.parent = transform;
             SetPieceToFocusPosition(p);
             LogLinks();
+
+            // TODO: check if game won
+            // for now, this can just be a debug.log i guess ..
+            if (CheckIfGameWon()) {
+                Debug.Log("YOU HAVE WON THE GAME!");
+            }
+            else
+            {
+                Debug.Log("you have not yet won the game ... but good luck :D");
+            }
+
             return Vector2Int.zero;
         }
 

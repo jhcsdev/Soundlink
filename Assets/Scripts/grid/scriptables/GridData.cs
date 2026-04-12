@@ -49,6 +49,31 @@ namespace PuzzleGrid
             soundID = -1;
             return GridTileType.BASIC;
         }
+
+        // NOTE: I apologize for the absurd function name here
+        // TODO: change this!
+        public bool GridLinkContainsNecessaryLink(List<Vector2> coveredPositions, LinkData link)
+        {
+            Vector2 startPos = link.GetStartPos();
+            Vector2 endPos = link.GetEndPos();
+
+            if (coveredPositions.Contains(startPos) && coveredPositions.Contains(endPos)) return true;
+
+            return false;
+        }
+
+        // given list of positions that are covered with links in the game, check if these cover all of the necessary
+        // positions that are contained within linkData
+        public bool CheckIfCovered(List<Vector2> coveredPositions)
+        {   
+            foreach (LinkData link in linkDatas)
+            {
+                if (!GridLinkContainsNecessaryLink(coveredPositions, link)) return false;
+
+            }
+            
+            return true;
+        }
     }
 
     public enum GridTileType
