@@ -1237,7 +1237,7 @@ MonoBehaviour:
   pointerFailedMoveTime: 0.1
   pointerFailedMoveColor: {r: 0.9, g: 0.5, b: 0.5, a: 1}
   pointerSquishTo: 0.35
-  pointerNormalSize: 0.8
+  pointerNormalSize: 0.65
   pointerScaleInOutTime: 0.2
   gridPointer: {fileID: 541209897}
   basicGridTile: {fileID: 21300000, guid: ca6f44d08e1b64a07bd00667e0aeca18, type: 3}

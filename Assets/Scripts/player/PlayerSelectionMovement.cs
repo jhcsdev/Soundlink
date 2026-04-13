@@ -129,7 +129,9 @@ namespace Player
         /// <param name="ctx"></param>
         private void OnInventoryButton(InputAction.CallbackContext ctx)
         {   
+            Debug.Log("inventory pressed");
             if (!IsCurrentGridPuzzleGrid()) return;
+            Debug.Log("taking action");
 
             if (referencedPiece != null) 
             {
@@ -144,6 +146,8 @@ namespace Player
                     inventoryGrid.PlaceAtFocusPosition(p);
                 }
             }
+
+            SwapGrid();
         }
     }
 }
