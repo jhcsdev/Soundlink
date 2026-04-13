@@ -78,9 +78,7 @@ namespace PuzzleGrid
             grid.OnNewFocusedTile += FocusPositionSuccessfullyChanged;
             grid.OnGridFocused += GridFocused;
             grid.OnGridUnfocused += GridUnfocused;
-            grid.OnGridInitialize += InitializeValues;
 
-            grid.OnTileUpdated += TileUpdated;
             grid.OnNewHover += HoverPositionChanged;
             grid.OnHoveringTile += HoverTile;
             grid.OnGridTileInitialize += InitializeTile;
@@ -96,13 +94,8 @@ namespace PuzzleGrid
             grid.OnNewFocusedTile -= FocusPositionSuccessfullyChanged;
             grid.OnGridFocused -= GridFocused;
             grid.OnGridUnfocused -= GridUnfocused;
-            grid.OnGridInitialize -= InitializeValues;
         }
 
-        void InitializeValues(int width, int height)
-        {
-            
-        }
         #endregion
 
         #region actual visual implementations
@@ -160,6 +153,43 @@ namespace PuzzleGrid
                 ).Append(
                     gridPointer.DOScale(Vector3.one * pointerNormalSize, 0)
                 ).Play();
+
+            Vector2 gridTileCount = maximumKnownTile + Vector2.one;
+
+            Vector2 tileSize = new(
+                gridTileCount.x > 1 ? (maximumKnownPosition.x - minimumKnownPosition.x) / (gridTileCount.x - 1) : 1f,
+                gridTileCount.y > 1 ? (maximumKnownPosition.y - minimumKnownPosition.y) / (gridTileCount.y - 1) : 1f
+            );
+
+            Vector2 focusWorldPos = toTile.transform.position;
+            Vector2 gridCenter = (minimumKnownPosition + maximumKnownPosition) * 0.5f;
+
+            float targetX, targetY;
+
+            if (gridTileCount.x <= displayGridTilesX)
+                targetX = gridCenter.x;
+            else
+            {
+                float halfDisplayX = (displayGridTilesX * 0.5f) * tileSize.x;
+                targetX = Mathf.Clamp(focusWorldPos.x, minimumKnownPosition.x + halfDisplayX, maximumKnownPosition.x - halfDisplayX);
+            }
+
+            if (gridTileCount.y <= displayGridTilesY)
+                targetY = gridCenter.y;
+            else
+            {
+                float halfDisplayY = (displayGridTilesY * 0.5f) * tileSize.y;
+                targetY = Mathf.Clamp(focusWorldPos.y, minimumKnownPosition.y + halfDisplayY, maximumKnownPosition.y - halfDisplayY);
+            }
+
+            Vector3 targetPos = new(targetX + camOffset.x, targetY + camOffset.y, cam.transform.position.z);
+
+            camMoveSequence?.Kill();
+            camMoveSequence = DOTween.Sequence()
+                .Append(
+                    cam.transform.DOMove(targetPos, camMoveTime)
+                        .SetEase(Ease.OutQuad)
+                ).Play();
         }
 
         void FocusPositionFailedChange(Vector2Int direction)
@@ -209,11 +239,6 @@ namespace PuzzleGrid
             maximumKnownPosition = Vector2.Max(maximumKnownPosition, worldPos);
         }
 
-        void TileUpdated(GridTile tile)
-        {
-            
-        }
-
         void HoverTile(GridTile tile)
         {
             if (hoverSequences == null) { Debug.LogWarning("hover list null, allocating, but it shouldn't be"); hoverSequences = new(); }
@@ -249,43 +274,6 @@ namespace PuzzleGrid
         void HoverPositionChanged(Vector2Int focusPosition)
         {
             ResetAllHovers();
-
-            Vector2 gridTileCount = maximumKnownTile + Vector2.one;
-
-            Vector2 tileSize = new(
-                gridTileCount.x > 1 ? (maximumKnownPosition.x - minimumKnownPosition.x) / (gridTileCount.x - 1) : 1f,
-                gridTileCount.y > 1 ? (maximumKnownPosition.y - minimumKnownPosition.y) / (gridTileCount.y - 1) : 1f
-            );
-
-            Vector2 focusWorldPos = minimumKnownPosition + focusPosition * tileSize;
-            Vector2 gridCenter = (minimumKnownPosition + maximumKnownPosition) * 0.5f;
-
-            float targetX, targetY;
-
-            if (gridTileCount.x <= displayGridTilesX)
-                targetX = gridCenter.x;
-            else
-            {
-                float halfDisplayX = (displayGridTilesX * 0.5f) * tileSize.x;
-                targetX = Mathf.Clamp(focusWorldPos.x, minimumKnownPosition.x + halfDisplayX, maximumKnownPosition.x - halfDisplayX);
-            }
-
-            if (gridTileCount.y <= displayGridTilesY)
-                targetY = gridCenter.y;
-            else
-            {
-                float halfDisplayY = (displayGridTilesY * 0.5f) * tileSize.y;
-                targetY = Mathf.Clamp(focusWorldPos.y, minimumKnownPosition.y + halfDisplayY, maximumKnownPosition.y - halfDisplayY);
-            }
-
-            Vector3 targetPos = new(targetX + camOffset.x, targetY + camOffset.y, cam.transform.position.z);
-
-            camMoveSequence?.Kill();
-            camMoveSequence = DOTween.Sequence()
-                .Append(
-                    cam.transform.DOMove(targetPos, camMoveTime)
-                        .SetEase(Ease.OutQuad)
-                ).Play();
         }
         #endregion
 
@@ -302,7 +290,7 @@ namespace PuzzleGrid
 
         void PlacePieceFailure(Piece p)
         {
-            // todo: flash piece red, scale it slightly?
+            p.FailedPlace();
         }
         void PlacePieceSuccess(Piece p)
         {
@@ -310,6 +298,7 @@ namespace PuzzleGrid
             p.gameObject.SetActive(false);
         }
         #endregion
+        
         #endregion 
     }
 }

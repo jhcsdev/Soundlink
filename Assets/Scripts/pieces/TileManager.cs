@@ -34,11 +34,11 @@ namespace GamePieces
             SpriteRenderer sr = tile.AddComponent<SpriteRenderer>();
             sr.sprite = tileSpriteLookup[data.tileType];
 
-            tile.transform.rotation = Quaternion.Euler(0, 0, GetRotationDegrees(data));
+            tile.transform.rotation = Quaternion.Euler(0, 0, GetSpriteRotationDegrees(data.spriteDirection));
 
             PieceTile pt = tile.AddComponent<PieceTile>();
 
-            return pt;
+            return pt.SetSpriteVariable(tileSpriteLookup[data.tileType]).SetTileDirection(data.spriteDirection);
         }
 
         public GameObject CreateCanvasTile(PieceTileData data)
@@ -48,7 +48,7 @@ namespace GamePieces
             Image image = canvasTile.AddComponent<Image>();
             image.sprite = tileSpriteLookup[data.tileType];
 
-            canvasTile.transform.rotation = Quaternion.Euler(0, 0, GetRotationDegrees(data));
+            canvasTile.transform.rotation = Quaternion.Euler(0, 0, GetSpriteRotationDegrees(data.spriteDirection));
 
             return canvasTile;
         }
@@ -58,13 +58,28 @@ namespace GamePieces
             return CreateTile(data);
         }
 
-        private float GetRotationDegrees(PieceTileData data) => data.spriteDirection switch
+        public static float GetSpriteRotationDegrees(TileSpriteDirection data) => data switch
         {
             TileSpriteDirection.FACES_RIGHT => -90,
             TileSpriteDirection.FACES_DOWN => 180,
             TileSpriteDirection.FACES_LEFT => 90,
             _ => 0
-        };    
+        };  
+
+        public static TileSpriteDirection RotateCW90(TileSpriteDirection dir) => dir switch
+        {
+            TileSpriteDirection.FACES_RIGHT => TileSpriteDirection.FACES_DOWN, 
+            TileSpriteDirection.FACES_DOWN => TileSpriteDirection.FACES_LEFT, 
+            TileSpriteDirection.FACES_LEFT => TileSpriteDirection.FACES_UP, 
+            _ => TileSpriteDirection.FACES_RIGHT
+        };
+        public static TileSpriteDirection RotateCCW90(TileSpriteDirection dir) => dir switch
+        {
+            TileSpriteDirection.FACES_RIGHT => TileSpriteDirection.FACES_UP, 
+            TileSpriteDirection.FACES_DOWN => TileSpriteDirection.FACES_RIGHT, 
+            TileSpriteDirection.FACES_LEFT => TileSpriteDirection.FACES_DOWN, 
+            _ => TileSpriteDirection.FACES_LEFT
+        };
     }
 
     [Serializable]

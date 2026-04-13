@@ -25,7 +25,6 @@ namespace PuzzleGrid
         public UnityAction<Vector2Int /*direction */> OnFailedLeavingGrid;
         
         public UnityAction<Vector2Int /*direction*/, GridTile /*FocusedTile*/> OnNewFocusedTile;
-        public UnityAction<GridTile> OnTileUpdated;
         public UnityAction<Vector2Int> OnNewHover;
         public UnityAction<GridTile> OnHoveringTile;
         public UnityAction<GridTile, GridTileType, Vector2> OnGridTileInitialize;
@@ -350,6 +349,7 @@ namespace PuzzleGrid
         private void SetPieceToFocusPosition(Piece p)
         {
             OnNewHover?.Invoke(focusPosition);
+
             foreach (PieceTile checkPiece in p.GetPieceTiles())
             {
                 // todo: getunrotatedrelativeoffset means that this function will not properly check rotated tiles
@@ -359,6 +359,8 @@ namespace PuzzleGrid
                 if (tileAtPosition.CanSetPieceTile(checkPiece)) OnHoveringTile?.Invoke(tileAtPosition);
             }
             
+            p.HoverMode();
+            p.transform.position = GetFocusedGridTile().transform.position;
         }
 
         private bool CanPieceBePlaced(Piece p)
@@ -387,7 +389,7 @@ namespace PuzzleGrid
             // need to remove the rest of the piece tiles
             foreach (PieceTile checkTile in atFocus.GetPiece().GetPieceTiles())
             {
-                if (checkTile == atFocus) continue;
+                if (checkTile == atFocus) continue; // skipped because TryGrabBottomTile removes it already
                 Vector2Int checkingPosition = focusPosition - atFocusOffset + checkTile.GetUnrotatedRelativeOffset();
                 GridTile testing = tiles[checkingPosition.x, checkingPosition.y];
                 if (!testing.RemovePieceTile(checkTile))
@@ -402,6 +404,9 @@ namespace PuzzleGrid
             RemoveFromGridLinks(toBeRemoved);
 
             LogLinks();
+
+            OnPieceYoinked?.Invoke(toBeRemoved);
+            toBeRemoved.transform.position = GetFocusedGridTile().transform.position; // todo: should not be manually setting position
 
             // return
             return toBeRemoved.GridMode();

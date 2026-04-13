@@ -116,7 +116,6 @@ namespace Player
             else // you are holding a piece and are not in the inventory; place the piece
             {
                 Vector2? placedAt = currentGrid.PlaceAtFocusPosition(referencedPiece);
-                Debug.Log("placed at: " + placedAt);
                 if (placedAt != null)
                 {
                     referencedPiece = null; // reset referenced piece; grid owns that now

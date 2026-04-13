@@ -33,7 +33,6 @@ namespace PuzzleGrid.Visuals
 
         void OnEnable()
         {
-            if(tile == null) 
             tile.OnRerender += UpdateSprites;
             tile.OnJoinedLink += UpdateLinkVisuals;
         }
@@ -45,8 +44,10 @@ namespace PuzzleGrid.Visuals
 
         void UpdateSprites()
         {
+            Debug.Log("Updating sprites");
             // request the tiles the gridtile owns
             List<PieceTile> pieceTiles = tile.GetPieceTiles();
+            Debug.Log("piece tiles: " + pieceTiles.Count);
 
             // set srBase to the first tile's representation
             if (pieceTiles == null || pieceTiles.Count <= 0) { 
@@ -56,11 +57,11 @@ namespace PuzzleGrid.Visuals
                 return;
             }
 
+            srBase.sprite = pieceTiles[0].GetSprite();
+            srBase.transform.rotation = Quaternion.Euler(0, 0, TileManager.GetSpriteRotationDegrees(pieceTiles[0].GetSpriteDirection()));
 
-            // set rendererTwo only if necessary
+            // (todo) set rendererTwo only if necessary
             if (pieceTiles.Count == 1) { rendererTwo.sprite = null; return; }
-            
-        
         } 
 
         void UpdateLinkVisuals()

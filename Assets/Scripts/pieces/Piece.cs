@@ -69,12 +69,7 @@ namespace GamePieces
             currentState = PieceState.HOVER_GRID;
 
             transform.localScale = Vector2.one * gridTileScale; 
-            // todo (temporary): separate into own visual class; for now just makes tiles slightly transparent
-            foreach (PieceTile pt in tileObjects)
-            {
-                SpriteRenderer temp = pt.gameObject.GetComponent<SpriteRenderer>();
-                temp.color = new(temp.color.r, temp.color.g, temp.color.b, 0.5f);
-            }
+            // todo: visuals class
 
             return this;
         }
@@ -84,12 +79,7 @@ namespace GamePieces
             currentState = PieceState.PLACED_GRID;
             
             transform.localScale = Vector2.one * gridTileScale;
-            // todo (temporary): separate into own visual class; for now just makes tiles fully visible
-            foreach (PieceTile pt in tileObjects)
-            {
-                SpriteRenderer temp = pt.gameObject.GetComponent<SpriteRenderer>();
-                temp.color = new(temp.color.r, temp.color.g, temp.color.b, 1f);
-            }
+            // todo: visuals class
 
             return this;
         }
@@ -111,6 +101,21 @@ namespace GamePieces
             {
                 pt.RotateRelativeOffsetCounterClockwise();
             }
+        }
+
+        public void FailedPlace()
+        {
+            // todo: visuals
+        }
+
+        public void HoverMode()
+        {
+            // todo: visuals
+            foreach(var pt in tileObjects)
+            {
+                pt.GetComponent<SpriteRenderer>().color = new(1f, 1f, 1f, 0.4f);
+            }
+            transform.localScale = Vector2.one * 0.8f;
         }
     }
 

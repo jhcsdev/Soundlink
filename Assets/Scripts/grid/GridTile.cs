@@ -51,6 +51,8 @@ namespace PuzzleGrid
         {
             if (!CanSetPieceTile(tile)) return false;
 
+            Debug.Log("setting piece tile");
+
             InstantAddPieceTile(tile);
             Rerender();
             return true;
@@ -62,10 +64,12 @@ namespace PuzzleGrid
 
         public bool RemovePieceTile(PieceTile tile)
         {
+            Debug.Log("REMOVING TILE");
             for (int i = linkedTiles.Count - 1; i >= 0; i--)
             {
                 if (linkedTiles[i] != tile) continue;
                 linkedTiles.RemoveAt(i);
+                Debug.Log("RERENDERING!!");
                 Rerender();
                 return true;
             }
@@ -76,6 +80,7 @@ namespace PuzzleGrid
             if (linkedTiles.Count == 0) return null;
             PieceTile pieceTile = linkedTiles[0];
             linkedTiles.RemoveAt(0);
+            Rerender();
             return pieceTile;
         }
 
