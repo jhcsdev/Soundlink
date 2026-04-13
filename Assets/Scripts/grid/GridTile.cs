@@ -11,7 +11,6 @@ namespace PuzzleGrid
     /// <summary>
     /// i say that gridTiles can hold representations of up to two piece tiles, if one is passthrough
     /// </summary>
-    [RequireComponent(typeof(GridTileVisuals))]
     public class GridTile : MonoBehaviour
     {
 
@@ -22,6 +21,11 @@ namespace PuzzleGrid
 
         [SerializeField] private List<PieceTile> linkedTiles = new(2);
         public GridTileType tileType;
+
+        void Awake()
+        {
+            gameObject.AddComponent<GridTileVisuals>();
+        }
 
         public GridTileType GetGridTileType()
         {

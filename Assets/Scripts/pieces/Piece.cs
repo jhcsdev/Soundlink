@@ -82,6 +82,7 @@ namespace GamePieces
         {
             if (currentState == PieceState.PLACED_GRID) return this;
             currentState = PieceState.PLACED_GRID;
+            
             transform.localScale = Vector2.one * gridTileScale;
             // todo (temporary): separate into own visual class; for now just makes tiles fully visible
             foreach (PieceTile pt in tileObjects)

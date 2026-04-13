@@ -58,7 +58,7 @@ namespace Inventory
 
         #endregion
 
-        #region objs
+        #region objs / textures
         [Header("Objects")]
         [SerializeField] private RectTransform inventoryCanvas;
         [SerializeField] private RectTransform pointerObject; 
@@ -116,11 +116,10 @@ namespace Inventory
 
         void FocusGrid(Vector2Int focusPosition)
         {
-            Debug.Log("focus grid");
             unfocusSequence?.Pause();
+
             if (focusSequence == null)
             {
-                Debug.Log("setting up focus sequence");
                 Vector2 destinationMin = new(focusedAnchorX, 0);
                 Vector2 destinationMax = new(focusedAnchorX + inventoryAnchorWidth, 1);
                 focusSequence = DOTween.Sequence()
@@ -142,11 +141,10 @@ namespace Inventory
 
         void UnfocusGrid()
         {
-            Debug.Log("unfocus grid");
             focusSequence.Pause();
+
             if (unfocusSequence == null)
             {
-                Debug.Log("setting up unfocus sequence");
                 Vector2 destinationMin = new(unfocusedAnchorX, 0);
                 Vector2 destinationMax = new(unfocusedAnchorX + inventoryAnchorWidth, 1);
                 unfocusSequence = DOTween.Sequence()
@@ -187,11 +185,15 @@ namespace Inventory
             // complete an existing move tween (this will create some jitter instantly, but i believe that to be okay?)
             if (activeFocusObjectMovementSequence != null) activeFocusObjectMovementSequence.Complete();
 
+            pointerObject.localScale = Vector3.one * pointerNormalSize;
+
             activeFocusObjectMovementSequence = DOTween.Sequence()
                 .Append(
                     pointerObject.DOAnchorPos((Vector2)pointerObject.parent.InverseTransformPoint(targetPos.position), pointerMoveTime)
                 ).Join(
                     pointerObject.DOPunchScale(new(-pointerSquishTo * Mathf.Abs(direction.y), -pointerSquishTo * Mathf.Abs(direction.x), 1), pointerMoveTime)
+                ).Append(
+                        pointerObject.DOScale(Vector3.one * pointerNormalSize, 0)
                 ).Play();
         }
 
@@ -199,6 +201,8 @@ namespace Inventory
         {
             // Thought: Stretch the focus shape in a given direction, color it red for now
             if (activeFailedMovement != null) activeFailedMovement.Complete();
+
+            pointerObject.localScale = Vector3.one * pointerNormalSize;
 
             activeFailedMovement = DOTween.Sequence()
                 .Append(
@@ -213,6 +217,8 @@ namespace Inventory
                 ).Insert(
                     pointerFailedMovementTime * 0.6f, 
                     pointerImageComponent.DOColor(pointerNormalColor, pointerFailedMovementTime * 0.7f)
+                ).Append(
+                    pointerObject.DOScale(Vector3.one * pointerNormalSize, 0)
                 ).Play();
         }
 

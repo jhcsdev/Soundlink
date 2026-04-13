@@ -20,8 +20,8 @@ namespace PuzzleGrid
 
         #region notifications
         public UnityAction<int, int /*width, height*/> OnGridInitialize;
-        public UnityAction OnGridFocused;
-        public UnityAction OnGridUnfocused;
+        public UnityAction<GridTile> OnGridFocused;
+        public UnityAction<GridTile> OnGridUnfocused;
         public UnityAction<Vector2Int /*direction */> OnFailedLeavingGrid;
         
         public UnityAction<Vector2Int /*direction*/, GridTile /*FocusedTile*/> OnNewFocusedTile;
@@ -34,7 +34,6 @@ namespace PuzzleGrid
         public UnityAction<Piece> OnPiecePlacementSuccess;
         public UnityAction<Piece> OnPieceYoinked;
         public UnityAction<Piece> OnPieceSentBackToInventory;
-        public UnityAction<Piece, GridTile> OnHoveringPieceMoved;
         #endregion
 
         void Awake()
@@ -350,7 +349,16 @@ namespace PuzzleGrid
 
         private void SetPieceToFocusPosition(Piece p)
         {
-            OnHoveringPieceMoved?.Invoke(p, tiles[focusPosition.x, focusPosition.y]);
+            OnNewHover?.Invoke();
+            foreach (PieceTile checkPiece in p.GetPieceTiles())
+            {
+                // todo: getunrotatedrelativeoffset means that this function will not properly check rotated tiles
+                Vector2Int checkingPosition = focusPosition + checkPiece.GetUnrotatedRelativeOffset();
+                if (checkingPosition.x < 0 || checkingPosition.x >= tiles.GetLength(0) || checkingPosition.y < 0 || checkingPosition.y >= tiles.GetLength(1)) continue;
+                GridTile tileAtPosition = tiles[checkingPosition.x, checkingPosition.y];
+                if (tileAtPosition.CanSetPieceTile(checkPiece)) OnHoveringTile?.Invoke(tileAtPosition);
+            }
+            
         }
 
         private bool CanPieceBePlaced(Piece p)
@@ -407,13 +415,18 @@ namespace PuzzleGrid
         public override void FocusGrid()
         {
             base.FocusGrid();
-            OnGridFocused?.Invoke();
+            OnGridFocused?.Invoke(GetFocusedGridTile());
         }
 
         public override void UnfocusGrid()
         {
             base.UnfocusGrid();
-            OnGridUnfocused?.Invoke();
+            OnGridUnfocused?.Invoke(GetFocusedGridTile());
+        }
+
+        private GridTile GetFocusedGridTile()
+        {
+            return tiles[focusPosition.x, focusPosition.y];
         }
     }
 }
