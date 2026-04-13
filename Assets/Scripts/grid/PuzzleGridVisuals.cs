@@ -38,6 +38,8 @@ namespace PuzzleGrid
 
         Dictionary<GridTile, Sequence> hoverSequences;
 
+        private Sequence camMoveSequence;
+
         #endregion
 
         #region objects / textures
@@ -49,11 +51,14 @@ namespace PuzzleGrid
         
         #region other variables
         PuzzleGrid grid;
-        private Vector2 maximumKnownTile;
+        private Vector2 maximumKnownTile = Vector2.zero;
         private Camera cam;
         [SerializeField] private Vector2 camOffset = new(5, 0);
-        private Vector2 maximumKnownPosition;
-        private Vector2 minimumKnownPosition;
+        [SerializeField] private int displayGridTilesX;
+        [SerializeField] private int displayGridTilesY;
+        [SerializeField] private float camMoveTime = 0.15f;
+        private Vector2 maximumKnownPosition = Vector2.negativeInfinity;
+        private Vector2 minimumKnownPosition = Vector2.positiveInfinity;
         #endregion
 
         #endregion
@@ -76,7 +81,7 @@ namespace PuzzleGrid
             grid.OnGridInitialize += InitializeValues;
 
             grid.OnTileUpdated += TileUpdated;
-            grid.OnNewHover += ResetAllHovers;
+            grid.OnNewHover += HoverPositionChanged;
             grid.OnHoveringTile += HoverTile;
             grid.OnGridTileInitialize += InitializeTile;
             
@@ -196,10 +201,12 @@ namespace PuzzleGrid
         {
             GridTileVisuals comp = tile.GetComponent<GridTileVisuals>();
             comp.SetBaseSprite(basicGridTile);
-            if (position.y > maximumKnownTile.y && position.x > maximumKnownTile.x)
-            {
-                maximumKnownTile = position;
-            }
+
+            Vector2 worldPos = tile.transform.position;
+
+            maximumKnownTile = Vector2.Max(maximumKnownTile, position);
+            minimumKnownPosition = Vector2.Min(minimumKnownPosition, worldPos);
+            maximumKnownPosition = Vector2.Max(maximumKnownPosition, worldPos);
         }
 
         void TileUpdated(GridTile tile)
@@ -236,17 +243,49 @@ namespace PuzzleGrid
             {
                 foreach (var tile in hoverSequences.Keys.ToList()) ResetHover(tile);
             }
+            hoverSequences = new();
         }
 
-        void HoverPositionChanged(Vector2 focusPosition)
+        void HoverPositionChanged(Vector2Int focusPosition)
         {
             ResetAllHovers();
 
-            // update the position of the cam variable based on focusPosition and maxPosition, 
-            // along with Camera offset (camOffset) from what should be center of grid (gridCenter) and
-            // the known displayGridTilesY and displayGridTilesX
+            Vector2 gridTileCount = maximumKnownTile + Vector2.one;
 
-            hoverSequences = new();
+            Vector2 tileSize = new(
+                gridTileCount.x > 1 ? (maximumKnownPosition.x - minimumKnownPosition.x) / (gridTileCount.x - 1) : 1f,
+                gridTileCount.y > 1 ? (maximumKnownPosition.y - minimumKnownPosition.y) / (gridTileCount.y - 1) : 1f
+            );
+
+            Vector2 focusWorldPos = minimumKnownPosition + focusPosition * tileSize;
+            Vector2 gridCenter = (minimumKnownPosition + maximumKnownPosition) * 0.5f;
+
+            float targetX, targetY;
+
+            if (gridTileCount.x <= displayGridTilesX)
+                targetX = gridCenter.x;
+            else
+            {
+                float halfDisplayX = (displayGridTilesX * 0.5f) * tileSize.x;
+                targetX = Mathf.Clamp(focusWorldPos.x, minimumKnownPosition.x + halfDisplayX, maximumKnownPosition.x - halfDisplayX);
+            }
+
+            if (gridTileCount.y <= displayGridTilesY)
+                targetY = gridCenter.y;
+            else
+            {
+                float halfDisplayY = (displayGridTilesY * 0.5f) * tileSize.y;
+                targetY = Mathf.Clamp(focusWorldPos.y, minimumKnownPosition.y + halfDisplayY, maximumKnownPosition.y - halfDisplayY);
+            }
+
+            Vector3 targetPos = new(targetX + camOffset.x, targetY + camOffset.y, cam.transform.position.z);
+
+            camMoveSequence?.Kill();
+            camMoveSequence = DOTween.Sequence()
+                .Append(
+                    cam.transform.DOMove(targetPos, camMoveTime)
+                        .SetEase(Ease.OutQuad)
+                ).Play();
         }
         #endregion
 

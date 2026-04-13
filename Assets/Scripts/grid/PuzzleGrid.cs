@@ -26,7 +26,7 @@ namespace PuzzleGrid
         
         public UnityAction<Vector2Int /*direction*/, GridTile /*FocusedTile*/> OnNewFocusedTile;
         public UnityAction<GridTile> OnTileUpdated;
-        public UnityAction OnNewHover;
+        public UnityAction<Vector2Int> OnNewHover;
         public UnityAction<GridTile> OnHoveringTile;
         public UnityAction<GridTile, GridTileType, Vector2> OnGridTileInitialize;
 
@@ -349,7 +349,7 @@ namespace PuzzleGrid
 
         private void SetPieceToFocusPosition(Piece p)
         {
-            OnNewHover?.Invoke();
+            OnNewHover?.Invoke(focusPosition);
             foreach (PieceTile checkPiece in p.GetPieceTiles())
             {
                 // todo: getunrotatedrelativeoffset means that this function will not properly check rotated tiles

@@ -926,7 +926,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: -0.05, y: -0.05}
   m_AnchorMax: {x: 1.05, y: 0.1}
-  m_AnchoredPosition: {x: 0, y: -0.0000076293945}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: -0.000015258789}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1313336512
@@ -1231,6 +1231,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56310cebc2f234b0fac264cee8e831ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PuzzleGrid.PuzzleGridVisuals
+  tilePulseScaleTime: 0.3
+  tilePulseToSize: 0.85
   pointerMoveTime: 0.1
   pointerFailedMoveTime: 0.1
   pointerFailedMoveColor: {r: 0.9, g: 0.5, b: 0.5, a: 1}
@@ -1239,6 +1241,10 @@ MonoBehaviour:
   pointerScaleInOutTime: 0.2
   gridPointer: {fileID: 541209897}
   basicGridTile: {fileID: 21300000, guid: ca6f44d08e1b64a07bd00667e0aeca18, type: 3}
+  camOffset: {x: 4, y: 0}
+  displayGridTilesX: 8
+  displayGridTilesY: 8
+  camMoveTime: 0.15
 --- !u!1 &1915616668
 GameObject:
   m_ObjectHideFlags: 0
