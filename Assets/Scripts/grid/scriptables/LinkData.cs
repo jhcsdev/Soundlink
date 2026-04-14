@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using GamePieces;
+using TrackSounds;
 using UnityEngine;
 
 namespace PuzzleGrid
@@ -11,6 +12,7 @@ namespace PuzzleGrid
         [SerializeField] private Vector2 startPos;
         [SerializeField] private Vector2 endPos;
 
+        [SerializeField] private TrackSound playsSound;
         [SerializeField] private int soundID;
 
         public Vector2 GetStartPos()
