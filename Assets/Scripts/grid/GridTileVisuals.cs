@@ -74,5 +74,24 @@ namespace PuzzleGrid.Visuals
             baseEmptySprite = to;
             UpdateSprites();
         }
+        private void SetBaseColor(Color to)
+        {
+            srBase.color = to;
+        }
+
+        public void TileTypeChanged(GridTileType t)
+        {
+            switch (t)
+            {
+                case GridTileType.START:
+                    SetBaseColor(Color.green);
+                    break;
+                case GridTileType.END:
+                    SetBaseColor(Color.red);
+                    break;
+                default:
+                    break;           
+            };
+        }
     }
 }

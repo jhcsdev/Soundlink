@@ -19,12 +19,21 @@ namespace PuzzleGrid
         public UnityAction OnRerender;
         #endregion
 
+        private GridTileVisuals visuals;
+
         [SerializeField] private List<PieceTile> linkedTiles = new(2);
-        public GridTileType tileType;
+        private GridTileType tileType;
+        public void SetTileType(GridTileType t) 
+        {
+            Debug.Log($"Setting tile type {t}");
+            visuals.TileTypeChanged(t); // todo - maybe not the best idea to have as a straight function
+            tileType = t;
+        }
+
 
         void Awake()
         {
-            gameObject.AddComponent<GridTileVisuals>();
+            visuals = gameObject.AddComponent<GridTileVisuals>();
         }
 
         public GridTileType GetGridTileType()

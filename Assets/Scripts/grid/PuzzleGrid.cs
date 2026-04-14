@@ -54,7 +54,7 @@ namespace PuzzleGrid
 
                     // grab and set color based on tiletype
                     GridTileType tileType = data.GetTileInfo(x, y, out int soundID);
-                    gridTile.tileType = tileType;
+                    gridTile.SetTileType(tileType);
                     tiles[x,y] = gridTile;
 
                     OnGridTileInitialize?.Invoke(gridTile, tileType, pos);
