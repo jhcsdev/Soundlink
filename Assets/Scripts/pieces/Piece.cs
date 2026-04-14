@@ -6,7 +6,6 @@ namespace GamePieces
 {
     public class Piece : MonoBehaviour
     {
-        private static float inventoryScale = 0.6f;
         private static float tileScale = 1;
         private static float gridTileScale = 1f;
 
