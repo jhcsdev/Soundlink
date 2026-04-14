@@ -1073,7 +1073,15 @@ MonoBehaviour:
     m_Id: e3c354a3-dd40-498d-8581-5e9ecc5f6607
     m_Processors: 
     m_Interactions: 
-    m_SingletonActionBindings: []
+    m_SingletonActionBindings:
+    - m_Name: 
+      m_Id: fccb8801-db3d-4259-b2bb-10b98db0f096
+      m_Path: <Keyboard>/#(R)
+      m_Interactions: Press
+      m_Processors: 
+      m_Groups: 
+      m_Action: ROTATE
+      m_Flags: 0
     m_Flags: 0
 --- !u!4 &1424401739
 Transform:

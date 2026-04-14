@@ -67,6 +67,7 @@ namespace GamePieces
             relativeOffset = new(x, y);
             SetLocalPosition(relativeOffset);
             spriteDirection = TileManager.RotateCW90(spriteDirection);
+            transform.rotation = Quaternion.Euler(0,0,TileManager.GetSpriteRotationDegrees(spriteDirection));
         }
         public void RotateRelativeOffsetCounterClockwise()
         {
@@ -75,6 +76,7 @@ namespace GamePieces
             relativeOffset = new(x, y);
             SetLocalPosition(relativeOffset);
             spriteDirection = TileManager.RotateCCW90(spriteDirection);
+            transform.rotation = Quaternion.Euler(0,0,TileManager.GetSpriteRotationDegrees(spriteDirection));
         }
     }
 }

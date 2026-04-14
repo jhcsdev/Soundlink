@@ -258,7 +258,7 @@ namespace PuzzleGrid
                 }
 
                 // get the relative position of this pieceTile
-                Vector2Int checkingPosition = focusPosition + checkPiece.GetUnrotatedRelativeOffset();
+                Vector2Int checkingPosition = focusPosition + checkPiece.GetRotatedRelativeOffset();
 
                 // set tile BEFORE checking glue ...
                 GridTile tileAtPosition = tiles[checkingPosition.x, checkingPosition.y];
@@ -352,8 +352,7 @@ namespace PuzzleGrid
 
             foreach (PieceTile checkPiece in p.GetPieceTiles())
             {
-                // todo: getunrotatedrelativeoffset means that this function will not properly check rotated tiles
-                Vector2Int checkingPosition = focusPosition + checkPiece.GetUnrotatedRelativeOffset();
+                Vector2Int checkingPosition = focusPosition + checkPiece.GetRotatedRelativeOffset();
                 if (checkingPosition.x < 0 || checkingPosition.x >= tiles.GetLength(0) || checkingPosition.y < 0 || checkingPosition.y >= tiles.GetLength(1)) continue;
                 GridTile tileAtPosition = tiles[checkingPosition.x, checkingPosition.y];
                 if (tileAtPosition.CanSetPieceTile(checkPiece)) OnHoveringTile?.Invoke(tileAtPosition);
@@ -368,8 +367,7 @@ namespace PuzzleGrid
             // iterate through piecetiles relative to origin, compare them to gridtiles
             foreach (PieceTile checkPiece in p.GetPieceTiles())
             {
-                // todo: getunrotatedrelativeoffset means that this function will not properly check rotated tiles
-                Vector2Int checkingPosition = focusPosition + checkPiece.GetUnrotatedRelativeOffset();
+                Vector2Int checkingPosition = focusPosition + checkPiece.GetRotatedRelativeOffset();
                 if (checkingPosition.x < 0 || checkingPosition.x >= tiles.GetLength(0) || checkingPosition.y < 0 || checkingPosition.y >= tiles.GetLength(1)) return false;
                 GridTile tileAtPosition = tiles[checkingPosition.x, checkingPosition.y];
                 if (!tileAtPosition.CanSetPieceTile(checkPiece)) return false;
@@ -384,13 +382,13 @@ namespace PuzzleGrid
             PieceTile atFocus = focus.TryGrabBottomTile();
             if (atFocus == null) return null;
 
-            Vector2Int atFocusOffset = atFocus.GetUnrotatedRelativeOffset(); // might not be starting from 0,0 this time
+            Vector2Int atFocusOffset = atFocus.GetRotatedRelativeOffset(); // might not be starting from 0,0 this time
 
             // need to remove the rest of the piece tiles
             foreach (PieceTile checkTile in atFocus.GetPiece().GetPieceTiles())
             {
                 if (checkTile == atFocus) continue; // skipped because TryGrabBottomTile removes it already
-                Vector2Int checkingPosition = focusPosition - atFocusOffset + checkTile.GetUnrotatedRelativeOffset();
+                Vector2Int checkingPosition = focusPosition - atFocusOffset + checkTile.GetRotatedRelativeOffset();
                 GridTile testing = tiles[checkingPosition.x, checkingPosition.y];
                 if (!testing.RemovePieceTile(checkTile))
                 {

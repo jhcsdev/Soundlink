@@ -39,6 +39,9 @@ namespace Player
         {
             playerInputWrapper.SELECT.performed += OnSelect;
             playerInputWrapper.INVENTORY_BUTTON.performed += OnInventoryButton;
+            playerInputWrapper.ROTATE.performed += OnRotate;
+            Debug.Log(playerInputWrapper.ROTATE);
+            Debug.Log(playerInputWrapper.INVENTORY_BUTTON);
             SetCurrentGrid(inventoryGrid);
         }
 
@@ -148,6 +151,15 @@ namespace Player
             }
 
             SwapGrid();
+        }
+
+        private void OnRotate(InputAction.CallbackContext ctx)
+        {
+            Debug.Log("rotate");
+            if (referencedPiece == null) return;
+
+            referencedPiece.RotatePieceClockwise();
+            currentGrid.Hover(referencedPiece);
         }
     }
 }
