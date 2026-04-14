@@ -14,5 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PuzzleGrid.GridData
   width: 20
   height: 20
-  linkDatas: []
+  linkDatas:
+  - startPos: {x: 0, y: 0}
+    endPos: {x: 5, y: 5}
+    soundID: 0
   currentSoundID: 0
