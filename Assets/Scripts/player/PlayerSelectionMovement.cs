@@ -116,7 +116,6 @@ namespace Player
             else // you are holding a piece and are not in the inventory; place the piece
             {
                 Vector2? placedAt = currentGrid.PlaceAtFocusPosition(referencedPiece);
-                Debug.Log("placed at: " + placedAt);
                 if (placedAt != null)
                 {
                     referencedPiece = null; // reset referenced piece; grid owns that now
@@ -130,7 +129,9 @@ namespace Player
         /// <param name="ctx"></param>
         private void OnInventoryButton(InputAction.CallbackContext ctx)
         {   
+            Debug.Log("inventory pressed");
             if (!IsCurrentGridPuzzleGrid()) return;
+            Debug.Log("taking action");
 
             if (referencedPiece != null) 
             {
@@ -145,6 +146,8 @@ namespace Player
                     inventoryGrid.PlaceAtFocusPosition(p);
                 }
             }
+
+            SwapGrid();
         }
     }
 }

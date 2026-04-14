@@ -10,6 +10,8 @@ namespace GamePieces
         private static float tileScale = 1;
         private static float gridTileScale = 1f;
 
+        private PieceState currentState;
+
         [SerializeField] private PieceData data;
 
         private readonly List<PieceTile> tileObjects = new();
@@ -58,31 +60,26 @@ namespace GamePieces
 
         public Piece InventoryMode()
         {
-            transform.localScale = Vector2.one * inventoryScale;
-
+            currentState = PieceState.INVENTORY;
             return this;
         }
         public Piece LimboMode()
         {
+            if (currentState == PieceState.HOVER_GRID) return this;
+            currentState = PieceState.HOVER_GRID;
+
             transform.localScale = Vector2.one * gridTileScale; 
-            // todo (temporary): separate into own visual class; for now just makes tiles slightly transparent
-            foreach (PieceTile pt in tileObjects)
-            {
-                SpriteRenderer temp = pt.gameObject.GetComponent<SpriteRenderer>();
-                temp.color = new(temp.color.r, temp.color.g, temp.color.b, 0.5f);
-            }
+            // todo: visuals class
 
             return this;
         }
         public Piece GridMode()
         {
+            if (currentState == PieceState.PLACED_GRID) return this;
+            currentState = PieceState.PLACED_GRID;
+            
             transform.localScale = Vector2.one * gridTileScale;
-            // todo (temporary): separate into own visual class; for now just makes tiles fully visible
-            foreach (PieceTile pt in tileObjects)
-            {
-                SpriteRenderer temp = pt.gameObject.GetComponent<SpriteRenderer>();
-                temp.color = new(temp.color.r, temp.color.g, temp.color.b, 1f);
-            }
+            // todo: visuals class
 
             return this;
         }
@@ -105,5 +102,27 @@ namespace GamePieces
                 pt.RotateRelativeOffsetCounterClockwise();
             }
         }
+
+        public void FailedPlace()
+        {
+            // todo: visuals
+        }
+
+        public void HoverMode()
+        {
+            // todo: visuals
+            foreach(var pt in tileObjects)
+            {
+                pt.GetComponent<SpriteRenderer>().color = new(1f, 1f, 1f, 0.4f);
+            }
+            transform.localScale = Vector2.one * 0.8f;
+        }
+    }
+
+    public enum PieceState
+    {
+        INVENTORY,
+        PLACED_GRID, 
+        HOVER_GRID
     }
 }

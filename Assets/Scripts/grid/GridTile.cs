@@ -4,33 +4,32 @@ using UnityEngine;
 using PuzzleGrid.Visuals;
 using UnityEngine.Tilemaps;
 using System.Linq;
+using UnityEngine.Events;
 
 namespace PuzzleGrid
 {
     /// <summary>
     /// i say that gridTiles can hold representations of up to two piece tiles, if one is passthrough
     /// </summary>
-    [RequireComponent(typeof(GridTileVisuals))]
     public class GridTile : MonoBehaviour
     {
+
+        #region notifs
+        public UnityAction OnJoinedLink;
+        public UnityAction OnRerender;
+        #endregion
 
         [SerializeField] private List<PieceTile> linkedTiles = new(2);
         public GridTileType tileType;
 
+        void Awake()
+        {
+            gameObject.AddComponent<GridTileVisuals>();
+        }
+
         public GridTileType GetGridTileType()
         {
             return tileType;
-        }
-
-        // TODO: could probably remove this set functions but we can keep them for now ...
-        public void SetStartTile()
-        {
-            tileType = GridTileType.START;
-        }
-
-        public void SetEndTile()
-        {
-            tileType = GridTileType.END;
         }
 
         public bool HasPieceTile() => linkedTiles.Count > 0;
@@ -52,6 +51,8 @@ namespace PuzzleGrid
         {
             if (!CanSetPieceTile(tile)) return false;
 
+            Debug.Log("setting piece tile");
+
             InstantAddPieceTile(tile);
             Rerender();
             return true;
@@ -63,10 +64,12 @@ namespace PuzzleGrid
 
         public bool RemovePieceTile(PieceTile tile)
         {
+            Debug.Log("REMOVING TILE");
             for (int i = linkedTiles.Count - 1; i >= 0; i--)
             {
                 if (linkedTiles[i] != tile) continue;
                 linkedTiles.RemoveAt(i);
+                Debug.Log("RERENDERING!!");
                 Rerender();
                 return true;
             }
@@ -77,12 +80,13 @@ namespace PuzzleGrid
             if (linkedTiles.Count == 0) return null;
             PieceTile pieceTile = linkedTiles[0];
             linkedTiles.RemoveAt(0);
+            Rerender();
             return pieceTile;
         }
 
         private void Rerender()
         {
-            // throw new System.NotImplementedException();
+            OnRerender?.Invoke();
         }
     }
 }

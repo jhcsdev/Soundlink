@@ -1,63 +1,65 @@
 using System.Collections.Generic;
-using System.Xml.Serialization;
 using GamePieces;
-using Unity.Collections;
-using UnityEditor.Tilemaps;
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.Tilemaps;
-using UnityEngine.UI;
 
 namespace PuzzleGrid
 {
     /// <summary>
     /// models a grid with pieces. grid coordinates go 0,0 up from the bottom left. of the grid.
     /// </summary>
+    [RequireComponent(typeof(PuzzleGridVisuals))]
     public class PuzzleGrid : PlayerInteractableGrid
     {
         [SerializeField] private Vector2 gridBottomLeftPosition = Vector2.zero;
         [SerializeField] private GridData data; 
         [SerializeField] private float tileRealsize = 1f;
-        [SerializeField] private Sprite GridTileSprite;
-        // todo - temporary colors
-        private Color gridTileUnfocusedColor = new(0.2f, 0.2f, 0.2f, 0.2f);
-        private Color gridTileFocusedColor = new(0.2f, 0.2f, 0.2f, 0.4f);
 
         private GridTile[,] tiles; // index via [x,y]
+        public List<GridLink> gridLinks = new();
 
         #region notifications
-        public UnityAction<Vector2> OnFailedLeavingGrid;
-        public UnityAction<Vector2> OnMoved;
-        public UnityAction<Vector2Int> OnNewFocusPosition;
-        public List<GridLink> gridLinks = new();
+        public UnityAction<int, int /*width, height*/> OnGridInitialize;
+        public UnityAction<GridTile> OnGridFocused;
+        public UnityAction<GridTile> OnGridUnfocused;
+        public UnityAction<Vector2Int /*direction */> OnFailedLeavingGrid;
+        
+        public UnityAction<Vector2Int /*direction*/, GridTile /*FocusedTile*/> OnNewFocusedTile;
+        public UnityAction<Vector2Int> OnNewHover;
+        public UnityAction<GridTile> OnHoveringTile;
+        public UnityAction<GridTile, GridTileType, Vector2> OnGridTileInitialize;
+
+        public UnityAction<Piece> OnPiecePlacementFailure;
+        public UnityAction<Piece> OnPiecePlacementSuccess;
+        public UnityAction<Piece> OnPieceYoinked;
+        public UnityAction<Piece> OnPieceSentBackToInventory;
         #endregion
 
         void Awake()
         {
-            Debug.Log("width: " + data.width);
-            Debug.Log("height: " + data.height);
             tiles = new GridTile[data.width, data.height];
+        }
 
+        void Start()
+        {
             for (int x = 0; x < data.width; x++)
             {
                 for (int y = 0; y < data.height; y++)
                 {
                     GameObject tileObj = new($"Tile {x}, {y}");
                     tileObj.transform.parent = transform;
-                    tileObj.transform.localPosition = gridBottomLeftPosition + new Vector2(x * tileRealsize, y * tileRealsize);
+                    Vector2 pos = new(x, y);
+                    tileObj.transform.localPosition = gridBottomLeftPosition + pos * tileRealsize;
                     GridTile gridTile = tileObj.AddComponent<GridTile>();
-                    SpriteRenderer sr = tileObj.AddComponent<SpriteRenderer>(); // todo: probably temporary visuals
 
                     // grab and set color based on tiletype
                     GridTileType tileType = data.GetTileInfo(x, y, out int soundID);
                     gridTile.tileType = tileType;
-                    sr.color = GetTileColor(tileType);
-                    sr.sprite = GridTileSprite;
-                    sr.sortingOrder = -1; // put it behind everything
                     tiles[x,y] = gridTile;
+
+                    OnGridTileInitialize?.Invoke(gridTile, tileType, pos);
                 }
             }
-            Debug.Log("grid setup");
         }
 
         // TODO: delete the visuals and just do logging stuff 
@@ -91,14 +93,6 @@ namespace PuzzleGrid
             return new Vector2Int(-1, -1); // not found
         }
 
-        // get color based on tile type
-        private Color GetTileColor(GridTileType tileType)
-        {
-            if (tileType == GridTileType.START) return Color.green;
-            if (tileType == GridTileType.END) return Color.red;
-            return gridTileUnfocusedColor;
-        }
-
         public override Vector2Int ShiftFocusPosition(Vector2Int direction)
         {
             if (direction == Vector2.zero) return Vector2Int.zero;
@@ -106,21 +100,11 @@ namespace PuzzleGrid
             Vector2Int intended = focusPosition + direction;
 
             // check x pos, y up
-            if (intended.x < 0 || intended.x >= data.width || intended.y >= data.height) { OnFailedLeavingGrid?.Invoke(direction); return Vector2Int.zero; }
-            // check y down - are we going back to the inventory?
-            if (intended.y < 0) { OnMoved?.Invoke(direction); return Vector2Int.down; }
+            if (intended.x < 0 || intended.x >= data.width || intended.y < 0 || intended.y >= data.height) { OnFailedLeavingGrid?.Invoke(direction); return Vector2Int.zero; }
 
             // otherwise movement is ok
-            GridTileType tileType = tiles[focusPosition.x, focusPosition.y].GetGridTileType();
-            tiles[focusPosition.x, focusPosition.y].GetComponent<SpriteRenderer>().color = GetTileColor(tileType);
-
             focusPosition = intended;
-            OnMoved?.Invoke(direction);
-            OnNewFocusPosition?.Invoke(intended);
-
-            // todo - this is just temporary to show where we are on the grid
-            // TODO: we are not showin
-            tiles[focusPosition.x, focusPosition.y].GetComponent<SpriteRenderer>().color = gridTileFocusedColor;
+            OnNewFocusedTile?.Invoke(direction, tiles[focusPosition.x, focusPosition.y]);
 
             return Vector2Int.zero;
         }
@@ -256,7 +240,10 @@ namespace PuzzleGrid
         {
             // yes, must first CHECK then SET, because we check incrementally - if we bulldozed straight to 
             // setting, then we might have to "unset" which is kinda complicated.
-            if (!CanPieceBePlaced(p)) return null; 
+            if (!CanPieceBePlaced(p)) {
+                OnPiecePlacementFailure?.Invoke(p);
+                return null; 
+            }
 
             // int connectedTracks = 0;
             int connectedTracks = 0;
@@ -340,9 +327,10 @@ namespace PuzzleGrid
                     }
                 }
             }
+            
             p.GridMode();
             p.transform.parent = transform;
-            SetPieceToFocusPosition(p);
+            OnPiecePlacementSuccess?.Invoke(p);
             LogLinks();
 
             // TODO: check if game won
@@ -360,7 +348,19 @@ namespace PuzzleGrid
 
         private void SetPieceToFocusPosition(Piece p)
         {
-            p.transform.position = tiles[focusPosition.x, focusPosition.y].transform.position;
+            OnNewHover?.Invoke(focusPosition);
+
+            foreach (PieceTile checkPiece in p.GetPieceTiles())
+            {
+                // todo: getunrotatedrelativeoffset means that this function will not properly check rotated tiles
+                Vector2Int checkingPosition = focusPosition + checkPiece.GetUnrotatedRelativeOffset();
+                if (checkingPosition.x < 0 || checkingPosition.x >= tiles.GetLength(0) || checkingPosition.y < 0 || checkingPosition.y >= tiles.GetLength(1)) continue;
+                GridTile tileAtPosition = tiles[checkingPosition.x, checkingPosition.y];
+                if (tileAtPosition.CanSetPieceTile(checkPiece)) OnHoveringTile?.Invoke(tileAtPosition);
+            }
+            
+            p.HoverMode();
+            p.transform.position = GetFocusedGridTile().transform.position;
         }
 
         private bool CanPieceBePlaced(Piece p)
@@ -389,7 +389,7 @@ namespace PuzzleGrid
             // need to remove the rest of the piece tiles
             foreach (PieceTile checkTile in atFocus.GetPiece().GetPieceTiles())
             {
-                if (checkTile == atFocus) continue;
+                if (checkTile == atFocus) continue; // skipped because TryGrabBottomTile removes it already
                 Vector2Int checkingPosition = focusPosition - atFocusOffset + checkTile.GetUnrotatedRelativeOffset();
                 GridTile testing = tiles[checkingPosition.x, checkingPosition.y];
                 if (!testing.RemovePieceTile(checkTile))
@@ -405,15 +405,33 @@ namespace PuzzleGrid
 
             LogLinks();
 
+            OnPieceYoinked?.Invoke(toBeRemoved);
+            toBeRemoved.transform.position = GetFocusedGridTile().transform.position; // todo: should not be manually setting position
+
             // return
             return toBeRemoved.GridMode();
         }
 
         public override void Hover(Piece p)
         {
-            // todo: lock all PieceTiles in p.GetTiles() to grid offset tiles
-            // temporary: just manually set position to focusposition
             SetPieceToFocusPosition(p);
+        }
+
+        public override void FocusGrid()
+        {
+            base.FocusGrid();
+            OnGridFocused?.Invoke(GetFocusedGridTile());
+        }
+
+        public override void UnfocusGrid()
+        {
+            base.UnfocusGrid();
+            OnGridUnfocused?.Invoke(GetFocusedGridTile());
+        }
+
+        private GridTile GetFocusedGridTile()
+        {
+            return tiles[focusPosition.x, focusPosition.y];
         }
     }
 }
