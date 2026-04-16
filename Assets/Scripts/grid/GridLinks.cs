@@ -1,12 +1,11 @@
 using System.Collections.Generic;
 using GamePieces;
-using Unity.Android.Gradle.Manifest;
-using UnityEditor.UI;
 using UnityEngine;
 
 namespace PuzzleGrid
 {
     // TODO: create a merge links function and then also a split links function (this will come a LOT later ... like next week)
+    // todo - need to introduce some method of ordering GridLinks
     public class GridLink
     {
         // list of pieces 
@@ -68,7 +67,27 @@ namespace PuzzleGrid
         }
         public LinkPlacementData GetEndPlacementData()
         {
-            return startLinkReference;
+            return endLinkReference;
+        }
+
+        public bool HasStartData() => startLinkReference == null;
+        public bool HasEndData() => startLinkReference == null;
+        /// <summary>
+        /// gets the sound id of the start link 
+        /// </summary>
+        /// <returns></returns>
+        public int GetStartSoundIDIfExists()
+        {
+            if (HasStartData()) return startLinkReference.GetSoundID();
+            else return -1;
+        }
+        /// <summary>
+        /// returns true if this link has both a start and end link and the sound id of those references matches
+        /// </summary>
+        /// <returns></returns>
+        public bool IsLinkComplete()
+        {
+            return HasStartData() && HasEndData() && (startLinkReference.GetSoundID() == endLinkReference.GetSoundID());
         }
 
     }

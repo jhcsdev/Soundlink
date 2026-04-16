@@ -31,5 +31,7 @@ namespace PuzzleGrid
         {
             return soundID;
         }
+
+        public TrackSound GetTrackSound() => playsSound;
     }
 }
