@@ -1,25 +1,25 @@
-using System;
 using System.Collections.Generic;
 using GamePieces;
-using Unity.VisualScripting;
+using Unity.Android.Gradle.Manifest;
+using UnityEditor.UI;
 using UnityEngine;
 
 namespace PuzzleGrid
 {
-    // TOOD: what I am doing with this? how do I used it
-    // TODO: check the edge case that 
     // TODO: create a merge links function and then also a split links function (this will come a LOT later ... like next week)
-    // TODO: there should also be some kind of link manager
     public class GridLink
     {
         // list of pieces 
         [SerializeField] private List<Piece> pieces = new();
-    
 
-        // add Piece to link    
-        public void AddPiece(Piece piece)
+        private LinkPlacementData startLinkReference;
+        private LinkPlacementData endLinkReference;
+
+        // add Piece to link; returns self  
+        public GridLink AddPiece(Piece piece)
         {
             pieces.Add(piece);
+            return this;
         }
 
         // remove Piece from link.
@@ -38,6 +38,8 @@ namespace PuzzleGrid
         // TODO: delete link?
 
         // TODO: merge links
+        // note here - when merging two links, you need to compare the start / end link references. 
+        // i'd say that if both start + end
 
         // TODO: split links (and then delete if the size is only one)
         // NOTE: there should never be a link with only one Piece in it ...
@@ -47,6 +49,27 @@ namespace PuzzleGrid
         {
             return pieces.Contains(piece);
         } 
+
+        public GridLink SetStartPlacementData(LinkPlacementData data)
+        {
+            startLinkReference = data;
+            return this; 
+        }
+
+        public LinkPlacementData GetStartPlacementData()
+        {
+            return startLinkReference;
+        }
+
+        public GridLink SetEndPlacementData(LinkPlacementData data)
+        {
+            endLinkReference = data;
+            return this;
+        }
+        public LinkPlacementData GetEndPlacementData()
+        {
+            return startLinkReference;
+        }
 
     }
 }

@@ -40,6 +40,8 @@ namespace PuzzleGrid
         {
             return tileType;
         }
+        public bool IsStartTile() => tileType == GridTileType.START;
+        public bool IsEndTile() => tileType == GridTileType.END;
 
         public bool HasPieceTile() => linkedTiles.Count > 0;
 

@@ -7,7 +7,7 @@ using UnityEngine;
 namespace PuzzleGrid
 {
     [Serializable]
-    public class LinkData 
+    public class LinkPlacementData 
     {
         [SerializeField] private Vector2 startPos;
         [SerializeField] private Vector2 endPos;

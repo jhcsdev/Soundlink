@@ -17,5 +17,6 @@ MonoBehaviour:
   linkDatas:
   - startPos: {x: 0, y: 0}
     endPos: {x: 5, y: 5}
+    playsSound: {fileID: 11400000, guid: 7d7f630fb01264a42bc4e7a9229cd792, type: 2}
     soundID: 0
   currentSoundID: 0

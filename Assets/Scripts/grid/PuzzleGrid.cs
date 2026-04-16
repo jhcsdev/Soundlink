@@ -33,6 +33,8 @@ namespace PuzzleGrid
         public UnityAction<Piece> OnPiecePlacementSuccess;
         public UnityAction<Piece> OnPieceYoinked;
         public UnityAction<Piece> OnPieceSentBackToInventory;
+
+        public UnityAction GameWon;
         #endregion
 
         void Awake()
@@ -155,7 +157,6 @@ namespace PuzzleGrid
         }
 
         // determine if Piece exists in GridLinks, return that link if true
-        // TODO: this could actually be a list, since a piece can be contained in multiple GridLinks
         public List<GridLink> GetGridLinks(Piece piece)
         {
             List<GridLink> gridsContainedIn = new();
@@ -210,30 +211,7 @@ namespace PuzzleGrid
 
         public bool CheckIfGameWon()
         {
-            List<Vector2> coveredPositions = new();
-            // iterate through all the possible positions on the board
-            for (int x = 0; x < data.width; x++)
-            {
-                for (int y = 0; y < data.height; y++)
-                {
-                    // if piece at that position, and piece is in a LINK, create vector 2 and add to list
-                    if (tiles[x, y].HasPieceTile()) {
-                        List<PieceTile> pieceTiles = tiles[x, y].GetPieceTiles();
-
-                        foreach(PieceTile pieceTile in pieceTiles)
-                        {
-                            Piece somePiece = pieceTile.GetPiece();
-                            if (GridLinksContainsPiece(somePiece)) {
-                                coveredPositions.Add(new Vector2(x, y));
-                            }
-                        }
-                    }
-                }
-            }
-
-            // now, we have list of Vector2 that is positions covered by linked tiles
-            if (data.CheckIfCovered(coveredPositions)) return true;
-            return false;        
+            return false; // todo
         }
 
         public override Vector2Int? PlaceAtFocusPosition(Piece p)
@@ -245,9 +223,20 @@ namespace PuzzleGrid
                 return null; 
             }
 
-            // int connectedTracks = 0;
-            int connectedTracks = 0;
+            // placing tile down
+            foreach(PieceTile pt in p.GetPieceTiles())
+            {
+                Vector2Int checkingPosition = focusPosition + pt.GetRotatedRelativeOffset();
+                GridTile tileAtPosition = tiles[checkingPosition.x, checkingPosition.y];
+                if (tileAtPosition.IsStartTile())
+                {
+                    // need to create a new type of "link" that is just the start & end
+                }
+                if (!tileAtPosition.TrySetPieceTile(pt)) return null;
+            }
 
+            // update links
+            int connectedTracks = 0;
             foreach(PieceTile checkPiece in p.GetPieceTiles())
             {
                 // limit of 2 connected tracks
@@ -259,10 +248,6 @@ namespace PuzzleGrid
 
                 // get the relative position of this pieceTile
                 Vector2Int checkingPosition = focusPosition + checkPiece.GetRotatedRelativeOffset();
-
-                // set tile BEFORE checking glue ...
-                GridTile tileAtPosition = tiles[checkingPosition.x, checkingPosition.y];
-                if (!tileAtPosition.TrySetPieceTile(checkPiece)) return null;
 
                 // get the glue at this piecetile
                 List<GlueCardinality> pieceTileGlue = checkPiece.GetGlue;
@@ -316,7 +301,7 @@ namespace PuzzleGrid
                                 } else
                                 {
                                     // if neighbor Piece does not belong to link, then create a new one with the two piece
-                                    Debug.Log("Neighbor Piece belongs to link already, creating new link with the pieces ...");
+                                    Debug.Log("Neighbor Piece does not belong to link, creating new link with the pieces ...");
                                     GridLink newLink = CreateNewLink(p, neighborPiece);
                                     gridLinks.Add(newLink);
                                     connectedTracks++;
