@@ -4,8 +4,8 @@ using UnityEngine;
 
 namespace TrackSounds
 {
-    [CreateAssetMenu(fileName = "KickSound", menuName = "Sounds/Kick")]
-    public class KickSound : TrackSound
+    [CreateAssetMenu(fileName = "SnareSound", menuName = "Sounds/Snare")]
+    public class SnareSound : TrackSound
     {
         private static ChuckSubInstance myChuck;
 
@@ -15,40 +15,41 @@ namespace TrackSounds
 
             if (myChuck == null) Debug.Log("There is no Chuck!");
 
-            Debug.Log("Play kick!");
+            Debug.Log("Play snare!");
 
             myChuck.RunCode( string.Format( @"
-            SinOsc kick => ADSR envKick => Gain kickGain => dac;
+            Noise snare => LPF lpf => ADSR envSnare => dac;
 
-            (.05::ms, 10::ms, 0, 10::ms) => envKick.set;
-            2.0 => kickGain.gain;
-            150 => kick.freq;
-            1.0 => float KICK_GAIN;
+            (2::ms, 50::ms, 0, 10::ms) => envSnare.set;
+            1800 => lpf.freq;
+            1.5 => lpf.Q;
+            .7 => float SNARE_GAIN;
 
             60 => float BPM;
             (60.0 / BPM)::second => dur beat_dur;
 
-            fun void playKick(float beat_note) {{
+            // play snare sound for given beat duration
+            fun void playSnare(float beat_note) {{
                 // turn kick on
-                KICK_GAIN => kick.gain;
+                SNARE_GAIN => snare.gain;
                 
                 // calculate hold and release times
                 beat_note * beat_dur => dur total_time;
-                envKick.releaseTime() => dur release_time;
+                envSnare.releaseTime() => dur release_time;
                 total_time - release_time => dur hold_time;
                 
                 // play sound
-                envKick.keyOn();
+                envSnare.keyOn();
                 hold_time => now;
                 
-                envKick.keyOff();
+                envSnare.keyOff();
                 release_time => now;
                 
                 // finally, turn off
-                0 => kick.gain;
+                0 => snare.gain;
             }}
 
-            playKick(1.0);
+            playSnare(1.0);
             "));
         }
     }

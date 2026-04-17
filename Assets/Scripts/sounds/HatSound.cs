@@ -1,11 +1,10 @@
-
 using ChuckChuckChuck;
 using UnityEngine;
 
 namespace TrackSounds
 {
-    [CreateAssetMenu(fileName = "KickSound", menuName = "Sounds/Kick")]
-    public class KickSound : TrackSound
+    [CreateAssetMenu(fileName = "HatSound", menuName = "Sounds/Hat")]
+    public class HatSound : TrackSound
     {
         private static ChuckSubInstance myChuck;
 
@@ -15,40 +14,41 @@ namespace TrackSounds
 
             if (myChuck == null) Debug.Log("There is no Chuck!");
 
-            Debug.Log("Play kick!");
+            Debug.Log("Play hat!");
 
             myChuck.RunCode( string.Format( @"
-            SinOsc kick => ADSR envKick => Gain kickGain => dac;
+            Noise hat => HPF hpf => ADSR envHat => dac;
 
-            (.05::ms, 10::ms, 0, 10::ms) => envKick.set;
-            2.0 => kickGain.gain;
-            150 => kick.freq;
-            1.0 => float KICK_GAIN;
+            (1::ms, 20::ms, 0, 10::ms) => envHat.set;
+            8000 => hpf.freq;
+            8 => hpf.Q;
+            .45 => float HAT_GAIN;
 
             60 => float BPM;
             (60.0 / BPM)::second => dur beat_dur;
 
-            fun void playKick(float beat_note) {{
-                // turn kick on
-                KICK_GAIN => kick.gain;
+            fun void playHat(float beat_note) {{
+                // turn on 
+                HAT_GAIN => hat.gain;
                 
                 // calculate hold and release times
                 beat_note * beat_dur => dur total_time;
-                envKick.releaseTime() => dur release_time;
+                envHat.releaseTime() => dur release_time;
                 total_time - release_time => dur hold_time;
                 
                 // play sound
-                envKick.keyOn();
+                envHat.keyOn();
                 hold_time => now;
                 
-                envKick.keyOff();
+                envHat.keyOff();
                 release_time => now;
                 
-                // finally, turn off
-                0 => kick.gain;
+                // turn off
+                0 => hat.gain;
             }}
 
-            playKick(1.0);
+            0 => hat.gain;
+            playHat(1.0);
             "));
         }
     }
