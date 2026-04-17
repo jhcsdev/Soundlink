@@ -40,6 +40,10 @@ namespace PuzzleGrid
                     soundID = link.GetSoundID();
                     return GridTileType.END;
                 }
+
+                // play the sound
+                Debug.Log("We are playing a sound");
+                link.GetSound().PlaySound();
             }
 
             // otherwise, just basic
