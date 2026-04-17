@@ -174,7 +174,7 @@ namespace PuzzleGrid
                                             continue;
                                         }
                                         Debug.Log("Neighbor Piece belongs to link already, adding current piece to that link ...");
-                                        existingLink.AddPiece(p, neighborPiece);
+                                        UpdateLink(existingLink, p, neighborPiece);
                                         continue;
                                     }
                                 } else
@@ -306,6 +306,11 @@ namespace PuzzleGrid
         public void AddLinkToKnownLinks(GridLink what)
         {
             gridLinks.Add(what);
+            if (what.HasStartData()) OnAStartLinkUpdated?.Invoke(what);
+        }
+        public void UpdateLink(GridLink what, Piece with, Piece neighborPiece)
+        {
+            what.AddPiece(with, neighborPiece);
             if (what.HasStartData()) OnAStartLinkUpdated?.Invoke(what);
         }
         #endregion

@@ -85,13 +85,13 @@ namespace GridLinks
 
                     while(scheduleIndexTracker[key] < knownLinks[key].scheduledBeats.Count && knownLinks[key].scheduledBeats[scheduleIndexTracker[key]] <= curBeat)
                     {
+                        if (knownLinks[key].scheduledBeats[scheduleIndexTracker[key]] == curBeat) knownLinks[key].link.IndexPlaySound(scheduleIndexTracker[key]);
+
                         scheduleIndexTracker[key] += 1;
                         if(!knownLinks[key].link.HasStartData()) { 
                             Debug.LogWarning("beware: there is a grid link that made it to the scheduler without having a start link!"); 
                             break; 
                         } 
-
-                        knownLinks[key].link.IndexPlaySound(scheduleIndexTracker[key]);
                     }
                 }
 
