@@ -181,7 +181,7 @@ namespace Inventory
         {
             if (piecesLookup == null)
             {
-                Debug.Log("Inventory not initialized.");
+                Debug.Log("Error: inventory not initialized.");
                 return;
             }
 

@@ -102,8 +102,8 @@ namespace PuzzleGrid
             return endLinkReference;
         }
 
-        public bool HasStartData() => startLinkReference == null;
-        public bool HasEndData() => endLinkReference == null;
+        public bool HasStartData() => startLinkReference != null;
+        public bool HasEndData() => endLinkReference != null;
         /// <summary>
         /// gets the sound id of the start link 
         /// </summary>

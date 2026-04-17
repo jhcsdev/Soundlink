@@ -44,10 +44,8 @@ namespace PuzzleGrid.Visuals
 
         void UpdateSprites()
         {
-            Debug.Log("Updating sprites");
             // request the tiles the gridtile owns
             List<PieceTile> pieceTiles = tile.GetPieceTiles();
-            Debug.Log("piece tiles: " + pieceTiles.Count);
 
             // set srBase to the first tile's representation
             if (pieceTiles == null || pieceTiles.Count <= 0) { 

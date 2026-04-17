@@ -36,7 +36,6 @@ namespace PuzzleGrid
         }
         public void SetTileType(GridTileType t) 
         {
-            Debug.Log($"Setting tile type {t}");
             visuals.TileTypeChanged(t); // todo - maybe not the best idea to have as a straight function
             tileType = t;
         }
@@ -70,9 +69,6 @@ namespace PuzzleGrid
         public bool TrySetPieceTile(PieceTile tile)
         {
             if (!CanSetPieceTile(tile)) return false;
-
-            Debug.Log("setting piece tile");
-
             InstantAddPieceTile(tile);
             Rerender();
             return true;
@@ -84,12 +80,10 @@ namespace PuzzleGrid
 
         public bool RemovePieceTile(PieceTile tile)
         {
-            Debug.Log("REMOVING TILE");
             for (int i = linkedTiles.Count - 1; i >= 0; i--)
             {
                 if (linkedTiles[i] != tile) continue;
                 linkedTiles.RemoveAt(i);
-                Debug.Log("RERENDERING!!");
                 Rerender();
                 return true;
             }

@@ -37,6 +37,8 @@ namespace GridLinks
 
         void OnEnable()
         {
+            // TODO: I think there might be an error here ...
+            // it is getting called, but then nothing is happening ..
             puzzleGrid.OnAStartLinkUpdated += ScheduleSingleLink;
         }
         void OnDisable()
@@ -59,7 +61,12 @@ namespace GridLinks
 
             while(soundPlaybackEnabled)
             {
-                if (!DoesSchedulerHaveAnyScheduledBeat()) yield return untilSchedulerHasSounds; // wait until there's actually something to play
+                Debug.Log("soundplaybackenabled");
+
+                if (!DoesSchedulerHaveAnyScheduledBeat()) {
+                    Debug.Log("No sounds in scheduler!");
+                    yield return untilSchedulerHasSounds; // wait until there's actually something to play
+                }
 
                 // check if curBeat exceeds loop; if it does, restart the loop
                 if (curBeat > beatsInLoop) { 
@@ -70,6 +77,8 @@ namespace GridLinks
                 // shift up to the maximum beat we can for each known beat
                 foreach (var key in knownLinks.Keys)
                 {
+                    Debug.Log("We have a key!");
+
                     if (!scheduleIndexTracker.ContainsKey(key)) scheduleIndexTracker[key] = 0;
 
                     while(scheduleIndexTracker[key] < knownLinks[key].scheduledBeats.Count && knownLinks[key].scheduledBeats[scheduleIndexTracker[key]] <= curBeat)
@@ -91,7 +100,12 @@ namespace GridLinks
 
         private bool DoesSchedulerHaveAnyScheduledBeat()
         {
-            return knownLinks.Values.Any((value) => value.scheduledBeats.Count != 0);
+            foreach (int key in knownLinks.Keys)
+            {
+                Debug.Log($"examining key {key}; there are {knownLinks[key].scheduledBeats.Count} beats scheduled!");
+                if (knownLinks[key].scheduledBeats.Count > 0) return true;
+            }
+            return false;
         }
 
         private void ParseLinks() // turns the list of grid-links into a list of "parsable" objects that are easier to play sound with 
