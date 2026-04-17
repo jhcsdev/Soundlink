@@ -13,6 +13,7 @@ namespace TrackSounds
 
         public override void PlaySound()
         {
+<<<<<<< HEAD
             if (myChuck == null)
             {
                 Debug.Log("Creating Object");
@@ -58,6 +59,10 @@ namespace TrackSounds
 
             playClap(1.0);
             "));
+=======
+
+            throw new System.NotImplementedException();
+>>>>>>> main
         }
     }
 }
