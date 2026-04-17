@@ -15,7 +15,7 @@ namespace TrackSounds
 
             if (myChuck == null) Debug.Log("There is no Chuck!");
 
-            Debug.Log("We are going to play the kick!");
+            Debug.Log("Play kick!");
 
             myChuck.RunCode( string.Format( @"
             Noise clap => BPF filter => ADSR envClap => Gain clapGain => dac;

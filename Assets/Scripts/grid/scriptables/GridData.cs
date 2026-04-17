@@ -20,8 +20,6 @@ namespace PuzzleGrid
         // get all the link info based on position!
         public GridTileType GetTileInfo(int x, int y, out int soundID) 
         {             
-            // Debug.Log("X: " + x);
-            // Debug.Log("Y: " + y);
             // check if matches any start or end tile
             foreach(LinkPlacementData link in linkDatas)
             {
@@ -40,10 +38,6 @@ namespace PuzzleGrid
                     soundID = link.GetSoundID();
                     return GridTileType.END;
                 }
-
-                // play the sound
-                Debug.Log("We are playing a sound");
-                link.GetTrackSound().PlaySound();
             }
 
             // otherwise, just basic

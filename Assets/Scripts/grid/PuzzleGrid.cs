@@ -192,8 +192,7 @@ namespace PuzzleGrid
             OnPiecePlacementSuccess?.Invoke(p);
             LogLinks();
 
-            // TODO: check if game won
-            // for now, this can just be a debug.log i guess ..
+            // TODO: add game winning scene!
             if (CheckIfGameWon()) {
                 Debug.Log("YOU HAVE WON THE GAME!");
             }
@@ -423,7 +422,6 @@ namespace PuzzleGrid
         // TODO: delete the visuals and just do logging stuff 
         public void LogLinks()
         {
-            Debug.Log("Logging Links ... ");
             Debug.Log($"{gridLinks.Count} links exist");
 
             for (int i = 0; i < gridLinks.Count; i++)
