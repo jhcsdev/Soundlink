@@ -61,8 +61,6 @@ namespace GridLinks
 
             while(soundPlaybackEnabled)
             {
-                Debug.Log("soundplaybackenabled");
-
                 if (!DoesSchedulerHaveAnyScheduledBeat()) {
                     Debug.Log("No sounds in scheduler!");
                     yield return untilSchedulerHasSounds; // wait until there's actually something to play
@@ -71,25 +69,29 @@ namespace GridLinks
                 // check if curBeat exceeds loop; if it does, restart the loop
                 if (curBeat > beatsInLoop) { 
                     curBeat = 1; 
-                    foreach(var key in scheduleIndexTracker.Keys) scheduleIndexTracker[key] = 0; 
+                    foreach(var key in scheduleIndexTracker.Keys.ToList()) 
+                    {
+                        Debug.Log($"reset schedule of {key}"); 
+                        scheduleIndexTracker[key] = 0;
+                    }
                 }
+
+                Debug.Log($"Beat: {curBeat}");
 
                 // shift up to the maximum beat we can for each known beat
                 foreach (var key in knownLinks.Keys)
                 {
-                    Debug.Log("We have a key!");
-
                     if (!scheduleIndexTracker.ContainsKey(key)) scheduleIndexTracker[key] = 0;
 
                     while(scheduleIndexTracker[key] < knownLinks[key].scheduledBeats.Count && knownLinks[key].scheduledBeats[scheduleIndexTracker[key]] <= curBeat)
                     {
+                        if (knownLinks[key].scheduledBeats[scheduleIndexTracker[key]] == curBeat) knownLinks[key].link.IndexPlaySound(scheduleIndexTracker[key]);
+
                         scheduleIndexTracker[key] += 1;
                         if(!knownLinks[key].link.HasStartData()) { 
                             Debug.LogWarning("beware: there is a grid link that made it to the scheduler without having a start link!"); 
                             break; 
                         } 
-
-                        knownLinks[key].link.IndexPlaySound(scheduleIndexTracker[key]);
                     }
                 }
 
@@ -116,6 +118,7 @@ namespace GridLinks
         private void ScheduleSingleLink(GridLink which)
         {
             int soundId = which.GetStartSoundIDIfExists();
+            Debug.Log($"Schedule Single Link for ID: {soundId}");
             if (soundId == -1) { 
                 Debug.LogError($"Scheduled a link that is not connected to any start sound: IsStartLink {which.HasStartData()}, IsEndLink {which.HasEndData()}"); 
                 return;
@@ -147,9 +150,11 @@ namespace GridLinks
             int curBeat = 1;
             foreach (Piece p in which.GetPieces())
             {
-                knownLinks[soundId].scheduledBeats.Add(curBeat);
-
-                Debug.Log($"scheduling sound id {soundId} at {curBeat}");
+                if (!p.IsSilentPiece()) // only schedule sound if it's not a silent piece
+                {
+                    Debug.Log($"scheduling sound id {soundId} at {curBeat}");
+                    knownLinks[soundId].scheduledBeats.Add(curBeat);
+                }
 
                 curBeat += p.GetPieceTiles().Count;
             }
