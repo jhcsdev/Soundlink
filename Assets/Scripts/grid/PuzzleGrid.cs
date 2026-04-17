@@ -294,11 +294,8 @@ namespace PuzzleGrid
         }
         public GridLink CreateStartLink(Piece piece, GridTile startTile)
         {
-            Debug.Log($"Placement Data: {startTile.GetLinkPlacementData()}");
             GridLink newLink = new(); 
-            newLink.AddPiece(piece, null).SetStartPlacementData(startTile.GetLinkPlacementData());
-            OnAStartLinkUpdated?.Invoke(newLink);
-            return newLink;
+            return newLink.AddPiece(piece, null).SetStartPlacementData(startTile.GetLinkPlacementData());
         }
         public GridLink CreateEndLink(Piece piece, GridTile endTile)
         {
@@ -437,11 +434,11 @@ namespace PuzzleGrid
 
                 foreach (Piece piece in gridLinks[i].GetPieces())
                 {
-                    Debug.Log($"  Piece {piece.name} has {piece.GetPieceTiles().Count} piecetiles");
+                    // Debug.Log($"  Piece {piece.name} has {piece.GetPieceTiles().Count} piecetiles");
                     foreach (PieceTile pt in piece.GetPieceTiles())
                     {
                         Vector2Int pos = GetPositionOfPieceTile(pt);
-                        Debug.Log($"    PieceTile {pt.name} found at pos {pos}");
+                        // Debug.Log($"    PieceTile {pt.name} found at pos {pos}");
                     }
                 }
             }
