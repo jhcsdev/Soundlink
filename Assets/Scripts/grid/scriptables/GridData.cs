@@ -18,10 +18,8 @@ namespace PuzzleGrid
         public int currentSoundID = 0;
 
         // get all the link info based on position!
-        public GridTileType GetTileInfo(int x, int y, out int soundID) 
+        public GridTileType GetTileInfo(int x, int y, out LinkPlacementData placementData) 
         {             
-            // Debug.Log("X: " + x);
-            // Debug.Log("Y: " + y);
             // check if matches any start or end tile
             foreach(LinkPlacementData link in linkDatas)
             {
@@ -31,19 +29,19 @@ namespace PuzzleGrid
                 // if either start or end, return the SOUNDID!
                 if (x == startPos.x && y == startPos.y)
                 {
-                    soundID = link.GetSoundID();
+                    placementData = link;
                     return GridTileType.START;
                 }
 
                 if (x == endPos.x && y == endPos.y)
                 {
-                    soundID = link.GetSoundID();
+                    placementData = link;
                     return GridTileType.END;
                 }
             }
 
             // otherwise, just basic
-            soundID = -1;
+            placementData = null;
             return GridTileType.BASIC;
         }
     }
