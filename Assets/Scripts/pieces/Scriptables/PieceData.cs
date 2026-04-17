@@ -8,5 +8,6 @@ namespace GamePieces
     public class PieceData : ScriptableObject
     {
         public List<PieceTileData> tiles = new();
+        public bool isSilentPiece;
     }
 }

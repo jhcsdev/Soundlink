@@ -170,7 +170,7 @@ namespace PuzzleGrid
                                             continue;
                                         }
                                         Debug.Log("Neighbor Piece belongs to link already, adding current piece to that link ...");
-                                        existingLink.AddPiece(p);
+                                        existingLink.AddPiece(p, neighborPiece);
                                         continue;
                                     }
                                 } else
@@ -285,19 +285,19 @@ namespace PuzzleGrid
         public GridLink CreateNewLink(Piece pieceOne, Piece pieceTwo)
         {
             GridLink newLink = new();
-            newLink.AddPiece(pieceOne);
-            newLink.AddPiece(pieceTwo);
+            newLink.AddPiece(pieceOne, null);
+            newLink.AddPiece(pieceTwo, pieceOne);
             return newLink;
         }
         public GridLink CreateStartLink(Piece piece, GridTile startTile)
         {
             GridLink newLink = new(); 
-            return newLink.AddPiece(piece).SetStartPlacementData(startTile.GetLinkPlacementData());
+            return newLink.AddPiece(piece, null).SetStartPlacementData(startTile.GetLinkPlacementData());
         }
         public GridLink CreateEndLink(Piece piece, GridTile endTile)
         {
             GridLink newLink = new(); 
-            return newLink.AddPiece(piece).SetEndPlacementData(endTile.GetLinkPlacementData());
+            return newLink.AddPiece(piece, null).SetEndPlacementData(endTile.GetLinkPlacementData());
         }
 
         public void AddLinkToKnownLinks(GridLink what)

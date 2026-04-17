@@ -37,3 +37,4 @@ MonoBehaviour:
     glue: 020000000000000001000000
     tileType: 4
     spriteDirection: 1
+  isSilentPiece: 0

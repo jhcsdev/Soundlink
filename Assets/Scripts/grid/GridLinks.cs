@@ -14,11 +14,34 @@ namespace PuzzleGrid
         private LinkPlacementData startLinkReference;
         private LinkPlacementData endLinkReference;
 
-        // add Piece to link; returns self  
-        public GridLink AddPiece(Piece piece)
+        // 
+        // adds piece to the proper order based on a set of conditions - if start, add after basedOn, if end, add before basedOn, todo: if complete, don't add (?)
+        /// <summary>
+        /// add Piece to link in an ordered position
+        /// </summary>
+        /// <param name="toAdd">the piece to add to the link</param>
+        /// <param name="basedOn" (nullable)>the piece that toAdd is connected to; will be used to base insertion position</param>
+        /// <returns>this if basedOn is null or successfully added piece; null if could not find basedOn</returns>
+        public GridLink AddPiece(Piece toAdd, Piece basedOn)
         {
-            pieces.Add(piece);
-            return this;
+            if (basedOn == null) { 
+                if (pieces.Count == 0) pieces.Add(toAdd); 
+                else Debug.LogWarning("Tried adding a piece to a link without any 'basedOn' parameter, but there are existing pieces in the link!");
+                return this;
+            }
+
+            // add according to basedOn
+            for (int i = 0; i < pieces.Count; i++)
+            {
+                if (pieces[i] == basedOn)
+                {
+                    if (HasEndData()) { pieces.Insert(i, toAdd);  } // add BEFORE basedOn
+                    else pieces.Insert(i+1, toAdd); // add AFTER basedOn
+
+                    return this;
+                }
+            }
+            return null;
         }
 
         // remove Piece from link.
@@ -36,7 +59,16 @@ namespace PuzzleGrid
 
         // TODO: delete link?
 
-        // TODO: merge links
+        /// <summary>
+        /// merge links
+        /// </summary>
+        /// <param name="other"></param>
+        /// <returns></returns>
+        public GridLink MergeLink(GridLink other)
+        {
+            // todo - merge links!
+            return this;
+        }
         // note here - when merging two links, you need to compare the start / end link references. 
         // i'd say that if both start + end
 
@@ -71,7 +103,7 @@ namespace PuzzleGrid
         }
 
         public bool HasStartData() => startLinkReference == null;
-        public bool HasEndData() => startLinkReference == null;
+        public bool HasEndData() => endLinkReference == null;
         /// <summary>
         /// gets the sound id of the start link 
         /// </summary>
@@ -88,6 +120,15 @@ namespace PuzzleGrid
         public bool IsLinkComplete()
         {
             return HasStartData() && HasEndData() && (startLinkReference.GetSoundID() == endLinkReference.GetSoundID());
+        }
+
+        public void IndexPlaySound(int index)
+        {
+            if (index < 0 || index > pieces.Count) { Debug.LogWarning($"Link passed index {index}, which is out of bounds for piece count {pieces.Count}"); return; }
+
+
+
+            GetStartPlacementData().GetTrackSound().PlaySound();
         }
 
     }

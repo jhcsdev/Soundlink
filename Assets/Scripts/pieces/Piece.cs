@@ -116,6 +116,8 @@ namespace GamePieces
             }
             transform.localScale = Vector2.one * 0.8f;
         }
+
+        public bool IsSilentPiece() => data.isSilentPiece;
     }
 
     public enum PieceState

@@ -41,6 +41,7 @@ public class PieceEditorWindow : EditorWindow
 
     private bool dragAdding;
     private bool isDragging;
+    private bool isSilentPiece;
     #endregion
 
     #region open functions
@@ -111,6 +112,8 @@ public class PieceEditorWindow : EditorWindow
 
         SerializedObject so = new(targetPiece);
         SerializedProperty tilesProp = so.FindProperty("tiles");
+        SerializedProperty silentPro = so.FindProperty("isSilentPiece");
+        silentPro.boolValue = isSilentPiece;
         tilesProp.ClearArray();
 
         var sorted = activeCells.OrderBy(c => c.Key.x).ThenBy(c => c.Key.y).ToList();
@@ -340,6 +343,8 @@ public class PieceEditorWindow : EditorWindow
             Repaint();
         }
 
+        GUILayout.FlexibleSpace();
+        isSilentPiece = GUILayout.Toggle(isSilentPiece, "Silent piece");
         GUILayout.FlexibleSpace();
 
         GUI.enabled = targetPiece != null && activeCells.Count > 0;
