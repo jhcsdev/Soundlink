@@ -8,7 +8,6 @@ namespace PuzzleGrid
     /// <summary>
     /// models a grid with pieces. grid coordinates go 0,0 up from the bottom left. of the grid.
     /// </summary>
-    [RequireComponent(typeof(PuzzleGridVisuals))]
     public class PuzzleGrid : PlayerInteractableGrid
     {
         [SerializeField] private Vector2 gridBottomLeftPosition = Vector2.zero;
@@ -59,9 +58,14 @@ namespace PuzzleGrid
                     GridTile gridTile = tileObj.AddComponent<GridTile>();
 
                     // grab and set color based on tiletype
-                    GridTileType tileType = data.GetTileInfo(x, y, out int soundID);
-                    if (tileType == GridTileType.START) totalTracksInGrid += 1;
+                    GridTileType tileType = data.GetTileInfo(x, y, out LinkPlacementData placementData);
                     gridTile.SetTileType(tileType);
+                    if (tileType == GridTileType.START)
+                    {
+                        totalTracksInGrid += 1;
+                        gridTile.SetLinkPlacementData(placementData);
+                    }
+
                     tiles[x,y] = gridTile;
 
                     OnGridTileInitialize?.Invoke(gridTile, tileType, pos);
@@ -290,8 +294,11 @@ namespace PuzzleGrid
         }
         public GridLink CreateStartLink(Piece piece, GridTile startTile)
         {
+            Debug.Log($"Placement Data: {startTile.GetLinkPlacementData()}");
             GridLink newLink = new(); 
-            return newLink.AddPiece(piece).SetStartPlacementData(startTile.GetLinkPlacementData());
+            newLink.AddPiece(piece).SetStartPlacementData(startTile.GetLinkPlacementData());
+            OnAStartLinkUpdated?.Invoke(newLink);
+            return newLink;
         }
         public GridLink CreateEndLink(Piece piece, GridTile endTile)
         {
