@@ -7,7 +7,7 @@ using UnityEngine;
 namespace PuzzleGrid
 {
     [Serializable]
-    public class LinkData 
+    public class LinkPlacementData 
     {
         [SerializeField] private Vector2 startPos;
         [SerializeField] private Vector2 endPos;
@@ -31,5 +31,7 @@ namespace PuzzleGrid
         {
             return soundID;
         }
+
+        public TrackSound GetTrackSound() => playsSound;
     }
 }

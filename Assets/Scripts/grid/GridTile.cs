@@ -23,13 +23,7 @@ namespace PuzzleGrid
 
         [SerializeField] private List<PieceTile> linkedTiles = new(2);
         private GridTileType tileType;
-        public void SetTileType(GridTileType t) 
-        {
-            Debug.Log($"Setting tile type {t}");
-            visuals.TileTypeChanged(t); // todo - maybe not the best idea to have as a straight function
-            tileType = t;
-        }
-
+        private LinkPlacementData goalLinkData;
 
         void Awake()
         {
@@ -40,7 +34,24 @@ namespace PuzzleGrid
         {
             return tileType;
         }
-
+        public void SetTileType(GridTileType t) 
+        {
+            Debug.Log($"Setting tile type {t}");
+            visuals.TileTypeChanged(t); // todo - maybe not the best idea to have as a straight function
+            tileType = t;
+        }
+        public bool IsStartTile() => tileType == GridTileType.START;
+        public bool IsEndTile() => tileType == GridTileType.END;
+        public LinkPlacementData GetLinkPlacementData()
+        {
+            if (!IsStartTile() && !IsEndTile()) return null;
+            return goalLinkData;
+        }
+        public void SetLinkPlacementData(LinkPlacementData data)
+        {
+            if (!IsStartTile() && !IsEndTile()) { Debug.LogWarning($"Warning: Tried to set link placement data on {name} but this tile is of type: {tileType}"); return; }
+            goalLinkData = data;
+        }
         public bool HasPieceTile() => linkedTiles.Count > 0;
 
         public List<PieceTile> GetPieceTiles()
