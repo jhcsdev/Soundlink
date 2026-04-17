@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using GamePieces;
 using PuzzleGrid;
 using UnityEngine;
@@ -90,7 +89,7 @@ namespace GridLinks
                             break; 
                         } 
 
-                        knownLinks[key].link.GetStartPlacementData().GetTrackSound().PlaySound();
+                        knownLinks[key].link.IndexPlaySound(scheduleIndexTracker[key]);
                     }
                 }
 
