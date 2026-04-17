@@ -7,12 +7,15 @@ namespace ChuckChuckChuck
     {
         public static ChuckManager Instance;
 
-        [SerializeField] public ChuckMainInstance mainInstance;
+        [SerializeField] public ChuckMainInstance chuckMainInstance;
+        [SerializeField] public ChuckSubInstance chuckSubInstance;
 
         void Awake()
         {
             if (Instance == null) Instance = this;
             else Destroy(gameObject);
+
+            // TODO: here ... define functions that are going to be shared across the sounds and stuff like that.
         }
 
         void Start()

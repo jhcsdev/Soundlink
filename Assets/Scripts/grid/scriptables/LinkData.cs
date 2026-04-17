@@ -32,13 +32,6 @@ namespace PuzzleGrid
             return soundID;
         }
 
-<<<<<<< HEAD
-        public TrackSound GetSound()
-        {
-            return playsSound;
-        }
-=======
         public TrackSound GetTrackSound() => playsSound;
->>>>>>> main
     }
 }

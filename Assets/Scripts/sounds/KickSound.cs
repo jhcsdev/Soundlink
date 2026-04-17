@@ -9,20 +9,14 @@ namespace TrackSounds
     {
         private static ChuckSubInstance myChuck;
 
-        // TODO: there should be some way to define the function globally, no? 
-
         public override void PlaySound()
         {
-<<<<<<< HEAD
-            if (myChuck == null)
-            {
-                Debug.Log("Creating Object");
-                GameObject chuckMain = GameObject.Find("TheChuck");
-                myChuck = chuckMain.AddComponent<ChuckSubInstance>();
-                myChuck.chuckMainInstance = ChuckManager.Instance.mainInstance;
-            }
+            myChuck = ChuckManager.Instance.chuckSubInstance;
 
-            Debug.Log("Play Kick!");
+            if (myChuck == null) Debug.Log("There is no Chuck!");
+
+            Debug.Log("We are going to play the kick!");
+
             myChuck.RunCode( string.Format( @"
             Noise clap => BPF filter => ADSR envClap => Gain clapGain => dac;
 
@@ -59,10 +53,6 @@ namespace TrackSounds
 
             playClap(1.0);
             "));
-=======
-
-            throw new System.NotImplementedException();
->>>>>>> main
         }
     }
 }
