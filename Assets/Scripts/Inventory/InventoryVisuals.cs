@@ -53,6 +53,9 @@ namespace Inventory
         [SerializeField, Tooltip("vice-versa to above")] 
         private float pointerDisappearAtRatioTime = 0.3f;
 
+        [Header("Scroll animation")]
+        [SerializeField] private float scrollAnimationTime = 0.15f;
+
         [Header("pieces")]
         [SerializeField] float pointerScaleDownTime = 0.2f;
 
@@ -61,6 +64,7 @@ namespace Inventory
         #region objs / textures
         [Header("Objects")]
         [SerializeField] private RectTransform inventoryCanvas;
+        [SerializeField] private RectTransform inventoryRows;
         [SerializeField] private RectTransform pointerObject; 
         private Image pointerImageComponent;
         #endregion
@@ -78,6 +82,7 @@ namespace Inventory
         Sequence activeFocusObjectMovementSequence;
         Sequence activeFailedMovement;
         Sequence takingPieceOut;
+        Sequence activeScrollSequence;
         #endregion
         #endregion
 
@@ -175,14 +180,12 @@ namespace Inventory
         /// <param name="newFocus"></param>
         void FocusLocationChanged(Vector2Int direction, Vector2Int newFocus)
         {
-            // Find the target object to focus
+            // move the pointer
             if (newFocus.y >= _rowObjects.Count) { Debug.LogWarning($"Tried to move to: {newFocus}, but there are only {_rowObjects.Count} rows!"); return; }
-            
-            if (newFocus.x >= _rowObjects[newFocus.y].childCount) { Debug.LogWarning($"Tried to move to: {newFocus}; the row exists, but it only has {_rowObjects[newFocus.y].childCount} children"); return;}
+            if (newFocus.x >= _rowObjects[newFocus.y].childCount) { Debug.LogWarning($"Tried to move to: {newFocus}; the row exists, but it only has {_rowObjects[newFocus.y].childCount} children"); return; }
 
             RectTransform targetPos = (RectTransform)_rowObjects[newFocus.y].GetChild(newFocus.x);
 
-            // complete an existing move tween (this will create some jitter instantly, but i believe that to be okay?)
             if (activeFocusObjectMovementSequence != null) activeFocusObjectMovementSequence.Complete();
 
             pointerObject.localScale = Vector3.one * pointerNormalSize;
@@ -193,8 +196,28 @@ namespace Inventory
                 ).Join(
                     pointerObject.DOPunchScale(new(-pointerSquishTo * Mathf.Abs(direction.y), -pointerSquishTo * Mathf.Abs(direction.x), 1), pointerMoveTime)
                 ).Append(
-                        pointerObject.DOScale(Vector3.one * pointerNormalSize, 0)
+                    pointerObject.DOScale(Vector3.one * pointerNormalSize, 0)
                 ).Play();
+
+            // vertical scroll the inventory rows if necessary 
+            int totalRows = _rowObjects.Count;
+            if (totalRows > maxRowsDisplayedAtOnce)
+            {
+                float rowHeight = inventoryCanvas.rect.height / maxRowsDisplayedAtOnce;
+
+                float targetScrollY = Mathf.Clamp(
+                    (newFocus.y - (maxRowsDisplayedAtOnce - 1) * 0.5f) * rowHeight,
+                    0f,
+                    (totalRows - maxRowsDisplayedAtOnce) * rowHeight
+                );
+
+                activeScrollSequence?.Kill();
+                activeScrollSequence = DOTween.Sequence()
+                    .Append(
+                        inventoryRows.DOAnchorPosY(targetScrollY, scrollAnimationTime)
+                            .SetEase(Ease.OutQuad)
+                    ).Play();
+            }
         }
 
         void FocusLocationFailedChange(Vector2Int directionFailed)
@@ -237,7 +260,7 @@ namespace Inventory
             {
                 GameObject row = new($"Row {_rowObjects.Count}", typeof(RectTransform));
                 RectTransform rowTransform = row.GetComponent<RectTransform>();
-                rowTransform.SetParent(inventoryCanvas, false);
+                rowTransform.SetParent(inventoryRows, false);
 
                 // set the position of the row based on the y axis of spot; it should be perfectly halfway on inventory canvas and some amount down
                 float anchorY = 1f - (spot.y + 0.5f) / maxRowsDisplayedAtOnce;

@@ -669,6 +669,42 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!1 &549283887
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 549283888}
+  m_Layer: 5
+  m_Name: InventoryRows
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &549283888
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 549283887}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1915616669}
+  m_Father: {fileID: 1944012035}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &619394800
 GameObject:
   m_ObjectHideFlags: 0
@@ -1655,8 +1691,10 @@ MonoBehaviour:
   pointerFailedMovementColor: {r: 0.9, g: 0.5, b: 0.5, a: 1}
   pointerAppearAtRatioTime: 0.7
   pointerDisappearAtRatioTime: 0.3
+  scrollAnimationTime: 0.15
   pointerScaleDownTime: 0.2
   inventoryCanvas: {fileID: 1944012035}
+  inventoryRows: {fileID: 549283888}
   pointerObject: {fileID: 1915616669}
 --- !u!1 &1771607250
 GameObject:
@@ -1746,8 +1784,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b620929824064f23849dd7cddc2afe5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GridLinks.LinkPlaybackManager
-  bpm: 60
-  beatsInLoop: 8
+  bpm: 120
+  beatsInLoop: 16
   soundPlaybackEnabled: 1
 --- !u!1 &1915616668
 GameObject:
@@ -1779,7 +1817,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1944012035}
+  m_Father: {fileID: 549283888}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -1854,7 +1892,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1915616669}
+  - {fileID: 549283888}
   m_Father: {fileID: 244024416}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.8, y: 0}
