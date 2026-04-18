@@ -116,7 +116,7 @@ namespace Inventory
             direction.y *= -1;
 
             // going back to the game grid
-            if ((focusPosition + direction).x < 0) return Vector2Int.up;
+            // if ((focusPosition + direction).x < 0) return Vector2Int.up;
 
             int maxY = 0;
             foreach (var key in piecesLookup.Keys)
