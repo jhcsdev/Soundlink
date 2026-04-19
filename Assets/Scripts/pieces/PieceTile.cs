@@ -10,6 +10,7 @@ namespace GamePieces
         private TileSpriteDirection spriteDirection;
         private Piece piece;
         private Vector2Int relativeOffset;
+        private List<GlueCardinality> glue;
 
         private PieceTileData ptd;
         private bool initialized = false;
@@ -22,6 +23,7 @@ namespace GamePieces
             piece = parent;
             type = ptd.type;
             initialized = true;
+            glue = ptd.glue;
             return this;
         }
         private bool IsInitialized() { if (initialized) return true; Debug.Log(name + " not initialized!"); return false; }
@@ -51,7 +53,7 @@ namespace GamePieces
         #endregion
 
         #region getters
-        public List<GlueCardinality> GetGlue => ptd.glue;
+        public List<GlueCardinality> GetGlue => glue;
         public PieceTileType GetTileType() => type;
         public Piece GetPiece() => piece;
         public Vector2Int GetUnrotatedRelativeOffset() => ptd.relativeOffset;
@@ -68,6 +70,13 @@ namespace GamePieces
             SetLocalPosition(relativeOffset);
             spriteDirection = TileManager.RotateCW90(spriteDirection);
             transform.rotation = Quaternion.Euler(0,0,TileManager.GetSpriteRotationDegrees(spriteDirection));
+
+            List<GlueCardinality> glueDirs = new();
+            foreach(var cardinality in glue)
+            {
+                glueDirs.Add(RotateCardinalityCW90(cardinality));
+            }
+            glue = glueDirs;
         }
         public void RotateRelativeOffsetCounterClockwise()
         {
@@ -77,6 +86,28 @@ namespace GamePieces
             SetLocalPosition(relativeOffset);
             spriteDirection = TileManager.RotateCCW90(spriteDirection);
             transform.rotation = Quaternion.Euler(0,0,TileManager.GetSpriteRotationDegrees(spriteDirection));
+
+            List<GlueCardinality> glueDirs = new();
+            foreach(var cardinality in glue)
+            {
+                glueDirs.Add(RotateCardinalityCCW90(cardinality));
+            }
+            glue = glueDirs;
         }
+
+        private GlueCardinality RotateCardinalityCW90(GlueCardinality cardinality) => cardinality switch
+        {
+            GlueCardinality.NORTH => GlueCardinality.EAST, 
+            GlueCardinality.EAST => GlueCardinality.SOUTH, 
+            GlueCardinality.SOUTH => GlueCardinality.WEST, 
+            _ => GlueCardinality.NORTH
+        };
+        private GlueCardinality RotateCardinalityCCW90(GlueCardinality cardinality) => cardinality switch
+        {
+            GlueCardinality.SOUTH => GlueCardinality.EAST, 
+            GlueCardinality.EAST => GlueCardinality.NORTH, 
+            GlueCardinality.NORTH => GlueCardinality.WEST, 
+            _ => GlueCardinality.SOUTH
+        };
     }
 }
