@@ -19,4 +19,8 @@ MonoBehaviour:
     endPos: {x: 5, y: 5}
     playsSound: {fileID: 11400000, guid: 7d7f630fb01264a42bc4e7a9229cd792, type: 2}
     soundID: 0
+  - startPos: {x: 3, y: 0}
+    endPos: {x: 6, y: 5}
+    playsSound: {fileID: 11400000, guid: e460ad7bde21649b1928b973ece08954, type: 2}
+    soundID: 1
   currentSoundID: 0
