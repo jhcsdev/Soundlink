@@ -30,10 +30,11 @@ MonoBehaviour:
     type: 0
     glue: 0000000001000000
     tileType: 2
-    spriteDirection: 1
+    spriteDirection: 0
   - relativeOffset: {x: 1, y: 0}
     isOrigin: 0
     type: 0
     glue: 020000000000000001000000
     tileType: 4
     spriteDirection: 1
+  isSilentPiece: 0

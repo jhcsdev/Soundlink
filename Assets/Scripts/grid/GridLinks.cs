@@ -69,11 +69,31 @@ namespace PuzzleGrid
             // todo - merge links!
             return this;
         }
-        // note here - when merging two links, you need to compare the start / end link references. 
-        // i'd say that if both start + end
 
-        // TODO: split links (and then delete if the size is only one)
-        // NOTE: there should never be a link with only one Piece in it ...
+        /// <summary>
+        /// Splits this link into two by removing the "at" piece. 
+        /// </summary>
+        /// <param name="at">The piece to orchestrate the split around.</param>
+        /// <param name="start">The first "half" of the newly-split link. Should be "this" link.</param>
+        /// <param name="end">The second half of the link, newly created. Might be null, if "at" piece is the first / last piece in the link - then this function is just a wrapper for RemovePiece().</param>
+        /// <returns>True if the "at" piece exists, and was removed. False otherwise.</returns>
+        public bool SplitLink(Piece at, out GridLink start, out GridLink end)
+        {
+            start = this;
+            end = null;
+
+            if (pieces.Count <= 0) return false;
+
+            for (int i = 0; i < pieces.Count; i++)
+            {
+                if (pieces[i] != at) continue;
+                if (i == 0 || i == pieces.Count - 1) 
+                {
+                    // edge case - need to update start/end fields.
+                    return RemovePiece(at);
+                }
+            }
+        }
 
         // determine if Piece exists within Link
         public bool ContainsPiece(Piece piece)
