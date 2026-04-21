@@ -177,6 +177,7 @@ namespace GridLinks
             return half;
         }
 
-        private void DisableSoundPlayback() => soundPlaybackEnabled = false;
+        public void DisableSoundPlayback() => soundPlaybackEnabled = false;
+        public int GetLoopSize() => beatsInLoop;
     }
 }

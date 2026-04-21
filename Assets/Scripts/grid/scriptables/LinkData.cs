@@ -15,6 +15,9 @@ namespace PuzzleGrid
         [SerializeField] private TrackSound playsSound;
         [SerializeField] private int soundID;
 
+        [SerializeField] private Color startLinkColor;
+        [SerializeField] private Color endLinkColor;
+
         public Vector2 GetStartPos()
         {
             return startPos;

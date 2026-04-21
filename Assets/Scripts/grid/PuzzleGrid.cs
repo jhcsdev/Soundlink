@@ -316,15 +316,6 @@ namespace PuzzleGrid
         #endregion
         
         #region link helpers
-        public bool GridLinksContainsPiece(Piece piece)
-        {
-            foreach (GridLink gridLink in gridLinks)
-            {
-                if (gridLink.ContainsPiece(piece)) return true;
-            }
-            
-            return false;
-        }
         // determine if Piece exists in GridLinks, return that link if true
         public List<GridLink> GetGridLinks(Piece piece)
         {
