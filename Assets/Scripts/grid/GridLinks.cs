@@ -73,6 +73,11 @@ namespace PuzzleGrid
 
         public bool HasStartData() => startLinkReference != null;
         public bool HasEndData() => endLinkReference != null;
+        /// <summary>
+        /// a link is "live" when it either 1) has more than two pieces or 2) is a Start or End piece.
+        /// </summary>
+        /// <returns></returns>
+        public bool IsLinkLive() => HasEndData() || HasStartData() || pieces.Count >= 2;
 
         /// <summary>
         /// evaluates whether two links are compatible with one another
