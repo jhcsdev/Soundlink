@@ -1,10 +1,12 @@
+// this is the first beat, which will correspond to the first level
+
 using ChuckChuckChuck;
 using UnityEngine;
 
 namespace TrackSounds
 {
-    [CreateAssetMenu(fileName = "ClapSound", menuName = "Sounds/Clap")]
-    public class ClapSound : TrackSound
+    [CreateAssetMenu(fileName = "BeatOne", menuName = "Sounds/BeatOne")]
+    public class BeatOne : TrackSound
     {
         private static ChuckSubInstance myChuck;
 
@@ -14,10 +16,18 @@ namespace TrackSounds
 
             if (myChuck == null) Debug.Log("There is no Chuck!");
 
-            Debug.Log("Play clap!");
+            Debug.Log("Play BeatOne!");
 
             myChuck.RunCode( string.Format( @"
+            // super simple beat: kick, clap, kick, clap
+
+            SinOsc kick => ADSR envKick => Gain kickGain => dac;
             Noise clap => BPF filter => ADSR envClap => Gain clapGain => dac;
+
+            (2::ms, 10::ms, 0, 10::ms) => envKick.set;
+            2.0 => kickGain.gain;
+            150 => kick.freq;
+            1.0 => float KICK_GAIN;
 
             (2::ms, 10::ms, 0, 5::ms) => envClap.set;
             1500 => filter.freq;
@@ -25,12 +35,24 @@ namespace TrackSounds
             .85 => float CLAP_GAIN;
             2.0 => clapGain.gain;
 
-            60 => float BPM;
+            120 => float BPM;
             (60.0 / BPM)::second => dur beat_dur;
 
-            fun void playClap(float beat_note) {{
-                CLAP_GAIN => clap.gain;
+            fun void playKick(float beat_note) {{   
+                // calculate hold and release times
+                beat_note * beat_dur => dur total_time;
+                envKick.releaseTime() => dur release_time;
+                total_time - release_time => dur hold_time;
                 
+                // play sound
+                envKick.keyOn();
+                hold_time => now;
+                
+                envKick.keyOff();
+                release_time => now;
+            }}
+
+            fun void playClap(float beat_note) {{
                 // calculate hold and release times
                 beat_note * beat_dur => dur total_time;
                 envClap.releaseTime() => dur release_time;
@@ -46,10 +68,14 @@ namespace TrackSounds
                 }}
                 
                 wait_time => now;
-                
-                0 => clap.gain;
             }}
 
+            1.0 => kick.gain;
+            .8 => clap.gain;
+
+            playKick(1.0);
+            playClap(1.0);
+            playKick(1.0);
             playClap(1.0);
             "));
         }
