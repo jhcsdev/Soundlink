@@ -1,10 +1,16 @@
 using System.Collections.Generic;
+using PuzzleGrid;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace GamePieces
 {
     public class PieceTile : MonoBehaviour
     {
+        public UnityAction<GridTile> OnPlaced;
+        public UnityAction OnHover;
+        public UnityAction<Piece, Vector2> OnPickedUp;
+
         [SerializeField] private PieceTileType type;
         private Sprite tileSprite; // todo - only supports tile right now, no overlay
         private TileSpriteDirection spriteDirection;
@@ -24,6 +30,9 @@ namespace GamePieces
             type = ptd.type;
             initialized = true;
             glue = ptd.glue;
+
+            gameObject.AddComponent<PieceTileVisuals>();
+
             return this;
         }
         private bool IsInitialized() { if (initialized) return true; Debug.Log(name + " not initialized!"); return false; }
@@ -109,5 +118,18 @@ namespace GamePieces
             GlueCardinality.NORTH => GlueCardinality.WEST, 
             _ => GlueCardinality.SOUTH
         };
+
+        public void Placed(GridTile tile)
+        {
+            OnPlaced?.Invoke(tile);
+        }
+        public void Hovered()
+        {
+            OnHover?.Invoke();
+        }
+        public void PickedUp()
+        {
+            OnPickedUp?.Invoke(piece, relativeOffset);
+        }
     }
 }

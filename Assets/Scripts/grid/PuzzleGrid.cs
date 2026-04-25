@@ -189,7 +189,7 @@ namespace PuzzleGrid
         }
         public override void Hover(Piece p)
         {
-            SetPieceToFocusPosition(p);
+            HoverPiecePosition(p);
         }
         public override void FocusGrid()
         {
@@ -414,7 +414,7 @@ namespace PuzzleGrid
         #endregion
     
         #region other
-        private void SetPieceToFocusPosition(Piece p)
+        private void HoverPiecePosition(Piece p)
         {
             OnNewHover?.Invoke(focusPosition);
 
@@ -426,7 +426,7 @@ namespace PuzzleGrid
                 if (tileAtPosition.CanSetPieceTile(checkPiece)) OnHoveringTile?.Invoke(tileAtPosition);
             }
             
-            p.HoverMode();
+            p.LimboMode();
             p.transform.position = GetFocusedGridTile().transform.position;
         }
 

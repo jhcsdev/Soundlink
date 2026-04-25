@@ -1,9 +1,6 @@
 using System.Collections.Generic;
 using GamePieces;
 using UnityEngine;
-using PuzzleGrid.Visuals;
-using UnityEngine.Tilemaps;
-using System.Linq;
 using UnityEngine.Events;
 
 namespace PuzzleGrid
@@ -19,16 +16,10 @@ namespace PuzzleGrid
         public UnityAction OnRerender;
         #endregion
 
-        private GridTileVisuals visuals;
-
         [SerializeField] private List<PieceTile> linkedTiles = new(2);
         private GridTileType tileType;
         private LinkPlacementData goalLinkData;
-
-        void Awake()
-        {
-            visuals = gameObject.AddComponent<GridTileVisuals>();
-        }
+        private SpriteRenderer spriteRenderer;
 
         public GridTileType GetGridTileType()
         {
@@ -36,7 +27,6 @@ namespace PuzzleGrid
         }
         public void SetTileType(GridTileType t) 
         {
-            visuals.TileTypeChanged(t); // todo - maybe not the best idea to have as a straight function
             tileType = t;
         }
         public bool IsStartTile() => tileType == GridTileType.START;
@@ -70,7 +60,9 @@ namespace PuzzleGrid
         {
             if (!CanSetPieceTile(tile)) return false;
             InstantAddPieceTile(tile);
-            Rerender();
+            
+            tile.Placed(this);
+
             return true;
         }
         private bool InstantAddPieceTile(PieceTile tile)
@@ -84,7 +76,6 @@ namespace PuzzleGrid
             {
                 if (linkedTiles[i] != tile) continue;
                 linkedTiles.RemoveAt(i);
-                Rerender();
                 return true;
             }
             return false;
@@ -94,13 +85,27 @@ namespace PuzzleGrid
             if (linkedTiles.Count == 0) return null;
             PieceTile pieceTile = linkedTiles[0];
             linkedTiles.RemoveAt(0);
-            Rerender();
             return pieceTile;
         }
 
-        private void Rerender()
+        public SpriteRenderer ResetChildRenderer(string childName)
+        {  
+            if (spriteRenderer != null)
+            {
+                Destroy(spriteRenderer.gameObject);
+                spriteRenderer = null;
+            }
+
+            GameObject child = new GameObject(childName);
+            child.transform.SetParent(transform);
+            child.transform.localPosition = Vector3.zero;
+            spriteRenderer = child.AddComponent<SpriteRenderer>();
+            return spriteRenderer;
+        }
+
+        public void SetSprite(Sprite spr)
         {
-            OnRerender?.Invoke();
+            spriteRenderer.sprite = spr;
         }
     }
 }
