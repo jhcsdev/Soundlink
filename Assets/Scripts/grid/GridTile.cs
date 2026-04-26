@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using GamePieces;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -36,6 +37,7 @@ namespace PuzzleGrid
             if (!IsStartTile() && !IsEndTile()) return null;
             return goalLinkData;
         }
+        public bool HasLinkPlacementData() => goalLinkData != null;
         public void SetLinkPlacementData(LinkPlacementData data)
         {
             if (!IsStartTile() && !IsEndTile()) { Debug.LogWarning($"Warning: Tried to set link placement data on {name} but this tile is of type: {tileType}"); return; }
@@ -106,6 +108,14 @@ namespace PuzzleGrid
         public void SetSprite(Sprite spr)
         {
             spriteRenderer.sprite = spr;
+        }
+
+        public void SetLinkColorByPlacementData()
+        {
+            if (spriteRenderer == null) {Debug.LogError("Called SetLinkColorByPlacementData but spriteRenderer is null"); return; }
+            if (goalLinkData == null) {Debug.LogError("Called SetLinkColorByPlacementData but has no placement data."); return;}
+
+            spriteRenderer.color = tileType == GridTileType.START ? goalLinkData.GetPulseColor() : goalLinkData.GetBaseColor();
         }
     }
 }

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using GamePieces;
+using GridLinks;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -37,6 +38,7 @@ namespace PuzzleGrid
 
         public UnityAction GameWon;
         public UnityAction<GridLink> OnAStartLinkUpdated;
+        public UnityAction<int> OnAStartLinkFullyDestroyed;
         #endregion
 
         #region unity functions
@@ -60,9 +62,9 @@ namespace PuzzleGrid
                     // grab and set color based on tiletype
                     GridTileType tileType = data.GetTileInfo(x, y, out LinkPlacementData placementData);
                     gridTile.SetTileType(tileType);
-                    if (tileType == GridTileType.START)
+                    if (tileType == GridTileType.START || tileType == GridTileType.END)
                     {
-                        totalTracksInGrid += 1;
+                        totalTracksInGrid += tileType == GridTileType.START ? 1 : 0;
                         gridTile.SetLinkPlacementData(placementData);
                     }
 
@@ -243,10 +245,12 @@ namespace PuzzleGrid
                 Debug.Log("Adding current piece to neighbor's existing link.");
                 if (linksForBasePiece.Count > 0)
                 {
+                    Debug.Log("\t Merging links");
                     MergeLinks(linksForBasePiece[0], existingLink, neighborPiece, p);
                 }
                 else
                 {
+                    Debug.Log("\t Updating existing link");
                     UpdateLink(existingLink, p, neighborPiece);
                 }   
             }
@@ -270,6 +274,8 @@ namespace PuzzleGrid
             {
                 Debug.Log("Removing Piece from Link");
                 if (!link.ContainsPiece(piece)) continue;
+                int startIdIfExists = link.GetStartSoundIDIfExists(); // because we might lose the start data, we have to store before splitting, then reset (OnAStartLinkFullyDestroyed) if necessary
+
                 if (!link.SplitLink(piece, out GridLink startLink, out GridLink endLink))
                 {
                     Debug.LogWarning($"Tried to split link {link}, but it failed!");
@@ -279,11 +285,18 @@ namespace PuzzleGrid
                 if (endLink != null && endLink.IsLinkLive()) 
                 { 
                     Debug.Log($"Created new endLink {endLink}; adding to links."); gridLinks.Add(endLink);
+                    if (endLink.HasStartData()) { Debug.LogWarning("Warning: 'end' Link created after splitting has start data."); }
                 }
-                if (!startLink.IsLinkLive()) 
+
+                if (startLink.HasStartData())
+                {
+                    OnAStartLinkUpdated?.Invoke(startLink);
+                } 
+                else
                 {
                     Debug.Log($"Start link {startLink} died after split merge.");
-                    gridLinks.Remove(link);
+                    if (!startLink.IsLinkLive()) gridLinks.Remove(link); // remove link from known links if necessary.
+                    if (startIdIfExists >= 0) OnAStartLinkFullyDestroyed?.Invoke(startIdIfExists);
                 }
             }
         }
@@ -321,6 +334,7 @@ namespace PuzzleGrid
             {
                 Debug.Log("Merge success.");
                 gridLinks.Remove(mergeTo);
+                if (baseLink.HasStartData()) OnAStartLinkUpdated?.Invoke(baseLink);
             } else { Debug.LogWarning("Merge failed."); }
         }
         #endregion

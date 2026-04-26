@@ -38,10 +38,12 @@ namespace GridLinks
         void OnEnable()
         {
             puzzleGrid.OnAStartLinkUpdated += ScheduleSingleLink;
+            puzzleGrid.OnAStartLinkFullyDestroyed += StopPlaybackForLink;
         }
         void OnDisable()
         {
             puzzleGrid.OnAStartLinkUpdated -= ScheduleSingleLink;
+            puzzleGrid.OnAStartLinkFullyDestroyed -= StopPlaybackForLink;
         }
 
         void Start()
@@ -135,9 +137,7 @@ namespace GridLinks
 
                 if (!scheduleIndexTracker.ContainsKey(soundId)) { 
                     Debug.LogWarning($"knownlinks has id {soundId} but scheduler missing it"); 
-                    return; 
-                }
-                scheduleIndexTracker.Remove(soundId); // fully removing it will cause a fast-speedup in the playback loop.
+                }else scheduleIndexTracker.Remove(soundId); // fully removing it will cause a fast-speedup in the playback loop.
             } 
             else
             {
@@ -149,7 +149,6 @@ namespace GridLinks
             }
 
             // setup the schedule 
-            // todo - this depends on the GridLink PieceList being ordered in the first place. very important
             int curBeat = 1;
             foreach (Piece p in which.GetPieces())
             {
@@ -161,6 +160,15 @@ namespace GridLinks
 
                 curBeat += p.GetPieceTiles().Count;
             }
+        }
+        private void StopPlaybackForLink(int soundId)
+        {
+            // reset gridlink if we know this link already
+            if (knownLinks.ContainsKey(soundId))
+            {
+                knownLinks.Remove(soundId);
+                scheduleIndexTracker.Remove(soundId);
+            } 
         }
 
         private int BinarySearchForId<T>(T forItem, List<T> searchIn) where T : IComparable<T>

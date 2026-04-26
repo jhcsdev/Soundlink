@@ -10,11 +10,12 @@ namespace GamePieces
         public UnityAction<GridTile> OnPlaced;
         public UnityAction OnHover;
         public UnityAction<Piece, Vector2> OnPickedUp;
-        public UnityAction<Color> OnColorPulse;
+        public UnityAction<Color, float> OnColorPulse;
         public UnityAction<Color, float> OnSetColor;
 
         [SerializeField] private PieceTileType type;
-        private Sprite tileSprite; // todo - only supports tile right now, no overlay
+        private Sprite tileSprite; // todo:: only supports tile right now, no overlay
+        private Sprite glueSprite; // todo:: see CreateGlueSprites()
         private TileSpriteDirection spriteDirection;
         private Piece piece;
         private Vector2Int relativeOffset;
@@ -56,11 +57,29 @@ namespace GamePieces
             }
             return this;
         }
+        public PieceTile CreateGlueSprites()
+        {
+            // todo:: questionable if these spriterenderers should really be put here...?
+            if (glueSprite == null) { Debug.LogError("Called CreateGlueSprites but glueSprite is null"); return this; }
 
+            foreach (var glueCardinality in glue)
+            {
+                GameObject glueObj = new($"Glue{glueCardinality}");
+                glueObj.transform.SetParent(transform);
+                glueObj.transform.localPosition = Vector3.zero;
+
+                SpriteRenderer sr = glueObj.AddComponent<SpriteRenderer>();
+                sr.sprite = glueSprite;
+                sr.sortingOrder = (int)SPRITE_ORDER.PIECE_GLUE_SPRITE_INDEX;
+                glueObj.transform.rotation = Quaternion.Euler(0, 0, TileManager.GetGlueRotationDegrees(glueCardinality));
+            }
+            return this;
+        }
         public PieceTile SetPiece(Piece p) { piece = p; return this; }
         public PieceTile SetRelativeOffset(Vector2Int vint) { relativeOffset = vint; return this; }
         public PieceTile SetSpriteVariable(Sprite sprite) { tileSprite = sprite; return this; }
         public PieceTile SetTileDirection(TileSpriteDirection direction)  { spriteDirection = direction; return this; }
+        public PieceTile SetGlueSprite(Sprite sprite) { glueSprite = sprite; return this; }
         #endregion
 
         #region getters
@@ -133,9 +152,9 @@ namespace GamePieces
         {
             OnPickedUp?.Invoke(piece, relativeOffset);
         }
-        public void ColorPulse(Color c)
+        public void ColorPulse(Color c, float overTime=1f)
         {
-            OnColorPulse?.Invoke(c);
+            OnColorPulse?.Invoke(c, overTime);
         }
         public void SetColor(Color c, float time=0.2f)
         {

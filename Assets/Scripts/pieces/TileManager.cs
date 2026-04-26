@@ -13,6 +13,7 @@ namespace GamePieces
         public static TileManager Instance;
 
         [SerializeField] private List<TileSpriteTypeToSprite> basicTileSprite; 
+        [SerializeField] private Sprite verticalSingleGlueSprite; // todo:: this means that we can have up to 4 spriteRenders for what realistically shoudl just be one; needs to be changed
         private Dictionary<PieceTileSpriteType, Sprite> tileSpriteLookup = new();
 
         void Awake()
@@ -33,12 +34,13 @@ namespace GamePieces
 
             SpriteRenderer sr = tile.AddComponent<SpriteRenderer>();
             sr.sprite = tileSpriteLookup[data.tileType];
+            sr.sortingOrder = (int)SPRITE_ORDER.PIECE_TILE_SPRITE_INDEX;
 
             tile.transform.rotation = Quaternion.Euler(0, 0, GetSpriteRotationDegrees(data.spriteDirection));
 
             PieceTile pt = tile.AddComponent<PieceTile>();
 
-            return pt.SetSpriteVariable(tileSpriteLookup[data.tileType]).SetTileDirection(data.spriteDirection);
+            return pt.SetSpriteVariable(tileSpriteLookup[data.tileType]).SetTileDirection(data.spriteDirection).SetGlueSprite(verticalSingleGlueSprite);
         }
 
         public GameObject CreateCanvasTile(PieceTileData data)
@@ -47,6 +49,17 @@ namespace GamePieces
 
             Image image = canvasTile.AddComponent<Image>();
             image.sprite = tileSpriteLookup[data.tileType];
+
+            foreach (var glueCardinality in data.glue)
+            {
+                GameObject glueObj = new($"CanvasGlue{glueCardinality}");
+                glueObj.transform.SetParent(canvasTile.transform);
+                glueObj.transform.localPosition = Vector3.zero;
+
+                Image sr = glueObj.AddComponent<Image>();
+                sr.sprite = verticalSingleGlueSprite;
+                glueObj.transform.localRotation = Quaternion.Euler(0, 0, GetGlueRotationDegrees(glueCardinality) - GetSpriteRotationDegrees(data.spriteDirection));
+            }
 
             canvasTile.transform.rotation = Quaternion.Euler(0, 0, GetSpriteRotationDegrees(data.spriteDirection));
 
@@ -65,6 +78,13 @@ namespace GamePieces
             TileSpriteDirection.FACES_LEFT => 90,
             _ => 0
         };  
+        public static float GetGlueRotationDegrees(GlueCardinality glue) => glue switch
+        {
+            GlueCardinality.EAST => -90,
+            GlueCardinality.SOUTH => 180,
+            GlueCardinality.WEST => 90,
+            _ => 0
+        };
 
         public static TileSpriteDirection RotateCW90(TileSpriteDirection dir) => dir switch
         {

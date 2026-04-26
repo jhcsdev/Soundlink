@@ -658,7 +658,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 3
+  m_SortingOrder: 7
   m_MaskInteraction: 0
   m_Sprite: {fileID: -5177388603050735206, guid: cc35afd292fc349128b36a291fb3a165, type: 3}
   m_Color: {r: 0.38692594, g: 0.4433962, b: 0.40083846, a: 1}
@@ -1075,7 +1075,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b409d6d9706b41988cd9e32bd055751, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ChuckSubInstance
-  chuckMainInstance: {fileID: 0}
+  chuckMainInstance: {fileID: 848501141}
   spatialize: 0
 --- !u!82 &771828670
 AudioSource:
@@ -1278,7 +1278,7 @@ Transform:
   m_GameObject: {fileID: 847595325}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.25638, y: -0.11604, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1726,6 +1726,7 @@ MonoBehaviour:
     sprite: {fileID: 21300000, guid: 6e6cd0927c0a2456d9cf60945c561717, type: 3}
   - type: 6
     sprite: {fileID: 21300000, guid: 7ccf1b5568075405d8a1b6bea7554c34, type: 3}
+  verticalSingleGlueSprite: {fileID: 21300000, guid: 2a4079817dab548f59019b4441378b38, type: 3}
 --- !u!1 &1247818250
 GameObject:
   m_ObjectHideFlags: 0
@@ -1989,6 +1990,8 @@ GameObject:
   - component: {fileID: 1762153999}
   - component: {fileID: 1762153998}
   - component: {fileID: 1762154000}
+  - component: {fileID: 1762154002}
+  - component: {fileID: 1762154001}
   m_Layer: 0
   m_Name: inventory
   m_TagString: Untagged
@@ -2009,21 +2012,25 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Inventory.Inventory
   inventoryData: {fileID: 11400000, guid: e6e7ba3f4463f444682514aa4c5607c8, type: 2}
---- !u!4 &1762153999
-Transform:
+--- !u!224 &1762153999
+RectTransform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1762153997}
-  serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -7.30362, y: -2.92396, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 847595326}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -7.30362, y: -2.92396}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1762154000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2060,6 +2067,63 @@ MonoBehaviour:
   inventoryCanvas: {fileID: 1944012035}
   inventoryRows: {fileID: 549283888}
   pointerObject: {fileID: 1915616669}
+--- !u!23 &1762154001
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1762153997}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 0}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_MaskInteraction: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!222 &1762154002
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1762153997}
+  m_CullTransparentMesh: 1
 --- !u!1 &1771607250
 GameObject:
   m_ObjectHideFlags: 0

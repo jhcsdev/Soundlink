@@ -46,7 +46,8 @@ namespace GamePieces
                 PieceTile t = TileManager.Instance.CreatePieceAndCanvasTile(ptd, out GameObject canvasVisual)
                     .Initialize(ptd, this)
                     .SetParent(transform)
-                    .SetLocalPositionAndScaleByTileSize(tileScale);
+                    .SetLocalPositionAndScaleByTileSize(tileScale)
+                    .CreateGlueSprites();
                 tileObjects.Add(t);
                 
                 canvasVisual.transform.SetParent(canvasPiece.transform, false);
@@ -65,7 +66,6 @@ namespace GamePieces
         public Piece LimboMode()
         {
             if (currentState == PieceState.HOVER_GRID) { 
-                Debug.Log("hovering now");
                 foreach(PieceTile pt in tileObjects) pt.Hovered();
                 return this;
             } 
@@ -106,7 +106,8 @@ namespace GamePieces
 
         public void FailedPlace()
         {
-            // todo: visuals
+            // todo:: visuals
+            foreach(PieceTile pt in tileObjects) pt.ColorPulse(Color.red, 0.5f);
         }
         public void LinkPulse(Color color)
         {
@@ -114,7 +115,6 @@ namespace GamePieces
         }
         public void SetColorPermanent(Color color, float overTime=0.2f)
         {
-            Debug.Log("setting color permanent!");
             foreach(PieceTile pt in tileObjects) pt.SetColor(color, overTime);
         }
 
