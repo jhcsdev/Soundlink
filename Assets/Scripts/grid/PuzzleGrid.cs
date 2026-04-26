@@ -21,7 +21,6 @@ namespace PuzzleGrid
         private int totalTracksInGrid = 0;
 
         #region notifications
-        public UnityAction<int, int /*width, height*/> OnGridInitialize;
         public UnityAction<GridTile> OnGridFocused;
         public UnityAction<GridTile> OnGridUnfocused;
         public UnityAction<Vector2Int /*direction */> OnFailedLeavingGrid;
@@ -185,11 +184,11 @@ namespace PuzzleGrid
             toBeRemoved.transform.position = GetFocusedGridTile().transform.position; // todo: should not be manually setting position
 
             // return
-            return toBeRemoved.GridMode();
+            return toBeRemoved.LimboMode();
         }
         public override void Hover(Piece p)
         {
-            SetPieceToFocusPosition(p);
+            HoverPiecePosition(p);
         }
         public override void FocusGrid()
         {
@@ -414,7 +413,7 @@ namespace PuzzleGrid
         #endregion
     
         #region other
-        private void SetPieceToFocusPosition(Piece p)
+        private void HoverPiecePosition(Piece p)
         {
             OnNewHover?.Invoke(focusPosition);
 
@@ -426,7 +425,7 @@ namespace PuzzleGrid
                 if (tileAtPosition.CanSetPieceTile(checkPiece)) OnHoveringTile?.Invoke(tileAtPosition);
             }
             
-            p.HoverMode();
+            p.LimboMode();
             p.transform.position = GetFocusedGridTile().transform.position;
         }
 

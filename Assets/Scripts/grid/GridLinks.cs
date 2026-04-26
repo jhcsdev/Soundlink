@@ -54,12 +54,16 @@ namespace PuzzleGrid
         public GridLink SetEndPlacementData(LinkPlacementData data)
         {
             endLinkReference = data;
+            // todo:: need linking visuals of some sort; if end does not match start, should break the link visually
+            foreach (var p in pieces) p.SetColorPermanent(endLinkReference.GetBaseColor());
             return this;
         }
 
         public GridLink SetStartPlacementData(LinkPlacementData data)
         {
             startLinkReference = data;
+            // todo:: same as above
+            foreach(var p in pieces) p.SetColorPermanent(startLinkReference.GetBaseColor());
             return this; 
         }
         #endregion
@@ -230,6 +234,7 @@ namespace PuzzleGrid
             if (basedOn == null) { 
                 Debug.Log($"Adding piece to {this} without basedOn. Ensure order!");
                 pieces.Add(toAdd); 
+                if (HasStartData() || HasEndData()) toAdd.SetColorPermanent(GetStartPlacementData()?.GetBaseColor() ?? GetEndPlacementData().GetBaseColor());
                 return this;
             }
 
@@ -240,6 +245,8 @@ namespace PuzzleGrid
                 {
                     if (HasEndData()) { pieces.Insert(i, toAdd);  } // add BEFORE basedOn
                     else pieces.Insert(i+1, toAdd); // add AFTER basedOn
+
+                    if (HasStartData() || HasEndData()) toAdd.SetColorPermanent(GetStartPlacementData()?.GetBaseColor() ?? GetEndPlacementData().GetBaseColor());
 
                     return this;
                 }
@@ -260,6 +267,7 @@ namespace PuzzleGrid
             if (index < 0 || index > pieces.Count) { Debug.LogWarning($"Link passed index {index}, which is out of bounds for piece count {pieces.Count}"); return; }
 
             GetStartPlacementData().GetTrackSound().PlaySound();
+            pieces[index].LinkPulse(startLinkReference.GetPulseColor());
         }
 
         #endregion
