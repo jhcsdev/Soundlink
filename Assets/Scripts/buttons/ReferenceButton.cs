@@ -53,6 +53,7 @@ public class ButtonAction : MonoBehaviour
         sound?.PlaySound();
     }
 
+    // disable link sound playback, change button visuals
     void SetButtonPlaying()
     {
         linkManager.DisableSoundPlayback();
@@ -64,6 +65,7 @@ public class ButtonAction : MonoBehaviour
         myButton.colors = colors;
     }
 
+    // enable link sound playback, change button visuals
     void SetButtonIdle()
     {
         linkManager.EnableSoundPlayback();

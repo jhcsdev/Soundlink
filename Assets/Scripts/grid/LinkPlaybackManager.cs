@@ -37,8 +37,6 @@ namespace GridLinks
 
         void OnEnable()
         {
-            // TODO: I think there might be an error here ...
-            // it is getting called, but then nothing is happening ..
             puzzleGrid.OnAStartLinkUpdated += ScheduleSingleLink;
         }
         void OnDisable()
@@ -182,14 +180,11 @@ namespace GridLinks
             return half;
         }
 
-        public void DisableSoundPlayback() {
-            soundPlaybackEnabled = false;
-        }
+        public void DisableSoundPlayback() => soundPlaybackEnabled = false;
 
-        public void EnableSoundPlayback() {
-            soundPlaybackEnabled = true;
-        }
-        
+        // NOTE: if wanted to reset link playback, just move curBeat to global and set equal to one.
+        public void EnableSoundPlayback() => soundPlaybackEnabled = true;
+
         public int GetLoopSize() => beatsInLoop;
     }
 }
