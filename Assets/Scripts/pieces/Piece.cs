@@ -46,7 +46,8 @@ namespace GamePieces
                 PieceTile t = TileManager.Instance.CreatePieceAndCanvasTile(ptd, out GameObject canvasVisual)
                     .Initialize(ptd, this)
                     .SetParent(transform)
-                    .SetLocalPositionAndScaleByTileSize(tileScale);
+                    .SetLocalPositionAndScaleByTileSize(tileScale)
+                    .CreateGlueSprites();
                 tileObjects.Add(t);
                 
                 canvasVisual.transform.SetParent(canvasPiece.transform, false);
@@ -106,7 +107,8 @@ namespace GamePieces
 
         public void FailedPlace()
         {
-            // todo: visuals
+            // todo:: visuals
+            foreach(PieceTile pt in tileObjects) pt.ColorPulse(Color.red, 0.5f);
         }
         public void LinkPulse(Color color)
         {

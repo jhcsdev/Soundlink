@@ -7,7 +7,6 @@ namespace GamePieces
     [RequireComponent(typeof(PieceTile), typeof(SpriteRenderer))]
     public class PieceTileVisuals : MonoBehaviour
     {
-        private static float colorPulseTime = 1;
         private PieceTile pieceTile;
         private SpriteRenderer spriteRenderer;
         private Color baseColor;
@@ -23,7 +22,7 @@ namespace GamePieces
             pieceTile.OnPlaced += OnPlacedHappened;
             pieceTile.OnHover += OnHovering;
             pieceTile.OnPickedUp += OnPickup;
-            pieceTile.OnColorPulse += OnLinkPulse;
+            pieceTile.OnColorPulse += OnColorPulse;
             pieceTile.OnSetColor += OnSetColor;
         }
         void OnDisable()
@@ -31,7 +30,7 @@ namespace GamePieces
             pieceTile.OnPlaced -= OnPlacedHappened;
             pieceTile.OnHover -= OnHovering;
             pieceTile.OnPickedUp -= OnPickup;
-            pieceTile.OnColorPulse -= OnLinkPulse;
+            pieceTile.OnColorPulse -= OnColorPulse;
             pieceTile.OnSetColor -= OnSetColor;
         }
 
@@ -53,11 +52,11 @@ namespace GamePieces
             transform.localPosition = localOffset;
         }
 
-        void OnLinkPulse(Color c)
+        void OnColorPulse(Color c, float overTime)
         {
-            Debug.Log($"Pulsing to {c} from {baseColor} over {colorPulseTime}");
+            Debug.Log($"Pulsing to {c} from {baseColor} over {overTime}");
             spriteRenderer.color = c;
-            spriteRenderer.DOColor(baseColor, colorPulseTime);
+            spriteRenderer.DOColor(baseColor, overTime);
         }
         void OnSetColor(Color c, float time)
         {
