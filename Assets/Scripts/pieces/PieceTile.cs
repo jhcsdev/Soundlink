@@ -62,8 +62,6 @@ namespace GamePieces
             // todo:: questionable if these spriterenderers should really be put here...?
             if (glueSprite == null) { Debug.LogError("Called CreateGlueSprites but glueSprite is null"); return this; }
 
-            float baseRotation = TileManager.GetSpriteRotationDegrees(spriteDirection);
-
             foreach (var glueCardinality in glue)
             {
                 GameObject glueObj = new($"Glue{glueCardinality}");

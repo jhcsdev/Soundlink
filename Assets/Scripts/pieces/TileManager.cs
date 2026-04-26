@@ -50,6 +50,16 @@ namespace GamePieces
             Image image = canvasTile.AddComponent<Image>();
             image.sprite = tileSpriteLookup[data.tileType];
 
+            foreach (var glueCardinality in data.glue)
+            {
+                GameObject glueObj = new($"CanvasGlue{glueCardinality}");
+                glueObj.transform.SetParent(canvasTile.transform);
+                glueObj.transform.localPosition = Vector3.zero;
+
+                Image sr = glueObj.AddComponent<Image>();
+                sr.sprite = verticalSingleGlueSprite;
+                glueObj.transform.localRotation = Quaternion.Euler(0, 0, GetGlueRotationDegrees(glueCardinality) - GetSpriteRotationDegrees(data.spriteDirection));
+            }
 
             canvasTile.transform.rotation = Quaternion.Euler(0, 0, GetSpriteRotationDegrees(data.spriteDirection));
 
