@@ -3,11 +3,13 @@ using UnityEngine.UI;
 using ChuckChuckChuck;
 using TrackSounds;
 using System.Collections;
+using GridLinks;
 
 public class ButtonAction : MonoBehaviour
 {
     public Button myButton;
     public TrackSound sound;
+    public LinkPlaybackManager linkManager;
     private ChuckSubInstance myChuck;
 
     public string idleText = "Play Reference";
@@ -53,6 +55,7 @@ public class ButtonAction : MonoBehaviour
 
     void SetButtonPlaying()
     {
+        linkManager.DisableSoundPlayback();
         myButton.interactable = false;
         buttonText.text = playingText;
 
@@ -63,6 +66,7 @@ public class ButtonAction : MonoBehaviour
 
     void SetButtonIdle()
     {
+        linkManager.EnableSoundPlayback();
         myButton.interactable = true;
         buttonText.text = idleText;
 

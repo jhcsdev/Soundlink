@@ -58,9 +58,14 @@ namespace GridLinks
             WaitUntil untilSchedulerHasSounds = new(DoesSchedulerHaveAnyScheduledBeat);
             int curBeat = 1;
 
-
-            while(soundPlaybackEnabled)
+            while(true)
             {
+                if (!soundPlaybackEnabled)
+                {
+                    yield return null;
+                    continue;
+                }
+
                 if (!DoesSchedulerHaveAnyScheduledBeat()) {
                     Debug.Log("No sounds in scheduler!");
                     yield return untilSchedulerHasSounds; // wait until there's actually something to play
@@ -96,7 +101,7 @@ namespace GridLinks
                 }
 
                 yield return waitBeat;
-                curBeat += 1;
+                curBeat += 1;                       
             }
         }
 
@@ -177,7 +182,14 @@ namespace GridLinks
             return half;
         }
 
-        public void DisableSoundPlayback() => soundPlaybackEnabled = false;
+        public void DisableSoundPlayback() {
+            soundPlaybackEnabled = false;
+        }
+
+        public void EnableSoundPlayback() {
+            soundPlaybackEnabled = true;
+        }
+        
         public int GetLoopSize() => beatsInLoop;
     }
 }
