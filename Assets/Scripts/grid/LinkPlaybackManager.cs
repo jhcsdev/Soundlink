@@ -37,8 +37,6 @@ namespace GridLinks
 
         void OnEnable()
         {
-            // TODO: I think there might be an error here ...
-            // it is getting called, but then nothing is happening ..
             puzzleGrid.OnAStartLinkUpdated += ScheduleSingleLink;
         }
         void OnDisable()
@@ -58,9 +56,14 @@ namespace GridLinks
             WaitUntil untilSchedulerHasSounds = new(DoesSchedulerHaveAnyScheduledBeat);
             int curBeat = 1;
 
-
-            while(soundPlaybackEnabled)
+            while(true)
             {
+                if (!soundPlaybackEnabled)
+                {
+                    yield return null;
+                    continue;
+                }
+
                 if (!DoesSchedulerHaveAnyScheduledBeat()) {
                     Debug.Log("No sounds in scheduler!");
                     yield return untilSchedulerHasSounds; // wait until there's actually something to play
@@ -96,7 +99,7 @@ namespace GridLinks
                 }
 
                 yield return waitBeat;
-                curBeat += 1;
+                curBeat += 1;                       
             }
         }
 
@@ -178,6 +181,10 @@ namespace GridLinks
         }
 
         public void DisableSoundPlayback() => soundPlaybackEnabled = false;
+
+        // NOTE: if wanted to reset link playback, just move curBeat to global and set equal to one.
+        public void EnableSoundPlayback() => soundPlaybackEnabled = true;
+
         public int GetLoopSize() => beatsInLoop;
     }
 }
