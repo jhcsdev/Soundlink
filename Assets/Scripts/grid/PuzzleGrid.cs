@@ -60,9 +60,9 @@ namespace PuzzleGrid
                     // grab and set color based on tiletype
                     GridTileType tileType = data.GetTileInfo(x, y, out LinkPlacementData placementData);
                     gridTile.SetTileType(tileType);
-                    if (tileType == GridTileType.START)
+                    if (tileType == GridTileType.START || tileType == GridTileType.END)
                     {
-                        totalTracksInGrid += 1;
+                        totalTracksInGrid += tileType == GridTileType.START ? 1 : 0;
                         gridTile.SetLinkPlacementData(placementData);
                     }
 

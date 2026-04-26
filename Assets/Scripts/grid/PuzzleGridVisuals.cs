@@ -230,6 +230,7 @@ namespace PuzzleGrid
         {
             tile.ResetChildRenderer("GridTileRenderer");
             tile.SetSprite(basicGridTile);
+            if (tile.HasLinkPlacementData()) tile.SetLinkColorByPlacementData();
             Vector2 worldPos = tile.transform.position;
 
             maximumKnownTile = Vector2.Max(maximumKnownTile, position);
@@ -259,7 +260,7 @@ namespace PuzzleGrid
                 tile.transform.localScale = Vector3.one;
             }
         }
-
+        
         void ResetAllHovers()
         {
             if (hoverSequences != null)

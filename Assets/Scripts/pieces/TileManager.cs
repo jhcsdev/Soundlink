@@ -13,6 +13,7 @@ namespace GamePieces
         public static TileManager Instance;
 
         [SerializeField] private List<TileSpriteTypeToSprite> basicTileSprite; 
+        [SerializeField] private Sprite verticalSingleGlueSprite;
         private Dictionary<PieceTileSpriteType, Sprite> tileSpriteLookup = new();
 
         void Awake()
@@ -38,7 +39,7 @@ namespace GamePieces
 
             PieceTile pt = tile.AddComponent<PieceTile>();
 
-            return pt.SetSpriteVariable(tileSpriteLookup[data.tileType]).SetTileDirection(data.spriteDirection);
+            return pt.SetSpriteVariable(tileSpriteLookup[data.tileType]).SetTileDirection(data.spriteDirection).CreateGlueSprites(verticalSingleGlueSprite);
         }
 
         public GameObject CreateCanvasTile(PieceTileData data)

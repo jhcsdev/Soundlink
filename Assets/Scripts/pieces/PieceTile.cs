@@ -56,6 +56,11 @@ namespace GamePieces
             }
             return this;
         }
+        public PieceTile CreateGlueSprites(Sprite s)
+        {
+            // todo::
+            return this;
+        }
 
         public PieceTile SetPiece(Piece p) { piece = p; return this; }
         public PieceTile SetRelativeOffset(Vector2Int vint) { relativeOffset = vint; return this; }
