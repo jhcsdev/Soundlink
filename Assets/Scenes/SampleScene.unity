@@ -1579,17 +1579,35 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GamePieces.TileManager
   basicTileSprite:
   - type: 0
-    sprite: {fileID: 21300000, guid: b764fce883ec44f0ebc9e82c1e0ccad2, type: 3}
+    sprite: {fileID: 21300000, guid: 0f3b4ede503dc4ec09a730b0f3c7155e, type: 3}
   - type: 1
-    sprite: {fileID: 21300000, guid: b1c16f936fb0c4835b78eb3f654b7e80, type: 3}
+    sprite: {fileID: 21300000, guid: 408f674f0ce144049b43b4d27fdf791d, type: 3}
   - type: 2
-    sprite: {fileID: 21300000, guid: e2a789af523d647dc92df0d8de7df956, type: 3}
+    sprite: {fileID: 21300000, guid: 4dfdf52fcc1a94b598a41e3778811f44, type: 3}
   - type: 3
-    sprite: {fileID: 21300000, guid: 940b6a35c6b934d21b2c0fd3971d37c9, type: 3}
+    sprite: {fileID: 21300000, guid: 5d659fdf2b4bd4f4080e7b4e30126fbc, type: 3}
   - type: 4
-    sprite: {fileID: 21300000, guid: 68f3227f96edf4564956087bd44b1218, type: 3}
+    sprite: {fileID: 21300000, guid: 6df453f9e8e0e46858fdafbc8edd042f, type: 3}
   - type: 5
-    sprite: {fileID: 21300000, guid: 76e11022c47f846b680b441b9519c471, type: 3}
+    sprite: {fileID: 21300000, guid: cbce84276199d4be99f73df66cea6024, type: 3}
+  - type: 7
+    sprite: {fileID: 21300000, guid: 8a29a192e4c08459bb9626febeb77c05, type: 3}
+  - type: 8
+    sprite: {fileID: 21300000, guid: 6bcd82723f48e4afba8df15bf64c0712, type: 3}
+  - type: 9
+    sprite: {fileID: 21300000, guid: 4133019d9b7f34344b08d6387a2e367f, type: 3}
+  - type: 10
+    sprite: {fileID: 21300000, guid: bd8581309c84642c786cef89a613c0cc, type: 3}
+  - type: 11
+    sprite: {fileID: 21300000, guid: 2cd6f30a5950a4261b30f6a94149593c, type: 3}
+  - type: 12
+    sprite: {fileID: 21300000, guid: 14d94f8445ad74c76b438bfe79e4ec7e, type: 3}
+  - type: 13
+    sprite: {fileID: 21300000, guid: 63a8a5f7c335b410ea27d1704940f148, type: 3}
+  - type: 14
+    sprite: {fileID: 21300000, guid: 6e6cd0927c0a2456d9cf60945c561717, type: 3}
+  - type: 6
+    sprite: {fileID: 21300000, guid: 7ccf1b5568075405d8a1b6bea7554c34, type: 3}
 --- !u!1 &1247818250
 GameObject:
   m_ObjectHideFlags: 0

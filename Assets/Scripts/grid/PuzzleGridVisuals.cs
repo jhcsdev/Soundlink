@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using DG.Tweening;
 using GamePieces;
-using PuzzleGrid.Visuals;
 using UnityEngine;
 
 namespace PuzzleGrid
@@ -229,9 +228,8 @@ namespace PuzzleGrid
         #region tile updates
         void InitializeTile(GridTile tile, GridTileType type, Vector2 position)
         {
-            GridTileVisuals comp = tile.GetComponent<GridTileVisuals>();
-            comp.SetBaseSprite(basicGridTile);
-
+            tile.ResetChildRenderer("GridTileRenderer");
+            tile.SetSprite(basicGridTile);
             Vector2 worldPos = tile.transform.position;
 
             maximumKnownTile = Vector2.Max(maximumKnownTile, position);
@@ -295,7 +293,6 @@ namespace PuzzleGrid
         void PlacePieceSuccess(Piece p)
         {
             ResetAllHovers();
-            p.gameObject.SetActive(false);
         }
         #endregion
         

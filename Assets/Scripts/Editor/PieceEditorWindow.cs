@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using GamePieces;
+using NUnit.Framework;
 using UnityEditor;
 using UnityEngine;
 
@@ -177,109 +178,160 @@ public class PieceEditorWindow : EditorWindow
         // The tile itself (may have just been removed, so guard inside)
         RecalculateTileSprite(coord);
 
-        // The four neighbours whose edge-counts may have changed
+        // The eight neighbours whose edge-counts may have changed
         RecalculateTileSprite(coord + Vector2Int.up);
         RecalculateTileSprite(coord + Vector2Int.down);
         RecalculateTileSprite(coord + Vector2Int.left);
         RecalculateTileSprite(coord + Vector2Int.right);
+        RecalculateTileSprite(coord + Vector2Int.one);
+        RecalculateTileSprite(coord + Vector2Int.one * -1);
+        RecalculateTileSprite(coord + new Vector2Int(1, -1));
+        RecalculateTileSprite(coord + new Vector2Int(-1, 1));
     }
 
-    /// <summary>
-    /// Counts the occupied cardinal neighbours of <paramref name="coord"/> and sets
-    /// <see cref="PieceEditorTileData.spriteType"/> and <see cref="PieceEditorTileData.spriteDirection"/>
-    /// accordingly.
-    ///
-    /// Neighbour layout used to determine direction (Unity Y-up, same as grid):
-    ///
-    ///         [UP]
-    ///   [LEFT] [coord] [RIGHT]
-    ///         [DOWN]
-    ///
-    /// "Edge" means an exposed side with no neighbour.
-    ///
-    ///   0 neighbours → ALL_EDGE   (isolated tile, direction irrelevant → FACES_UP)
-    ///   4 neighbours → NO_EDGE    (fully interior,  direction irrelevant → FACES_UP)
-    ///   1 neighbour  → TRIPLE_EDGE;  the one neighbour sits on the BOTTOM side when FACES_UP,
-    ///                                so rotate to put that neighbour at the "bottom" of the sprite.
-    ///   3 neighbours → SINGLE_EDGE; the one exposed edge is the TOP side when FACES_UP,
-    ///                                so rotate to put that gap at the "top".
-    ///   2 neighbours (opposite)    → DOUBLE_OPPOSING_EDGE; horizontal pair → FACES_RIGHT.
-    ///   2 neighbours (adjacent)    → DOUBLE_CORNER_EDGE;   the TWO EXPOSED edges are top+right
-    ///                                when FACES_UP, so we rotate until the open corner matches.
-    /// </summary>
+    // based on the eight surrounding neighbors, recalculates the tile.
     private void RecalculateTileSprite(Vector2Int coord)
     {
         if (!activeCells.TryGetValue(coord, out var data)) return;
 
-        bool hasUp    = activeCells.ContainsKey(coord + Vector2Int.up);
-        bool hasDown  = activeCells.ContainsKey(coord + Vector2Int.down);
-        bool hasLeft  = activeCells.ContainsKey(coord + Vector2Int.left);
+        bool hasUp = activeCells.ContainsKey(coord + Vector2Int.up);
+        bool hasDown = activeCells.ContainsKey(coord + Vector2Int.down);
+        bool hasLeft = activeCells.ContainsKey(coord + Vector2Int.left);
         bool hasRight = activeCells.ContainsKey(coord + Vector2Int.right);
+        bool hasUpRight = activeCells.ContainsKey(coord + Vector2Int.one);
+        bool hasUpLeft = activeCells.ContainsKey(coord + new Vector2Int(-1, 1));
+        bool hasDownLeft = activeCells.ContainsKey(coord + Vector2Int.one * -1);
+        bool hasDownRight = activeCells.ContainsKey(coord + new Vector2Int(1, -1));
 
-        int neighborCount = (hasUp    ? 1 : 0)
-                          + (hasDown  ? 1 : 0)
-                          + (hasLeft  ? 1 : 0)
-                          + (hasRight ? 1 : 0);
+        int cardinalNeighborCount = (hasUp ? 1 : 0)
+                                    + (hasDown ? 1 : 0)
+                                    + (hasLeft ? 1 : 0)
+                                    + (hasRight ? 1 : 0);
+        int cornerNeighborCount = (hasUpLeft ? 1 : 0)
+                                + (hasUpRight ? 1 : 0)
+                                + (hasDownLeft ? 1 : 0)
+                                + (hasDownRight ? 1 : 0);
 
-        switch (neighborCount)
+        switch (cardinalNeighborCount)
         {
             case 0:
                 data.spriteType      = PieceTileSpriteType.ALL_EDGE;
                 data.spriteDirection = TileSpriteDirection.FACES_UP;
                 break;
 
-            case 4:
-                data.spriteType      = PieceTileSpriteType.NO_EDGE;
-                data.spriteDirection = TileSpriteDirection.FACES_UP;
-                break;
-
-            // ── 3 neighbours: one exposed edge ──────────────────────────────────────
-            // The sprite shows its single edge on TOP when FACES_UP, so we point the
-            // direction toward the missing neighbour.
-            case 3:
-                data.spriteType = PieceTileSpriteType.SINGLE_EDGE;
-                data.spriteDirection =
-                    !hasUp    ? TileSpriteDirection.FACES_UP    :
-                    !hasRight ? TileSpriteDirection.FACES_RIGHT :
-                    !hasDown  ? TileSpriteDirection.FACES_DOWN  :
-                                TileSpriteDirection.FACES_LEFT;
-                break;
-
-            // ── 1 neighbour: three exposed edges ────────────────────────────────────
-            // The sprite leaves the BOTTOM closed (neighbour there) when FACES_UP, so
-            // we rotate until the single neighbour sits at the "bottom" of the sprite.
-            case 1:
+            case 1: 
                 data.spriteType = PieceTileSpriteType.TRIPLE_EDGE;
-                data.spriteDirection =
-                    hasDown  ? TileSpriteDirection.FACES_UP    :   // neighbour below  → bottom closed
-                    hasLeft  ? TileSpriteDirection.FACES_RIGHT :   // neighbour left   → rotate so left = bottom
-                    hasUp    ? TileSpriteDirection.FACES_DOWN  :   // neighbour above  → rotate so top  = bottom
-                               TileSpriteDirection.FACES_LEFT;     // neighbour right  → rotate so right = bottom
+                data.spriteDirection = hasUp ? TileSpriteDirection.FACES_DOWN : 
+                                       hasDown ? TileSpriteDirection.FACES_UP :
+                                       hasLeft ? TileSpriteDirection.FACES_RIGHT : 
+                                       TileSpriteDirection.FACES_LEFT;
                 break;
 
-            // ── 2 neighbours ─────────────────────────────────────────────────────────
             case 2:
                 if ((hasUp && hasDown) || (hasLeft && hasRight))
                 {
-                    // Opposing neighbours → straight corridor
-                    data.spriteType      = PieceTileSpriteType.DOUBLE_OPPOSING_EDGE;
-                    data.spriteDirection = (hasUp && hasDown)
-                        ? TileSpriteDirection.FACES_UP    // vertical corridor
-                        : TileSpriteDirection.FACES_RIGHT; // horizontal corridor
+                    data.spriteType = PieceTileSpriteType.OPPOSITE_EDGE;
+                    data.spriteDirection = (hasUp && hasDown) ? TileSpriteDirection.FACES_RIGHT : TileSpriteDirection.FACES_UP;
                 }
                 else
                 {
-                    // Adjacent neighbours → corner piece.
-                    // FACES_UP  exposes top  + right  → neighbours are DOWN  + LEFT
-                    // FACES_RIGHT exposes right + bottom → neighbours are LEFT  + UP
-                    // FACES_DOWN  exposes bottom + left  → neighbours are UP   + RIGHT
-                    // FACES_LEFT  exposes left  + top    → neighbours are RIGHT + DOWN
-                    data.spriteType = PieceTileSpriteType.DOUBLE_CORNER_EDGE;
-                    data.spriteDirection =
-                        (hasDown  && hasLeft)  ? TileSpriteDirection.FACES_UP    :
-                        (hasLeft  && hasUp)    ? TileSpriteDirection.FACES_RIGHT :
-                        (hasUp    && hasRight) ? TileSpriteDirection.FACES_DOWN  :
-                                                 TileSpriteDirection.FACES_LEFT;  // hasRight && hasDown
+                    if (hasUp && hasRight)
+                    {
+                        data.spriteType = hasUpRight ? PieceTileSpriteType.ADJACENT_EDGE_NO_CORNER : PieceTileSpriteType.ADJACENT_EDGE_CORNER;
+                        data.spriteDirection = TileSpriteDirection.FACES_DOWN;
+                    }
+                    else if (hasRight && hasDown)
+                    {
+                        data.spriteType = hasDownRight ? PieceTileSpriteType.ADJACENT_EDGE_NO_CORNER : PieceTileSpriteType.ADJACENT_EDGE_CORNER;
+                        data.spriteDirection = TileSpriteDirection.FACES_LEFT;
+                    }
+                    else if (hasDown && hasLeft)
+                    {
+                        data.spriteType = hasDownLeft ? PieceTileSpriteType.ADJACENT_EDGE_NO_CORNER : PieceTileSpriteType.ADJACENT_EDGE_CORNER;
+                        data.spriteDirection = TileSpriteDirection.FACES_UP;
+                    }
+                    else
+                    {
+                        data.spriteType = hasUpLeft ? PieceTileSpriteType.ADJACENT_EDGE_NO_CORNER : PieceTileSpriteType.ADJACENT_EDGE_CORNER;
+                        data.spriteDirection = TileSpriteDirection.FACES_RIGHT;
+                    }
+                }
+                break;
+
+            case 3:
+                if (!hasUp)
+                {
+                    data.spriteType = (hasDownLeft && hasDownRight) ? PieceTileSpriteType.T_SECTION_NO_CORNERS
+                                        : hasDownLeft ? PieceTileSpriteType.T_SECTION_CORNER_BOTTOM_RIGHT
+                                        : hasDownRight ? PieceTileSpriteType.T_SECTION_CORNER_BOTTOM_LEFT
+                                        : PieceTileSpriteType.T_SECTION_BOTH_CORNERS;
+                    data.spriteDirection = TileSpriteDirection.FACES_UP;
+                }
+                else if (!hasRight)
+                {
+                    data.spriteType = (hasUpLeft && hasDownLeft) ? PieceTileSpriteType.T_SECTION_NO_CORNERS
+                                        : hasUpLeft ? PieceTileSpriteType.T_SECTION_CORNER_BOTTOM_RIGHT
+                                        : hasDownLeft ? PieceTileSpriteType.T_SECTION_CORNER_BOTTOM_LEFT
+                                        : PieceTileSpriteType.T_SECTION_BOTH_CORNERS;
+                    data.spriteDirection = TileSpriteDirection.FACES_RIGHT;
+                }
+                else if (!hasLeft)
+                {
+                    data.spriteType = (hasUpRight && hasDownRight) ? PieceTileSpriteType.T_SECTION_NO_CORNERS
+                                        : hasUpRight ? PieceTileSpriteType.T_SECTION_CORNER_BOTTOM_LEFT
+                                        : hasDownRight ? PieceTileSpriteType.T_SECTION_CORNER_BOTTOM_RIGHT
+                                        : PieceTileSpriteType.T_SECTION_BOTH_CORNERS;
+                    data.spriteDirection = TileSpriteDirection.FACES_LEFT;
+                }
+                else // !hasDown
+                {
+                    data.spriteType = (hasUpLeft && hasUpRight) ? PieceTileSpriteType.T_SECTION_NO_CORNERS
+                                        : hasUpLeft ? PieceTileSpriteType.T_SECTION_CORNER_BOTTOM_LEFT
+                                        : hasUpRight ? PieceTileSpriteType.T_SECTION_CORNER_BOTTOM_RIGHT
+                                        : PieceTileSpriteType.T_SECTION_BOTH_CORNERS;
+                    data.spriteDirection = TileSpriteDirection.FACES_DOWN;
+                }
+                break;
+
+            case 4:
+                switch (cornerNeighborCount) {
+                    case 0:
+                        data.spriteType = PieceTileSpriteType.NO_EDGE_FOUR_CORNERS;
+                        data.spriteDirection = TileSpriteDirection.FACES_UP;
+                        break;
+                    case 1:
+                        data.spriteType = PieceTileSpriteType.NO_EDGE_THREE_CORNERS;
+                        data.spriteDirection = hasUpRight ? TileSpriteDirection.FACES_UP
+                                             : hasDownRight ? TileSpriteDirection.FACES_RIGHT
+                                             : hasDownLeft ? TileSpriteDirection.FACES_DOWN 
+                                             : TileSpriteDirection.FACES_LEFT;
+                        break;
+                    case 2: 
+                        if ((hasUpRight && hasDownLeft) || (hasUpLeft && hasDownLeft))
+                        {
+                            data.spriteType = PieceTileSpriteType.NO_EDGE_OPPOSITE_CORNER; 
+                            data.spriteDirection = hasUpRight ? TileSpriteDirection.FACES_RIGHT : TileSpriteDirection.FACES_UP;
+                        }
+                        else // adjacent
+                        {
+                            data.spriteType = PieceTileSpriteType.NO_EDGE_ADJACENT_CORNERS;
+                            data.spriteDirection = (hasUpLeft && hasUpRight) ? TileSpriteDirection.FACES_UP
+                                                 : (hasUpRight && hasDownRight) ? TileSpriteDirection.FACES_RIGHT
+                                                 : (hasDownRight && hasDownLeft) ? TileSpriteDirection.FACES_DOWN
+                                                 : TileSpriteDirection.FACES_LEFT;
+                        }
+                        break;
+                    case 3:
+                        data.spriteType = PieceTileSpriteType.NO_EDGE_ONE_CORNER;
+                        data.spriteDirection = !hasDownLeft ? TileSpriteDirection.FACES_UP
+                                             : !hasUpLeft ? TileSpriteDirection.FACES_RIGHT
+                                             : !hasUpRight ? TileSpriteDirection.FACES_DOWN 
+                                             : TileSpriteDirection.FACES_LEFT;
+                        break;
+                    case 4:
+                        data.spriteType = PieceTileSpriteType.NO_EDGE_NO_CORNER;
+                        data.spriteDirection = TileSpriteDirection.FACES_UP;
+                        break;
                 }
                 break;
         }
@@ -324,7 +376,7 @@ public class PieceEditorWindow : EditorWindow
     private static void ToggleGlue(PieceEditorTileData data, GlueCardinality dir)
     {
         if (data.glueDirections.Contains(dir)) data.glueDirections.Remove(dir);
-        else                                   data.glueDirections.Add(dir);
+        else data.glueDirections.Add(dir);
     }
 
     #endregion
@@ -357,8 +409,8 @@ public class PieceEditorWindow : EditorWindow
 
     private void DrawGrid()
     {
-        float toolbarH    = EditorStyles.toolbar.fixedHeight;
-        Rect  gridArea    = new(GridPadding, toolbarH + GridPadding, GridSize * CellSize, GridSize * CellSize);
+        float toolbarH = EditorStyles.toolbar.fixedHeight;
+        Rect  gridArea = new(GridPadding, toolbarH + GridPadding, GridSize * CellSize, GridSize * CellSize);
         Vector2Int center = new(GridSize / 2, GridSize / 2);
 
         // Background panel

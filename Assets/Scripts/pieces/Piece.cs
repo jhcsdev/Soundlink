@@ -64,11 +64,16 @@ namespace GamePieces
         }
         public Piece LimboMode()
         {
-            if (currentState == PieceState.HOVER_GRID) return this;
+            if (currentState == PieceState.HOVER_GRID) { 
+                Debug.Log("hovering now");
+                foreach(PieceTile pt in tileObjects) pt.Hovered();
+                return this;
+            } 
             currentState = PieceState.HOVER_GRID;
 
             transform.localScale = Vector2.one * gridTileScale; 
-            // todo: visuals class
+
+            foreach(PieceTile pt in tileObjects) { pt.PickedUp(); pt.Hovered(); }// these are visuals
 
             return this;
         }
@@ -76,10 +81,7 @@ namespace GamePieces
         {
             if (currentState == PieceState.PLACED_GRID) return this;
             currentState = PieceState.PLACED_GRID;
-            
-            transform.localScale = Vector2.one * gridTileScale;
-            // todo: visuals class
-
+                        
             return this;
         }
         public List<PieceTile> GetPieceTiles()
@@ -106,15 +108,14 @@ namespace GamePieces
         {
             // todo: visuals
         }
-
-        public void HoverMode()
+        public void LinkPulse(Color color)
         {
-            // todo: visuals
-            foreach(var pt in tileObjects)
-            {
-                pt.GetComponent<SpriteRenderer>().color = new(1f, 1f, 1f, 0.4f);
-            }
-            transform.localScale = Vector2.one * 0.8f;
+            foreach(PieceTile pt in tileObjects) pt.ColorPulse(color);
+        }
+        public void SetColorPermanent(Color color, float overTime=0.2f)
+        {
+            Debug.Log("setting color permanent!");
+            foreach(PieceTile pt in tileObjects) pt.SetColor(color, overTime);
         }
 
         public bool IsSilentPiece() => data.isSilentPiece;

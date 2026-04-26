@@ -1,6 +1,9 @@
 using System.Collections.Generic;
+using System.Linq;
 using GamePieces;
 using UnityEngine;
+using UnityEngine.InputSystem.Android;
+using UnityEngine.UIElements;
 
 namespace PuzzleGrid
 {
@@ -14,10 +17,214 @@ namespace PuzzleGrid
         private LinkPlacementData startLinkReference;
         private LinkPlacementData endLinkReference;
 
-        // 
-        // adds piece to the proper order based on a set of conditions - if start, add after basedOn, if end, add before basedOn, todo: if complete, don't add (?)
+        #region Getters
+        public List<Piece> GetPieces()
+        {
+            return pieces;
+        }
+        public LinkPlacementData GetStartPlacementData()
+        {
+            return startLinkReference;
+        }
+        public LinkPlacementData GetEndPlacementData()
+        {
+            return endLinkReference;
+        }
         /// <summary>
-        /// add Piece to link in an ordered position
+        /// gets the sound id of the start link 
+        /// </summary>
+        /// <returns></returns>
+        public int GetStartSoundIDIfExists()
+        {
+            if (HasStartData()) return startLinkReference.GetSoundID();
+            return -1;
+        }
+        /// <summary>
+        /// inverse of above
+        /// </summary>
+        /// <returns>sound id or -1 if does not exist</returns>
+        public int GetEndSoundIDIfExists()
+        {
+            if (HasEndData()) return startLinkReference.GetSoundID();
+            return -1;
+        }
+        #endregion
+
+        #region setters
+        public GridLink SetEndPlacementData(LinkPlacementData data)
+        {
+            endLinkReference = data;
+            // todo:: need linking visuals of some sort; if end does not match start, should break the link visually
+            foreach (var p in pieces) p.SetColorPermanent(endLinkReference.GetBaseColor());
+            return this;
+        }
+
+        public GridLink SetStartPlacementData(LinkPlacementData data)
+        {
+            startLinkReference = data;
+            // todo:: same as above
+            foreach(var p in pieces) p.SetColorPermanent(startLinkReference.GetBaseColor());
+            return this; 
+        }
+        #endregion
+
+        #region predicates
+        // determine if Piece exists within Link
+        public bool ContainsPiece(Piece piece)
+        {
+            return pieces.Contains(piece);
+        } 
+
+        public bool HasStartData() => startLinkReference != null;
+        public bool HasEndData() => endLinkReference != null;
+        /// <summary>
+        /// a link is "live" when it either 1) has more than two pieces or 2) is a Start or End piece.
+        /// </summary>
+        /// <returns></returns>
+        public bool IsLinkLive() => HasEndData() || HasStartData() || pieces.Count >= 2;
+
+        /// <summary>
+        /// evaluates whether two links are compatible with one another
+        /// </summary>
+        /// <param name="other">the link to compare against</param>
+        /// <returns>
+        /// false if - both links have end data, both links have start data, or links have opposite start/end & soundIds do not match.
+        /// true otherwise.
+        /// </returns>
+        public bool IsOtherCompatible(GridLink other)
+        {
+            if ((this.HasEndData() && other.HasEndData()) || (this.HasStartData() && other.HasStartData())) return false;
+            if (this.HasStartData() && other.HasEndData()) return this.GetStartSoundIDIfExists() == other.GetEndSoundIDIfExists();
+            if (this.HasEndData() && other.HasStartData()) return this.GetEndSoundIDIfExists() == other.GetStartSoundIDIfExists();
+
+            return true;
+        }
+        /// <summary>
+        /// returns true if this link has both a start and end link and the sound id of those references matches
+        /// </summary>
+        /// <returns></returns>
+        public bool IsLinkComplete()
+        {
+            return HasStartData() && HasEndData() && (startLinkReference.GetSoundID() == endLinkReference.GetSoundID());
+        }
+        #endregion 
+
+        #region major functionality
+        /// <summary>
+        /// Merge another link with this one, re-ordering pieces and resetting start/end link data when necessary.
+        /// </summary>
+        /// <param name="other">The link to merge with.</param>
+        /// <param name="otherPivot">The "piece" in other to base the merge on. </param>
+        /// <param name="thisPivot">The "piece" in this to base the merge on. </param>
+        /// <returns>True on success, false on failure. See IsOtherCompatible() for definition of compatibility.
+        /// </returns>
+        public bool MergeLink(GridLink other, Piece otherPivot, Piece thisPivot)
+        {
+            // these checks remove situations where: the "other" is complete, "this" is complete, "other" & "this" both are start / end, or "other" & "this" have different soundIds 
+            if (this.IsLinkComplete())
+            {
+                Debug.LogWarning("Tried to merge other: {other} with this: {this}, but this is complete.");
+                return false;
+            }
+            if (!IsOtherCompatible(other))
+            {
+                Debug.LogWarning($"Tried to merge {this} with incompatible link {other}"); 
+                return false;
+            }
+
+            List<Piece> otherPieces = other.GetPieces();
+
+            // re-orient otherPieces so that "pivot" is always at the start of the otherPieces list. 
+            // todo (thought) - we can allow connecting to the middle of an existing piece by splitting "other"; however, this adds some other edge cases that we'd need to think through logically...
+            int otherPivotIndex = -1;
+            for (int i = 0; i < otherPieces.Count; i++)
+            {
+                if (otherPieces[i] == otherPivot) { otherPivotIndex = i; break; }
+            }
+
+            // reorient list
+            if (otherPivotIndex == otherPieces.Count - 1) otherPieces.Reverse();
+            else if (otherPivotIndex != 0) 
+            { 
+                Debug.LogWarning("(unimplemented) Tried to merge with a piece that was in the middle of an existing link (or pivot was not in link)"); 
+                return false;
+            }
+
+            // in this case, "other" should go after "this"
+            if (other.HasEndData() || this.HasStartData())
+            {
+                pieces.AddRange(otherPieces);
+                endLinkReference = other.GetEndPlacementData(); // preserve end link data
+            }
+            // in this case, "this" should go after "other"
+            else if (other.HasStartData() || this.HasEndData())
+            {
+                otherPieces.AddRange(pieces);
+                startLinkReference = other.GetStartPlacementData();
+            }
+            // in this case, it is a free-standing link. We don't know the end direction of the link, so we're gonna have to just combine the two, preserving existing ordering
+            else
+            {
+                int thisPivotIndex = -1;
+                for (int i = 0; i < pieces.Count; i++)
+                {
+                    if (pieces[i] == thisPivot) { thisPivotIndex = i; break; }
+                }
+                if (thisPivotIndex == -1) { Debug.LogWarning("Could not find thisPivot in pieces."); return false; }
+
+                pieces.InsertRange(thisPivotIndex, otherPieces);
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Splits this link into two by REMOVING!! the "at" piece. 
+        /// </summary>
+        /// <param name="at">The piece to orchestrate the split around.</param>
+        /// <param name="start">The first "half" of the newly-split link. Should be "this" link.</param>
+        /// <param name="end">The second half of the link, newly created. Might be null, if "at" piece is the first / last piece in the link - then this function is just a wrapper for RemovePiece().</param>
+        /// <returns>True if the "at" piece exists, and was removed. False otherwise.</returns>
+        public bool SplitLink(Piece at, out GridLink start, out GridLink end)
+        {
+            start = this;
+            end = null;
+
+            if (pieces.Count <= 0) return false;
+
+            for (int i = 0; i < pieces.Count; i++)
+            {
+                if (pieces[i] != at) continue;
+                if (i == 0 || i == pieces.Count - 1) 
+                {
+                    Debug.Log($"Split link - edge case (index {i}, {pieces.Count} pieces). Removing piece.");
+                    // edge case - need to update start/end fields.
+                    if (i == 0) startLinkReference = null;
+                    if (i == pieces.Count) endLinkReference = null;
+
+                    RemovePiece(at);
+                    return true;
+                }
+
+                // otherwise, need to create a new grid link. 
+                Debug.Log($"Split link - found piece; making new grid link.");
+                end = new();
+                List<Piece> newLinkPieces = pieces.Skip(i + 1).Take(pieces.Count - i - 1).ToList();
+
+                foreach (var p in newLinkPieces) end.AddPiece(p, null); 
+
+                end.SetEndPlacementData(endLinkReference);
+                endLinkReference = null; // note - setting endLinkReference to null here is okay only under the assumption that links will never continue past the end position. Otherwise, we cannot assume this.
+
+                Debug.Log($"Split link successful. This link is now: {start}. \n The new link is: {end}.");
+                return true;
+            }
+
+            return false;
+        }
+
+                /// <summary>
+        /// adds piece to the proper order based on a set of conditions - if start, add after basedOn, if end, add before basedOn, todo: if complete, don't add (?)
         /// </summary>
         /// <param name="toAdd">the piece to add to the link</param>
         /// <param name="basedOn" (nullable)>the piece that toAdd is connected to; will be used to base insertion position</param>
@@ -25,8 +232,9 @@ namespace PuzzleGrid
         public GridLink AddPiece(Piece toAdd, Piece basedOn)
         {
             if (basedOn == null) { 
-                if (pieces.Count == 0) pieces.Add(toAdd); 
-                else Debug.LogWarning("Tried adding a piece to a link without any 'basedOn' parameter, but there are existing pieces in the link!");
+                Debug.Log($"Adding piece to {this} without basedOn. Ensure order!");
+                pieces.Add(toAdd); 
+                if (HasStartData() || HasEndData()) toAdd.SetColorPermanent(GetStartPlacementData()?.GetBaseColor() ?? GetEndPlacementData().GetBaseColor());
                 return this;
             }
 
@@ -37,6 +245,8 @@ namespace PuzzleGrid
                 {
                     if (HasEndData()) { pieces.Insert(i, toAdd);  } // add BEFORE basedOn
                     else pieces.Insert(i+1, toAdd); // add AFTER basedOn
+
+                    if (HasStartData() || HasEndData()) toAdd.SetColorPermanent(GetStartPlacementData()?.GetBaseColor() ?? GetEndPlacementData().GetBaseColor());
 
                     return this;
                 }
@@ -52,91 +262,24 @@ namespace PuzzleGrid
             return pieces.Count;
         }
 
-        public List<Piece> GetPieces()
-        {
-            return pieces;
-        }
-
-        // TODO: delete link?
-
-        /// <summary>
-        /// merge links
-        /// </summary>
-        /// <param name="other"></param>
-        /// <returns></returns>
-        public GridLink MergeLink(GridLink other)
-        {
-            // todo - merge links!
-            Debug.Log("merging two links!");
-
-            // NOTE: want to check the order of the links, which means that we are going to have to iterate through them, 
-            // or something like that .. 
-            
-
-            // 
-            return this;
-        }
-        // note here - when merging two links, you need to compare the start / end link references. 
-        // i'd say that if both start + end
-
-        // TODO: split links (and then delete if the size is only one)
-        // NOTE: there should never be a link with only one Piece in it ...
-
-        // determine if Piece exists within Link
-        public bool ContainsPiece(Piece piece)
-        {
-            return pieces.Contains(piece);
-        } 
-
-        public GridLink SetStartPlacementData(LinkPlacementData data)
-        {
-            startLinkReference = data;
-            return this; 
-        }
-
-        public LinkPlacementData GetStartPlacementData()
-        {
-            return startLinkReference;
-        }
-
-        public GridLink SetEndPlacementData(LinkPlacementData data)
-        {
-            endLinkReference = data;
-            return this;
-        }
-        public LinkPlacementData GetEndPlacementData()
-        {
-            return endLinkReference;
-        }
-
-        public bool HasStartData() => startLinkReference != null;
-        public bool HasEndData() => endLinkReference != null;
-        /// <summary>
-        /// gets the sound id of the start link 
-        /// </summary>
-        /// <returns></returns>
-        public int GetStartSoundIDIfExists()
-        {
-            if (HasStartData()) return startLinkReference.GetSoundID();
-            else return -1;
-        }
-        /// <summary>
-        /// returns true if this link has both a start and end link and the sound id of those references matches
-        /// </summary>
-        /// <returns></returns>
-        public bool IsLinkComplete()
-        {
-            return HasStartData() && HasEndData() && (startLinkReference.GetSoundID() == endLinkReference.GetSoundID());
-        }
-
         public void IndexPlaySound(int index)
         {
             if (index < 0 || index > pieces.Count) { Debug.LogWarning($"Link passed index {index}, which is out of bounds for piece count {pieces.Count}"); return; }
 
-
-
             GetStartPlacementData().GetTrackSound().PlaySound();
+            pieces[index].LinkPulse(startLinkReference.GetPulseColor());
         }
+
+        #endregion
+
+        #region other
+        public override string ToString()
+        {
+            string baseStr = base.ToString();
+            baseStr += $"\n LinkStart: {startLinkReference} \n LinkEnd: {endLinkReference} \n Number pieces: {pieces.Count}";
+            return baseStr;
+        }
+        #endregion
 
     }
 }
