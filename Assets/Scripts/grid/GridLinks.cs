@@ -53,6 +53,8 @@ namespace PuzzleGrid
         #region setters
         public GridLink SetEndPlacementData(LinkPlacementData data)
         {
+            if (data == null) { ResetEndPlacementData(); return this; }
+
             endPlacementData = data;
             hasEndLinkRef = true;
             // todo:: need linking visuals of some sort; if end does not match start, should break the link visually
@@ -63,12 +65,14 @@ namespace PuzzleGrid
         {
             hasEndLinkRef = false;
             endPlacementData = null; 
-            PermanentRepaintPieces(Color.white);
+            if (!HasStartData()) PermanentRepaintPieces(Color.white);
             return this;
         }
 
         public GridLink SetStartPlacementData(LinkPlacementData data)
         {
+            if (data == null) { ResetStartPlacementData(); return this; }
+
             startPlacementData = data;
             hasStartLinkRef = true;
             // todo:: same as above
@@ -79,7 +83,7 @@ namespace PuzzleGrid
         {
             hasStartLinkRef = false;
             startPlacementData = null;
-            PermanentRepaintPieces(Color.white);
+            if (!HasEndData()) PermanentRepaintPieces(Color.white);
             return this;
         }
         #endregion
@@ -215,6 +219,8 @@ namespace PuzzleGrid
             for (int i = 0; i < pieces.Count; i++)
             {
                 if (pieces[i] != at) continue;
+
+
                 if (i == 0 || i == pieces.Count - 1) 
                 {
                     Debug.Log($"Split link - edge case (index {i}, {pieces.Count} pieces). Removing piece.");
@@ -231,7 +237,10 @@ namespace PuzzleGrid
                 end = new();
                 List<Piece> newLinkPieces = pieces.Skip(i + 1).Take(pieces.Count - i - 1).ToList();
 
-                foreach (var p in newLinkPieces) end.AddPiece(p, null); 
+                foreach (var p in newLinkPieces) end.AddPiece(p, null); // add all the pieces to the end of list
+
+                // reset this link's pieces, removing the "at" link simultaneously
+                pieces = pieces.Take(i).ToList();
 
                 end.SetEndPlacementData(endPlacementData);
                 ResetEndPlacementData(); // note:: setting endLinkReference to null here is okay only under the assumption that links will never continue past the end position. Otherwise, we cannot assume this.

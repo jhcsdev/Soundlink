@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using GamePieces;
+using GridLinks;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -37,6 +38,7 @@ namespace PuzzleGrid
 
         public UnityAction GameWon;
         public UnityAction<GridLink> OnAStartLinkUpdated;
+        public UnityAction<int> OnAStartLinkFullyDestroyed;
         #endregion
 
         #region unity functions
@@ -272,6 +274,8 @@ namespace PuzzleGrid
             {
                 Debug.Log("Removing Piece from Link");
                 if (!link.ContainsPiece(piece)) continue;
+                int startIdIfExists = link.GetStartSoundIDIfExists(); // because we might lose the start data, we have to store before splitting, then reset (OnAStartLinkFullyDestroyed) if necessary
+
                 if (!link.SplitLink(piece, out GridLink startLink, out GridLink endLink))
                 {
                     Debug.LogWarning($"Tried to split link {link}, but it failed!");
@@ -281,11 +285,18 @@ namespace PuzzleGrid
                 if (endLink != null && endLink.IsLinkLive()) 
                 { 
                     Debug.Log($"Created new endLink {endLink}; adding to links."); gridLinks.Add(endLink);
+                    if (endLink.HasStartData()) { Debug.LogWarning("Warning: 'end' Link created after splitting has start data."); }
                 }
-                if (!startLink.IsLinkLive()) 
+
+                if (startLink.HasStartData())
+                {
+                    OnAStartLinkUpdated?.Invoke(startLink);
+                } 
+                else
                 {
                     Debug.Log($"Start link {startLink} died after split merge.");
-                    gridLinks.Remove(link);
+                    if (!startLink.IsLinkLive()) gridLinks.Remove(link); // remove link from known links if necessary.
+                    if (startIdIfExists >= 0) OnAStartLinkFullyDestroyed?.Invoke(startIdIfExists);
                 }
             }
         }

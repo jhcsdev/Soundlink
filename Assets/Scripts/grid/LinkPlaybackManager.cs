@@ -38,10 +38,12 @@ namespace GridLinks
         void OnEnable()
         {
             puzzleGrid.OnAStartLinkUpdated += ScheduleSingleLink;
+            puzzleGrid.OnAStartLinkFullyDestroyed += StopPlaybackForLink;
         }
         void OnDisable()
         {
             puzzleGrid.OnAStartLinkUpdated -= ScheduleSingleLink;
+            puzzleGrid.OnAStartLinkFullyDestroyed -= StopPlaybackForLink;
         }
 
         void Start()
@@ -158,6 +160,15 @@ namespace GridLinks
 
                 curBeat += p.GetPieceTiles().Count;
             }
+        }
+        private void StopPlaybackForLink(int soundId)
+        {
+            // reset gridlink if we know this link already
+            if (knownLinks.ContainsKey(soundId))
+            {
+                knownLinks.Remove(soundId);
+                scheduleIndexTracker.Remove(soundId);
+            } 
         }
 
         private int BinarySearchForId<T>(T forItem, List<T> searchIn) where T : IComparable<T>
