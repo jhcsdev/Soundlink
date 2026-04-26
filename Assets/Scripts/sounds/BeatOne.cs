@@ -14,12 +14,18 @@ namespace TrackSounds
         {
             myChuck = ChuckManager.Instance.chuckSubInstance;
 
+            Debug.Log($"myChuck is (BeatOne): {myChuck}");
+
             if (myChuck == null) Debug.Log("There is no Chuck!");
 
             Debug.Log("Play BeatOne!");
 
             myChuck.RunCode( string.Format( @"
             // super simple beat: kick, clap, kick, clap
+            global Event beatStart;
+            global Event beatDone;
+
+            beatStart.signal();
 
             SinOsc kick => ADSR envKick => Gain kickGain => dac;
             Noise clap => BPF filter => ADSR envClap => Gain clapGain => dac;
@@ -77,6 +83,8 @@ namespace TrackSounds
             playClap(1.0);
             playKick(1.0);
             playClap(1.0);
+
+            beatDone.signal();
             "));
         }
     }
