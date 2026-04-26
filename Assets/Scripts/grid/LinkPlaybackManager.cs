@@ -135,9 +135,7 @@ namespace GridLinks
 
                 if (!scheduleIndexTracker.ContainsKey(soundId)) { 
                     Debug.LogWarning($"knownlinks has id {soundId} but scheduler missing it"); 
-                    return; 
-                }
-                scheduleIndexTracker.Remove(soundId); // fully removing it will cause a fast-speedup in the playback loop.
+                }else scheduleIndexTracker.Remove(soundId); // fully removing it will cause a fast-speedup in the playback loop.
             } 
             else
             {
@@ -149,7 +147,6 @@ namespace GridLinks
             }
 
             // setup the schedule 
-            // todo - this depends on the GridLink PieceList being ordered in the first place. very important
             int curBeat = 1;
             foreach (Piece p in which.GetPieces())
             {

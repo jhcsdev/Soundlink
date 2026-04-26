@@ -66,7 +66,6 @@ namespace GamePieces
         public Piece LimboMode()
         {
             if (currentState == PieceState.HOVER_GRID) { 
-                Debug.Log("hovering now");
                 foreach(PieceTile pt in tileObjects) pt.Hovered();
                 return this;
             } 
@@ -116,7 +115,6 @@ namespace GamePieces
         }
         public void SetColorPermanent(Color color, float overTime=0.2f)
         {
-            Debug.Log("setting color permanent!");
             foreach(PieceTile pt in tileObjects) pt.SetColor(color, overTime);
         }
 

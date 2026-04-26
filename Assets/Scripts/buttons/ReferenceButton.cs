@@ -34,8 +34,8 @@ public class ButtonAction : MonoBehaviour
             global Event beatDone;
         "));
 
-        Debug.Log($"myChuck is (RefenceButton): {myChuck}");
-        Debug.Log($"buttonText is: {buttonText}");
+        // Debug.Log($"myChuck is (RefenceButton): {myChuck}");
+        // Debug.Log($"buttonText is: {buttonText}");
 
         // create listener for when beat starts
         // create a ChuckEventListener, call SetButtonPlaying() during Update() after every broadcast from "beatStart"

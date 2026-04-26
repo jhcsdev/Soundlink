@@ -243,10 +243,12 @@ namespace PuzzleGrid
                 Debug.Log("Adding current piece to neighbor's existing link.");
                 if (linksForBasePiece.Count > 0)
                 {
+                    Debug.Log("\t Merging links");
                     MergeLinks(linksForBasePiece[0], existingLink, neighborPiece, p);
                 }
                 else
                 {
+                    Debug.Log("\t Updating existing link");
                     UpdateLink(existingLink, p, neighborPiece);
                 }   
             }
@@ -321,6 +323,7 @@ namespace PuzzleGrid
             {
                 Debug.Log("Merge success.");
                 gridLinks.Remove(mergeTo);
+                if (baseLink.HasStartData()) OnAStartLinkUpdated?.Invoke(baseLink);
             } else { Debug.LogWarning("Merge failed."); }
         }
         #endregion

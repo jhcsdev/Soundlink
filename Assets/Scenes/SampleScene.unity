@@ -1075,7 +1075,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b409d6d9706b41988cd9e32bd055751, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ChuckSubInstance
-  chuckMainInstance: {fileID: 0}
+  chuckMainInstance: {fileID: 848501141}
   spatialize: 0
 --- !u!82 &771828670
 AudioSource:
