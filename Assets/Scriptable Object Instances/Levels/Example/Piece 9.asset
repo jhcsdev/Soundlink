@@ -16,25 +16,25 @@ MonoBehaviour:
   - relativeOffset: {x: -1, y: 0}
     isOrigin: 0
     type: 0
-    glue: 
+    glue: 000000000300000001000000
     tileType: 14
     spriteDirection: 3
   - relativeOffset: {x: 0, y: 0}
     isOrigin: 1
     type: 0
-    glue: 
+    glue: 0100000000000000
     tileType: 10
     spriteDirection: 0
   - relativeOffset: {x: 1, y: 0}
     isOrigin: 0
     type: 0
-    glue: 
+    glue: 0200000001000000
     tileType: 12
     spriteDirection: 1
   - relativeOffset: {x: 1, y: 1}
     isOrigin: 0
     type: 0
-    glue: 
+    glue: 030000000000000002000000
     tileType: 14
     spriteDirection: 0
   isSilentPiece: 0

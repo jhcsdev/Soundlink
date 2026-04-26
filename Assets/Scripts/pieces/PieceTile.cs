@@ -10,6 +10,8 @@ namespace GamePieces
         public UnityAction<GridTile> OnPlaced;
         public UnityAction OnHover;
         public UnityAction<Piece, Vector2> OnPickedUp;
+        public UnityAction<Color> OnColorPulse;
+        public UnityAction<Color, float> OnSetColor;
 
         [SerializeField] private PieceTileType type;
         private Sprite tileSprite; // todo - only supports tile right now, no overlay
@@ -130,6 +132,14 @@ namespace GamePieces
         public void PickedUp()
         {
             OnPickedUp?.Invoke(piece, relativeOffset);
+        }
+        public void ColorPulse(Color c)
+        {
+            OnColorPulse?.Invoke(c);
+        }
+        public void SetColor(Color c, float time=0.2f)
+        {
+            OnSetColor?.Invoke(c, time);
         }
     }
 }

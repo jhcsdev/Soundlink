@@ -108,6 +108,15 @@ namespace GamePieces
         {
             // todo: visuals
         }
+        public void LinkPulse(Color color)
+        {
+            foreach(PieceTile pt in tileObjects) pt.ColorPulse(color);
+        }
+        public void SetColorPermanent(Color color, float overTime=0.2f)
+        {
+            Debug.Log("setting color permanent!");
+            foreach(PieceTile pt in tileObjects) pt.SetColor(color, overTime);
+        }
 
         public bool IsSilentPiece() => data.isSilentPiece;
     }
