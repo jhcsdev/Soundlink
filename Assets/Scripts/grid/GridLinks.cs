@@ -67,6 +67,13 @@ namespace PuzzleGrid
         public GridLink MergeLink(GridLink other)
         {
             // todo - merge links!
+            Debug.Log("merging two links!");
+
+            // NOTE: want to check the order of the links, which means that we are going to have to iterate through them, 
+            // or something like that .. 
+            
+
+            // 
             return this;
         }
         // note here - when merging two links, you need to compare the start / end link references. 

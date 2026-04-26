@@ -1,24 +1,73 @@
-// this is the code to do something when the reference button is hit
-// for now, just a debug statement would be good .. will eventually want to reference the ChuckSound, though, huh ..
-
 using UnityEngine;
 using UnityEngine.UI;
 using ChuckChuckChuck;
 using TrackSounds;
+using System.Collections;
 
 public class ButtonAction : MonoBehaviour
 {
     public Button myButton;
     public TrackSound sound;
+    private ChuckSubInstance myChuck;
+
+    public string idleText = "Play Reference";
+    public string playingText = "Playing ...";
+    public Color idleColor = Color.white;
+    public Color playingColor = Color.green;
+    private Text buttonText;
 
     void Start()
     {
         myButton.onClick.AddListener(LogClick);
+
+        // initialize text
+        buttonText = myButton.GetComponentInChildren<Text>();
+
+        // grab same chuck subsinstance as track sound 
+        myChuck = ChuckManager.Instance.chuckSubInstance;
+
+        // must declare Chuck events before creating listeners
+        myChuck.RunCode( string.Format( @"
+            global Event beatStart;
+            global Event beatDone;
+        "));
+
+        Debug.Log($"myChuck is (RefenceButton): {myChuck}");
+        Debug.Log($"buttonText is: {buttonText}");
+
+        // create listener for when beat starts
+        // create a ChuckEventListener, call SetButtonPlaying() during Update() after every broadcast from "beatStart"
+        ChuckEventListener beatStartListener = gameObject.AddComponent<ChuckEventListener>();
+        beatStartListener.ListenForEvent( myChuck, "beatStart", SetButtonPlaying);
+
+        // create listener for when beat ends
+        // create a ChuckEventListener, call SetButtonIdle() during Update() after every broadcast from "beatDone"
+        ChuckEventListener beatDoneListener = gameObject.AddComponent<ChuckEventListener>();
+        beatDoneListener.ListenForEvent( myChuck, "beatDone", SetButtonIdle);
     }
 
     void LogClick()
     {
-        Debug.Log("Button clicked!");
         sound?.PlaySound();
+    }
+
+    void SetButtonPlaying()
+    {
+        myButton.interactable = false;
+        buttonText.text = playingText;
+
+        ColorBlock colors = myButton.colors;
+        colors.disabledColor = playingColor;
+        myButton.colors = colors;
+    }
+
+    void SetButtonIdle()
+    {
+        myButton.interactable = true;
+        buttonText.text = idleText;
+
+        ColorBlock colors = myButton.colors;
+        colors.normalColor = idleColor;
+        myButton.colors = colors;
     }
 }
