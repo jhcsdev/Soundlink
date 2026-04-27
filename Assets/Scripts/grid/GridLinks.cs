@@ -164,6 +164,7 @@ namespace PuzzleGrid
             }
 
             // reorient list
+            Debug.Log($"Reorienting other by index found at {otherPivotIndex}");
             if (otherPivotIndex == otherPieces.Count - 1) otherPieces.Reverse();
             else if (otherPivotIndex != 0) 
             { 
@@ -174,13 +175,17 @@ namespace PuzzleGrid
             // in this case, "other" should go after "this"
             if (other.HasEndData() || this.HasStartData())
             {
+                Debug.Log("Other has end data, or this has start data!");
                 pieces.AddRange(otherPieces);
                 if (other.HasEndData()) SetEndPlacementData(other.GetEndPlacementData());
             }
             // in this case, "this" should go after "other"
             else if (other.HasStartData() || this.HasEndData())
             {
+                Debug.Log("Other has start data, and this has end data!");
+                otherPieces.Reverse();
                 otherPieces.AddRange(pieces);
+                pieces = otherPieces;
                 if (other.HasStartData()) SetStartPlacementData(other.GetStartPlacementData());
             }
             // in this case, it is a free-standing link. We don't know the end direction of the link, so we're gonna have to just combine the two, preserving existing ordering

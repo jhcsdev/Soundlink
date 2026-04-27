@@ -61,7 +61,8 @@ namespace GamePieces
         void OnSetColor(Color c, float time)
         {
             Debug.Log($"Setting color to: {c}, {time}");
-            spriteRenderer.color = c;
+            Color mixCol = pieceTile.GetMixColor();
+            spriteRenderer.color = c * mixCol;
             baseColor = c;
             // spriteRenderer.DOColor(c, time);
         }
