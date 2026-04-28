@@ -22,7 +22,8 @@ namespace GridLinks
 
         private Dictionary<int /*soundid*/, SchedulerInformation> knownLinks = new();
         private Dictionary<int /*soundid*/, int /*currentschedulerindex*/> scheduleIndexTracker = new();
-        private class SchedulerInformation { public List<int> scheduledBeats; public GridLink link; }
+        private class SchedulerInformation { public List<EventTiming> scheduledBeats; public GridLink link; }
+        private class EventTiming { public int beat; public bool silent; }
 
         #region unity functions
         void Awake()
@@ -88,9 +89,15 @@ namespace GridLinks
                 {
                     if (!scheduleIndexTracker.ContainsKey(key)) scheduleIndexTracker[key] = 0;
 
-                    while(scheduleIndexTracker[key] < knownLinks[key].scheduledBeats.Count && knownLinks[key].scheduledBeats[scheduleIndexTracker[key]] <= curBeat)
+                    while(scheduleIndexTracker[key] < knownLinks[key].scheduledBeats.Count && knownLinks[key].scheduledBeats[scheduleIndexTracker[key]].beat <= curBeat)
                     {
-                        if (knownLinks[key].scheduledBeats[scheduleIndexTracker[key]] == curBeat) knownLinks[key].link.IndexPlaySound(scheduleIndexTracker[key]);
+                        if (knownLinks[key].scheduledBeats[scheduleIndexTracker[key]].beat == curBeat)
+                        {
+                            knownLinks[key].link.IndexPlaySound(
+                                scheduleIndexTracker[key], 
+                                knownLinks[key].scheduledBeats[scheduleIndexTracker[key]].silent
+                            );
+                        }
 
                         scheduleIndexTracker[key] += 1;
                         if(!knownLinks[key].link.HasStartData()) { 
@@ -152,11 +159,8 @@ namespace GridLinks
             int curBeat = 1;
             foreach (Piece p in which.GetPieces())
             {
-                if (!p.IsSilentPiece()) // only schedule sound if it's not a silent piece
-                {
-                    Debug.Log($"scheduling sound id {soundId} at {curBeat}");
-                    knownLinks[soundId].scheduledBeats.Add(curBeat);
-                }
+                // need to schedule even if silent, but must indicate whether to play sound or not
+                knownLinks[soundId].scheduledBeats.Add(new() {beat = curBeat, silent = p.IsSilentPiece()});
 
                 curBeat += p.GetPieceTiles().Count;
             }

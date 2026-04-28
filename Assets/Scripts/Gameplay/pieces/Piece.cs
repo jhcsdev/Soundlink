@@ -115,7 +115,10 @@ namespace GamePieces
         }
         public void SetColorPermanent(Color color, float overTime=0.2f)
         {
-            foreach(PieceTile pt in tileObjects) pt.SetColor(color, overTime);
+            foreach(PieceTile pt in tileObjects) {
+                Debug.Log($"PAINTING COLOR TO {color}");
+                pt.SetColorPermanent(color, overTime);
+            }
         }
         public void SetMixColorOnPieces(Color color)
         {

@@ -168,8 +168,9 @@ namespace GamePieces
         {
             OnColorPulse?.Invoke(c, overTime);
         }
-        public void SetColor(Color c, float time=0.2f)
+        public void SetColorPermanent(Color c, float time=0.2f)
         {
+            Debug.Log("Set color permanent");
             OnSetColor?.Invoke(c, time);
         }
         #endregion
