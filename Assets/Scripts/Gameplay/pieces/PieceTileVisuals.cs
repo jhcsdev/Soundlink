@@ -9,7 +9,12 @@ namespace GamePieces
     {
         private PieceTile pieceTile;
         private SpriteRenderer spriteRenderer;
-        private Color baseColor;
+        private Color baseColor = Color.white;
+
+        #region active DOTweens
+        Tween activePulseTween = null;
+
+        #endregion
 
         void Awake()
         {
@@ -55,8 +60,9 @@ namespace GamePieces
         void OnColorPulse(Color c, float overTime)
         {
             Debug.Log($"Pulsing to {c} from {baseColor} over {overTime}");
+            if (activePulseTween != null) activePulseTween.Kill();
             spriteRenderer.color = c;
-            spriteRenderer.DOColor(baseColor, overTime);
+            activePulseTween = spriteRenderer.DOColor(baseColor, overTime);
         }
         void OnSetColor(Color c, float time)
         {
