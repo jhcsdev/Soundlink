@@ -64,7 +64,7 @@ namespace PuzzleGrid
             InstantAddPieceTile(tile);
             
             tile.Placed(this);
-
+            
             return true;
         }
         private bool InstantAddPieceTile(PieceTile tile)

@@ -44,7 +44,6 @@ namespace GamePieces
             transform.SetParent(gridTile.transform);
             transform.localPosition = Vector2.zero;
             transform.localScale = Vector2.one;
-            // spriteRenderer.color = new(1, 1, 1, 1f); // todo:: hardset color...?
         }
         void OnHovering()
         {
