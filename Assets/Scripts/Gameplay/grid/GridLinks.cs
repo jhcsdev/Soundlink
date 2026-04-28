@@ -10,7 +10,7 @@ namespace PuzzleGrid
     public class GridLink
     {
         // list of pieces 
-        private List<Piece> pieces = new();
+        [SerializeField] private List<Piece> pieces = new();
 
         [NonSerialized] private LinkPlacementData startPlacementData = null;
         [NonSerialized] private LinkPlacementData endPlacementData = null;
@@ -301,11 +301,11 @@ namespace PuzzleGrid
             return pieces.Count;
         }
 
-        public void IndexPlaySound(int index)
+        public void IndexPlaySound(int index, bool silent = false)
         {
             if (index < 0 || index > pieces.Count) { Debug.LogWarning($"Link passed index {index}, which is out of bounds for piece count {pieces.Count}"); return; }
 
-            GetStartPlacementData().GetTrackSound().PlaySound();
+            if (!silent) GetStartPlacementData().GetTrackSound().PlaySound();
             pieces[index].LinkPulse(startPlacementData.GetPulseColor());
         }
 
@@ -318,7 +318,6 @@ namespace PuzzleGrid
             foreach (var p in pieces) p.SetColorPermanent(to);
         }
 
-
         #endregion
 
         #region other
@@ -329,6 +328,5 @@ namespace PuzzleGrid
             return baseStr;
         }
         #endregion
-
     }
 }

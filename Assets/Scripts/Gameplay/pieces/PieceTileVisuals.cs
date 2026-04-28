@@ -44,7 +44,6 @@ namespace GamePieces
             transform.SetParent(gridTile.transform);
             transform.localPosition = Vector2.zero;
             transform.localScale = Vector2.one;
-            spriteRenderer.color = new(1, 1, 1, 1f); // todo:: hardset color...?
         }
         void OnHovering()
         {
@@ -68,6 +67,7 @@ namespace GamePieces
         {
             Debug.Log($"Setting color to: {c}, {time}");
             // Color mixCol = pieceTile.GetMixColor();
+            if (activePulseTween != null) activePulseTween.Kill();
             spriteRenderer.color = c;
             baseColor = c;
             // spriteRenderer.DOColor(c, time);
