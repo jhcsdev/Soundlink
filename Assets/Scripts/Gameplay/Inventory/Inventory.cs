@@ -18,16 +18,15 @@ namespace Inventory
         public UnityAction<Piece, Vector2Int /*position of placement*/> OnPiecePutIntoInventory;
         #endregion
 
-        [SerializeField] private InventoryData inventoryData;
+        private InventoryData inventoryData;
         private Dictionary<Vector2Int, Piece> piecesLookup;
 
-        void Awake()
+        void OnEnable()
         {
-            if (inventoryData == null) {
-                Debug.Log("Error in Awake(): Inventory not assigned!");
-                return;
-            }
+            if (LevelLoader.instance == null) Debug.LogError("Warning: A LevelLoader needs to exist in the scene for inventory to build.");
+            if (LevelLoader.instance.GetInventoryData() == null) Debug.LogError("Warning: LevelLoader exists, but inventory failed to retrieve InventoryData.");
 
+            inventoryData = LevelLoader.instance.GetInventoryData();
             piecesLookup = new Dictionary<Vector2Int, Piece>();
         }
 
@@ -44,8 +43,6 @@ namespace Inventory
 
                 putPiece(pieceObjComp);
             }
-
-            // PrintInventory();
         }
 
         // check if current position is the max position, or something like that

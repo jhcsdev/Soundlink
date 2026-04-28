@@ -214,6 +214,18 @@ MonoBehaviour:
           m_StringArgument: Levels
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 677761133}
+        m_TargetAssemblyTypeName: MainMenuCanvasController, Assembly-CSharp
+        m_MethodName: TriggerLevelTransition
+        m_Mode: 2
+        m_Arguments:
+          m_ObjectArgument: {fileID: 11400000, guid: fb23fc0a4de5f425bae10f91b819b886, type: 2}
+          m_ObjectArgumentAssemblyTypeName: LevelData, Assembly-CSharp
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &125666072
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -809,13 +821,13 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 677761132}
-        m_TargetAssemblyTypeName: ChildContextSwapper, Assembly-CSharp
-        m_MethodName: SwapChild
-        m_Mode: 5
+      - m_Target: {fileID: 677761133}
+        m_TargetAssemblyTypeName: MainMenuCanvasController, Assembly-CSharp
+        m_MethodName: TriggerLevelTransition
+        m_Mode: 2
         m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_ObjectArgument: {fileID: 11400000, guid: 4a9a4e0c4320d4618bbaa6722838cb25, type: 2}
+          m_ObjectArgumentAssemblyTypeName: LevelData, Assembly-CSharp
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: Options
@@ -1101,6 +1113,7 @@ GameObject:
   - component: {fileID: 677761129}
   - component: {fileID: 677761128}
   - component: {fileID: 677761132}
+  - component: {fileID: 677761133}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -1205,6 +1218,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c8f7e2987c83542f19d9d4be72c37709, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CanvasContextSwapper
+--- !u!114 &677761133
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 677761127}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57854a4091d404fbb8e4d214f0736f1a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MainMenuCanvasController
 --- !u!1 &751060034
 GameObject:
   m_ObjectHideFlags: 0
@@ -1510,6 +1535,50 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 873729890}
   m_CullTransparentMesh: 1
+--- !u!1 &1082158941
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1082158943}
+  - component: {fileID: 1082158942}
+  m_Layer: 0
+  m_Name: LevelLoader
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1082158942
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1082158941}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 589c6ca68d087498ea483203f2f4cfce, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LevelLoader
+--- !u!4 &1082158943
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1082158941}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 449.96823, y: 173.986, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1110826027
 GameObject:
   m_ObjectHideFlags: 0
@@ -2957,3 +3026,4 @@ SceneRoots:
   - {fileID: 594476237}
   - {fileID: 677761131}
   - {fileID: 352017563}
+  - {fileID: 1082158943}

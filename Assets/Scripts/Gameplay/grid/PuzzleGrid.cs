@@ -13,8 +13,9 @@ namespace PuzzleGrid
     public class PuzzleGrid : PlayerInteractableGrid
     {
         [SerializeField] private Vector2 gridBottomLeftPosition = Vector2.zero;
-        [SerializeField] private GridData data; 
         [SerializeField] private float tileRealsize = 1f;
+
+        private GridData gridData; 
 
         private GridTile[,] tiles; // index via [x,y]
         public List<GridLink> gridLinks = new();
@@ -42,16 +43,20 @@ namespace PuzzleGrid
         #endregion
 
         #region unity functions
-        void Awake()
+        void OnEnable()
         {
-            tiles = new GridTile[data.width, data.height];
+            if (LevelLoader.instance == null) Debug.LogError("Warning: A LevelLoader needs to exist in the scene for grid to build.");
+            if (LevelLoader.instance.GetGridData() == null) Debug.LogError("Warning: LevelLoader exists, but grid failed to retrieve GridData.");
+
+            gridData = LevelLoader.instance.GetGridData();
+            tiles = new GridTile[gridData.width, gridData.height];
         }
 
         void Start()
         {
-            for (int x = 0; x < data.width; x++)
+            for (int x = 0; x < gridData.width; x++)
             {
-                for (int y = 0; y < data.height; y++)
+                for (int y = 0; y < gridData.height; y++)
                 {
                     GameObject tileObj = new($"Tile {x}, {y}");
                     tileObj.transform.parent = transform;
@@ -60,7 +65,7 @@ namespace PuzzleGrid
                     GridTile gridTile = tileObj.AddComponent<GridTile>();
 
                     // grab and set color based on tiletype
-                    GridTileType tileType = data.GetTileInfo(x, y, out LinkPlacementData placementData);
+                    GridTileType tileType = gridData.GetTileInfo(x, y, out LinkPlacementData placementData);
                     gridTile.SetTileType(tileType);
                     if (tileType == GridTileType.START || tileType == GridTileType.END)
                     {
@@ -84,7 +89,7 @@ namespace PuzzleGrid
             Vector2Int intended = focusPosition + direction;
 
             // check x pos, y up
-            if (intended.x < 0 || intended.x >= data.width || intended.y < 0 || intended.y >= data.height) { OnFailedLeavingGrid?.Invoke(direction); return Vector2Int.zero; }
+            if (intended.x < 0 || intended.x >= gridData.width || intended.y < 0 || intended.y >= gridData.height) { OnFailedLeavingGrid?.Invoke(direction); return Vector2Int.zero; }
 
             // otherwise movement is ok
             focusPosition = intended;
@@ -360,8 +365,8 @@ namespace PuzzleGrid
         #region helpers
         private Vector2Int GetPositionOfPieceTile(PieceTile pt)
         {
-            for (int x = 0; x < data.width; x++)
-                for (int y = 0; y < data.height; y++)
+            for (int x = 0; x < gridData.width; x++)
+                for (int y = 0; y < gridData.height; y++)
                     if (tiles[x, y].GetPieceTiles().Contains(pt))
                         return new Vector2Int(x, y);
             return new Vector2Int(-1, -1); // not found

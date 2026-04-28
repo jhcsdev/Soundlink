@@ -119,6 +119,51 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &51757163
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 51757165}
+  - component: {fileID: 51757164}
+  m_Layer: 0
+  m_Name: LevelLoader
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &51757164
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 51757163}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 589c6ca68d087498ea483203f2f4cfce, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LevelLoader
+  activeLevel: {fileID: 0}
+--- !u!4 &51757165
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 51757163}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 449.96823, y: 173.986, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &75001921
 GameObject:
   m_ObjectHideFlags: 0
@@ -2011,7 +2056,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6e6e6b06a35bf4c9c97a00132b8471f4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Inventory.Inventory
-  inventoryData: {fileID: 11400000, guid: e6e7ba3f4463f444682514aa4c5607c8, type: 2}
 --- !u!224 &1762153999
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2156,8 +2200,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PuzzleGrid.PuzzleGrid
   gridBottomLeftPosition: {x: 0, y: 0}
-  data: {fileID: 11400000, guid: 794c9530f0fa342628c4662286ddd402, type: 2}
   tileRealsize: 1
+  gridLinks: []
 --- !u!4 &1771607252
 Transform:
   m_ObjectHideFlags: 0
@@ -2454,3 +2498,4 @@ SceneRoots:
   - {fileID: 730133862}
   - {fileID: 848501143}
   - {fileID: 75001924}
+  - {fileID: 51757165}
