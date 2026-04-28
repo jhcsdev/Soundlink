@@ -117,6 +117,10 @@ namespace GamePieces
         {
             foreach(PieceTile pt in tileObjects) pt.SetColor(color, overTime);
         }
+        public void SetMixColorOnPieces(Color color)
+        {
+            
+        }
 
         public bool IsSilentPiece() => data.isSilentPiece;
     }

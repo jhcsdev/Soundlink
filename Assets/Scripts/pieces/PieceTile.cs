@@ -7,22 +7,29 @@ namespace GamePieces
 {
     public class PieceTile : MonoBehaviour
     {
+        #region UnityActions
         public UnityAction<GridTile> OnPlaced;
         public UnityAction OnHover;
         public UnityAction<Piece, Vector2> OnPickedUp;
         public UnityAction<Color, float> OnColorPulse;
         public UnityAction<Color, float> OnSetColor;
+        #endregion
 
+        private Piece piece;
+        private PieceTileData ptd;
+
+        #region initialized instance data
         [SerializeField] private PieceTileType type;
         private Sprite tileSprite; // todo:: only supports tile right now, no overlay
         private Sprite glueSprite; // todo:: see CreateGlueSprites()
         private TileSpriteDirection spriteDirection;
-        private Piece piece;
         private Vector2Int relativeOffset;
         private List<GlueCardinality> glue;
-
-        private PieceTileData ptd;
         private bool initialized = false;
+        #endregion
+
+        private Color mixColor; // todo:: move to PieceTileVisuals
+        public Color GetMixColor() => mixColor;
 
         #region chaining functions
         public PieceTile Initialize(PieceTileData data, Piece parent) // returns self for chaining purposes
@@ -80,6 +87,7 @@ namespace GamePieces
         public PieceTile SetSpriteVariable(Sprite sprite) { tileSprite = sprite; return this; }
         public PieceTile SetTileDirection(TileSpriteDirection direction)  { spriteDirection = direction; return this; }
         public PieceTile SetGlueSprite(Sprite sprite) { glueSprite = sprite; return this; }
+        public PieceTile SetMixColor(Color color) { mixColor = color; return this; }
         #endregion
 
         #region getters
@@ -92,6 +100,7 @@ namespace GamePieces
         public TileSpriteDirection GetSpriteDirection() => spriteDirection;
         #endregion
 
+        #region rotation
         public void RotateRelativeOffsetClockwise()
         {
             int x = relativeOffset.y * 1;
@@ -140,6 +149,9 @@ namespace GamePieces
             _ => GlueCardinality.SOUTH
         };
 
+        #endregion 
+
+        #region setters
         public void Placed(GridTile tile)
         {
             OnPlaced?.Invoke(tile);
@@ -160,5 +172,6 @@ namespace GamePieces
         {
             OnSetColor?.Invoke(c, time);
         }
+        #endregion
     }
 }

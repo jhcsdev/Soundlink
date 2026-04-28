@@ -16,7 +16,7 @@ MonoBehaviour:
   - relativeOffset: {x: 0, y: 0}
     isOrigin: 1
     type: 0
-    glue: 03000000000000000200000001000000
+    glue: 0000000001000000
     tileType: 13
     spriteDirection: 0
   isSilentPiece: 0
