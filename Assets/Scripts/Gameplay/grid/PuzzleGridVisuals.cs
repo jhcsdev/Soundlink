@@ -1,5 +1,6 @@
 
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using DG.Tweening;
@@ -45,7 +46,7 @@ namespace PuzzleGrid
         [Header("objects to be set")]
         [SerializeField] private Transform gridPointer;
         private SpriteRenderer pointerRenderer;
-        [SerializeField] private Sprite basicGridTile;
+        [SerializeField] private List<Sprite> gridTiles;
         #endregion
         
         #region other variables
@@ -229,7 +230,8 @@ namespace PuzzleGrid
         void InitializeTile(GridTile tile, GridTileType type, Vector2 position)
         {
             tile.ResetChildRenderer("GridTileRenderer");
-            tile.SetSprite(basicGridTile);
+            int spriteIndex = (int)(position.x + position.y) % gridTiles.Count;
+            tile.SetSprite(gridTiles[spriteIndex]);
             if (tile.HasLinkPlacementData()) tile.SetLinkColorByPlacementData();
             Vector2 worldPos = tile.transform.position;
 
