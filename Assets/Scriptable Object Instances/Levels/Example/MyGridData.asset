@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e28649601a3744f7a97b948ed0ac6d14, type: 3}
   m_Name: MyGridData
   m_EditorClassIdentifier: Assembly-CSharp::PuzzleGrid.GridData
-  width: 8
-  height: 8
+  width: 15
+  height: 15
   linkDatas:
   - startPos: {x: 0, y: 0}
     endPos: {x: 5, y: 5}
