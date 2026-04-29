@@ -109,10 +109,8 @@ namespace GridLinks
                     }
                 }
 
-                // TODO: for now, get it playing simply
-                // after that, work in the on four thing or something
-                Debug.Log("Would play a sound here!");
-                // should play the metronome on every link, right? 
+                // play metronome sound on every beat ... 
+                // TODO: need to implement the "four" thing"
                 metronome?.PlaySound();
 
                 yield return waitBeat;

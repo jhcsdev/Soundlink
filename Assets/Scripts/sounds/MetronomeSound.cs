@@ -26,9 +26,7 @@ namespace TrackSounds
             0.6 => float CLICK_GAIN;
 
             (60.0 / BPM)::second => dur beat_dur;
-
-            4 => int BEATS_PER_MEASURE;
-
+            
             // Play a single metronome click
             // isAccent: true for beat 1 downbeat, false for other beats
             fun void playClick(int isAccent, float beat_note) {{
