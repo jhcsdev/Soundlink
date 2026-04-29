@@ -39,6 +39,8 @@ namespace Player
         {
             playerInputWrapper.SELECT.performed += OnSelect;
             playerInputWrapper.INVENTORY_BUTTON.performed += OnInventoryButton;
+            playerInputWrapper.ESCAPE.performed += OnEscape;
+            playerInputWrapper.GRID.performed += OnGrid;
             playerInputWrapper.ROTATE.performed += OnRotate;
             SetCurrentGrid(inventoryGrid);
         }
@@ -136,16 +138,20 @@ namespace Player
                 inventoryGrid.PlaceAtFocusPosition(referencedPiece);
                 referencedPiece = null;
             }
-            else
-            {
-                Piece p = currentGrid.TakeAtFocusPosition();
-                if (p != null)
-                {
-                    inventoryGrid.PlaceAtFocusPosition(p);
-                }
-            }
 
             SwapGrid();
+        }
+
+        private void OnGrid(InputAction.CallbackContext ctx)
+        {
+            if (!IsCurrentGridInventory()) return;
+
+            SwapGrid(); 
+        }
+
+        private void OnEscape(InputAction.CallbackContext ctx)
+        {
+            
         }
 
         private void OnRotate(InputAction.CallbackContext ctx)

@@ -131,7 +131,7 @@ namespace Player
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""ReturnToinventory"",
+                    ""name"": ""ReturnToInventory"",
                     ""type"": ""Button"",
                     ""id"": ""f1ba0d36-48eb-4cd5-b651-1c94a6531f70"",
                     ""expectedControlType"": """",
@@ -140,9 +140,18 @@ namespace Player
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""Map"",
+                    ""name"": ""Grid"",
                     ""type"": ""Button"",
                     ""id"": ""2776c80d-3c14-4091-8c56-d04ced07a2b0"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Escape"",
+                    ""type"": ""Button"",
+                    ""id"": ""a001700c-e1ab-4a6d-b2b2-e341a3ba44b4"",
                     ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
@@ -355,7 +364,7 @@ namespace Player
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Keyboard&Mouse"",
-                    ""action"": ""ReturnToinventory"",
+                    ""action"": ""ReturnToInventory"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -366,7 +375,7 @@ namespace Player
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Gamepad"",
-                    ""action"": ""ReturnToinventory"",
+                    ""action"": ""ReturnToInventory"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -377,29 +386,29 @@ namespace Player
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""XR"",
-                    ""action"": ""ReturnToinventory"",
+                    ""action"": ""ReturnToInventory"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
                 {
                     ""name"": """",
                     ""id"": ""1534dc16-a6aa-499d-9c3a-22b47347b52a"",
-                    ""path"": ""<Keyboard>/m"",
+                    ""path"": ""<Keyboard>/g"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Keyboard&Mouse"",
-                    ""action"": ""Map"",
+                    ""action"": ""Grid"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
                 {
                     ""name"": """",
-                    ""id"": ""25060bbd-a3a6-476e-8fba-45ae484aad05"",
-                    ""path"": ""<Gamepad>/dpad/left"",
+                    ""id"": ""f4320a6d-59c8-4df5-949f-372af866696e"",
+                    ""path"": ""<Keyboard>/escape"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": ""Gamepad"",
-                    ""action"": ""Map"",
+                    ""groups"": ""Keyboard&Mouse"",
+                    ""action"": ""Escape"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -1035,8 +1044,9 @@ namespace Player
             m_Player_LeftClick = m_Player.FindAction("LeftClick", throwIfNotFound: true);
             m_Player_Rotate = m_Player.FindAction("Rotate", throwIfNotFound: true);
             m_Player_Select = m_Player.FindAction("Select", throwIfNotFound: true);
-            m_Player_ReturnToinventory = m_Player.FindAction("ReturnToinventory", throwIfNotFound: true);
-            m_Player_Map = m_Player.FindAction("Map", throwIfNotFound: true);
+            m_Player_ReturnToInventory = m_Player.FindAction("ReturnToInventory", throwIfNotFound: true);
+            m_Player_Grid = m_Player.FindAction("Grid", throwIfNotFound: true);
+            m_Player_Escape = m_Player.FindAction("Escape", throwIfNotFound: true);
             // UI
             m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
             m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -1134,8 +1144,9 @@ namespace Player
         private readonly InputAction m_Player_LeftClick;
         private readonly InputAction m_Player_Rotate;
         private readonly InputAction m_Player_Select;
-        private readonly InputAction m_Player_ReturnToinventory;
-        private readonly InputAction m_Player_Map;
+        private readonly InputAction m_Player_ReturnToInventory;
+        private readonly InputAction m_Player_Grid;
+        private readonly InputAction m_Player_Escape;
         /// <summary>
         /// Provides access to input actions defined in input action map "Player".
         /// </summary>
@@ -1164,13 +1175,17 @@ namespace Player
             /// </summary>
             public InputAction @Select => m_Wrapper.m_Player_Select;
             /// <summary>
-            /// Provides access to the underlying input action "Player/ReturnToinventory".
+            /// Provides access to the underlying input action "Player/ReturnToInventory".
             /// </summary>
-            public InputAction @ReturnToinventory => m_Wrapper.m_Player_ReturnToinventory;
+            public InputAction @ReturnToInventory => m_Wrapper.m_Player_ReturnToInventory;
             /// <summary>
-            /// Provides access to the underlying input action "Player/Map".
+            /// Provides access to the underlying input action "Player/Grid".
             /// </summary>
-            public InputAction @Map => m_Wrapper.m_Player_Map;
+            public InputAction @Grid => m_Wrapper.m_Player_Grid;
+            /// <summary>
+            /// Provides access to the underlying input action "Player/Escape".
+            /// </summary>
+            public InputAction @Escape => m_Wrapper.m_Player_Escape;
             /// <summary>
             /// Provides access to the underlying input action map instance.
             /// </summary>
@@ -1209,12 +1224,15 @@ namespace Player
                 @Select.started += instance.OnSelect;
                 @Select.performed += instance.OnSelect;
                 @Select.canceled += instance.OnSelect;
-                @ReturnToinventory.started += instance.OnReturnToinventory;
-                @ReturnToinventory.performed += instance.OnReturnToinventory;
-                @ReturnToinventory.canceled += instance.OnReturnToinventory;
-                @Map.started += instance.OnMap;
-                @Map.performed += instance.OnMap;
-                @Map.canceled += instance.OnMap;
+                @ReturnToInventory.started += instance.OnReturnToInventory;
+                @ReturnToInventory.performed += instance.OnReturnToInventory;
+                @ReturnToInventory.canceled += instance.OnReturnToInventory;
+                @Grid.started += instance.OnGrid;
+                @Grid.performed += instance.OnGrid;
+                @Grid.canceled += instance.OnGrid;
+                @Escape.started += instance.OnEscape;
+                @Escape.performed += instance.OnEscape;
+                @Escape.canceled += instance.OnEscape;
             }
 
             /// <summary>
@@ -1238,12 +1256,15 @@ namespace Player
                 @Select.started -= instance.OnSelect;
                 @Select.performed -= instance.OnSelect;
                 @Select.canceled -= instance.OnSelect;
-                @ReturnToinventory.started -= instance.OnReturnToinventory;
-                @ReturnToinventory.performed -= instance.OnReturnToinventory;
-                @ReturnToinventory.canceled -= instance.OnReturnToinventory;
-                @Map.started -= instance.OnMap;
-                @Map.performed -= instance.OnMap;
-                @Map.canceled -= instance.OnMap;
+                @ReturnToInventory.started -= instance.OnReturnToInventory;
+                @ReturnToInventory.performed -= instance.OnReturnToInventory;
+                @ReturnToInventory.canceled -= instance.OnReturnToInventory;
+                @Grid.started -= instance.OnGrid;
+                @Grid.performed -= instance.OnGrid;
+                @Grid.canceled -= instance.OnGrid;
+                @Escape.started -= instance.OnEscape;
+                @Escape.performed -= instance.OnEscape;
+                @Escape.canceled -= instance.OnEscape;
             }
 
             /// <summary>
@@ -1573,19 +1594,26 @@ namespace Player
             /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
             void OnSelect(InputAction.CallbackContext context);
             /// <summary>
-            /// Method invoked when associated input action "ReturnToinventory" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+            /// Method invoked when associated input action "ReturnToInventory" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
             /// </summary>
             /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
             /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
             /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-            void OnReturnToinventory(InputAction.CallbackContext context);
+            void OnReturnToInventory(InputAction.CallbackContext context);
             /// <summary>
-            /// Method invoked when associated input action "Map" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+            /// Method invoked when associated input action "Grid" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
             /// </summary>
             /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
             /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
             /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-            void OnMap(InputAction.CallbackContext context);
+            void OnGrid(InputAction.CallbackContext context);
+            /// <summary>
+            /// Method invoked when associated input action "Escape" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+            /// </summary>
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+            void OnEscape(InputAction.CallbackContext context);
         }
         /// <summary>
         /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "UI" which allows adding and removing callbacks.
