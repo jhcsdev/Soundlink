@@ -12,8 +12,6 @@ public class ButtonAction : MonoBehaviour
     public LinkPlaybackManager linkManager;
     private ChuckSubInstance myChuck;
 
-    public string idleText = "Play Reference";
-    public string playingText = "Playing ...";
     public Color idleColor = Color.white;
     public Color playingColor = Color.green;
     private Text buttonText;
@@ -57,8 +55,6 @@ public class ButtonAction : MonoBehaviour
     void SetButtonPlaying()
     {
         linkManager.DisableSoundPlayback();
-        myButton.interactable = false;
-        buttonText.text = playingText;
 
         ColorBlock colors = myButton.colors;
         colors.disabledColor = playingColor;
@@ -69,8 +65,6 @@ public class ButtonAction : MonoBehaviour
     void SetButtonIdle()
     {
         linkManager.EnableSoundPlayback();
-        myButton.interactable = true;
-        buttonText.text = idleText;
 
         ColorBlock colors = myButton.colors;
         colors.normalColor = idleColor;
