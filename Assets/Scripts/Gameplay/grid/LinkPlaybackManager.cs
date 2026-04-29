@@ -5,6 +5,7 @@ using System.Linq;
 using GamePieces;
 using PuzzleGrid;
 using UnityEngine;
+using TrackSounds;
 
 namespace GridLinks
 {
@@ -12,6 +13,7 @@ namespace GridLinks
     public class LinkPlaybackManager : MonoBehaviour
     {
         public static LinkPlaybackManager Instance;
+        [SerializeField] TrackSound metronome;
 
         [SerializeField] float bpm;
         [SerializeField, Tooltip("number of beats for the playback loop")] private int beatsInLoop;
@@ -106,6 +108,12 @@ namespace GridLinks
                         } 
                     }
                 }
+
+                // TODO: for now, get it playing simply
+                // after that, work in the on four thing or something
+                Debug.Log("Would play a sound here!");
+                // should play the metronome on every link, right? 
+                metronome?.PlaySound();
 
                 yield return waitBeat;
                 curBeat += 1;                       

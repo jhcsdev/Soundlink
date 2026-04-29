@@ -9,7 +9,7 @@ namespace ChuckChuckChuck
 
         [SerializeField] public ChuckMainInstance chuckMainInstance;
         [SerializeField] public ChuckSubInstance chuckSubInstance;
-        public static float BPM = 120f;
+        public static float BPM = 90f;
 
         void Awake()
         {
