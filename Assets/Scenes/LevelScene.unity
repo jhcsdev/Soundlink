@@ -148,7 +148,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 589c6ca68d087498ea483203f2f4cfce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LevelLoader
-  activeLevel: {fileID: 11400000, guid: fb23fc0a4de5f425bae10f91b819b886, type: 2}
+  activeLevel: {fileID: 11400000, guid: dcb12b7273ea94282921f033eca42a9b, type: 2}
 --- !u!4 &51757165
 Transform:
   m_ObjectHideFlags: 0
@@ -1102,7 +1102,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ButtonAction
   myButton: {fileID: 771828665}
-  sound: {fileID: 11400000, guid: fc817b0c3447347f78a0856c59cdb056, type: 2}
+  sound: {fileID: 11400000, guid: d16c574643abe4451b64fc54c14ff424, type: 2}
   linkManager: {fileID: 1771607254}
   idleText: Play Reference
   playingText: Playing ...
@@ -2243,7 +2243,7 @@ MonoBehaviour:
   gridTiles:
   - {fileID: 21300000, guid: ca6f44d08e1b64a07bd00667e0aeca18, type: 3}
   - {fileID: -371271769975134872, guid: 16ae1469daea84fa8ac78e2e3fad9133, type: 3}
-  camOffset: {x: 4, y: 0}
+  camOffset: {x: 2, y: 0}
   displayGridTilesX: 8
   displayGridTilesY: 8
   camMoveTime: 0.15
@@ -2259,6 +2259,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b620929824064f23849dd7cddc2afe5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GridLinks.LinkPlaybackManager
+  metronome: {fileID: 11400000, guid: 764ecaa10a291435dae541c97b79a9f4, type: 2}
   bpm: 120
   beatsInLoop: 16
   soundPlaybackEnabled: 1

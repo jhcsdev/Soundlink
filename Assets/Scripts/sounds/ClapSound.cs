@@ -14,9 +14,9 @@ namespace TrackSounds
 
             if (myChuck == null) Debug.Log("There is no Chuck!");
 
-            Debug.Log("Play clap!");
-
             myChuck.RunCode( string.Format( @"
+            global float BPM;
+
             Noise clap => BPF filter => ADSR envClap => Gain clapGain => dac;
 
             (2::ms, 10::ms, 0, 5::ms) => envClap.set;
@@ -24,8 +24,6 @@ namespace TrackSounds
             1.5 => filter.Q;
             .85 => float CLAP_GAIN;
             2.0 => clapGain.gain;
-
-            60 => float BPM;
             (60.0 / BPM)::second => dur beat_dur;
 
             fun void playClap(float beat_note) {{
