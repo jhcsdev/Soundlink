@@ -31,6 +31,7 @@ namespace PuzzleGrid
         public UnityAction<Vector2Int> OnNewHover;
         public UnityAction<GridTile> OnHoveringTile;
         public UnityAction<GridTile, GridTileType, Vector2> OnGridTileInitialize;
+        public UnityAction OnGridFinishedInitialize;
 
         public UnityAction<Piece> OnPiecePlacementFailure;
         public UnityAction<Piece> OnPiecePlacementSuccess;
@@ -78,6 +79,8 @@ namespace PuzzleGrid
                     OnGridTileInitialize?.Invoke(gridTile, tileType, pos);
                 }
             }
+
+            OnGridFinishedInitialize?.Invoke();
         }
         #endregion
 
