@@ -2,11 +2,14 @@ using UnityEngine;
 using UnityEngine.UI;
 using ChuckChuckChuck;
 using TrackSounds;
-using System.Collections;
 using GridLinks;
 
 public class ButtonAction : MonoBehaviour
 {
+    [SerializeField] Sprite playSprite;
+    [SerializeField] Sprite pauseSprite;
+    [SerializeField] Image buttonImage;
+
     public Button myButton;
     public TrackSound sound;
     public LinkPlaybackManager linkManager;
@@ -15,6 +18,7 @@ public class ButtonAction : MonoBehaviour
     public Color idleColor = Color.white;
     public Color playingColor = Color.green;
     private Text buttonText;
+    private bool isPlaying = false;
 
     void Start()
     {
@@ -49,6 +53,13 @@ public class ButtonAction : MonoBehaviour
     void LogClick()
     {
         sound?.PlaySound();
+        ToggleIcon();
+    }
+
+    void ToggleIcon()
+    {
+        isPlaying = !isPlaying;
+        buttonImage.sprite = isPlaying ? pauseSprite : playSprite;
     }
 
     // disable link sound playback, change button visuals
