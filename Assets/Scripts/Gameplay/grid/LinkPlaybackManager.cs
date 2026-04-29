@@ -35,7 +35,7 @@ namespace GridLinks
 
             puzzleGrid = GetComponent<PuzzleGrid.PuzzleGrid>();
             if (beatsInLoop == 0) Debug.LogWarning("loop beats 0 in link playback");
-            secondsPerBeat = 60 / bpm;
+            secondsPerBeat = 60 / bpm / 4;
             // TODO: should these be sixteenth notes? 
         }
 
@@ -112,7 +112,10 @@ namespace GridLinks
 
                 // play metronome sound on every beat ... 
                 // TODO: need to implement the "four" thing"
-                metronome?.PlaySound();
+                if (curBeat % 2 == 0)
+                {
+                    metronome?.PlaySound();   
+                }
 
                 yield return waitBeat;
                 curBeat += 1;                       

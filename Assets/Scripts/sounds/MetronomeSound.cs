@@ -18,33 +18,45 @@ namespace TrackSounds
             myChuck.RunCode( string.Format( @"
             global float BPM;
 
+            // metronome
             SinOsc click => ADSR envClick => dac;
+            SinOsc clickAccent => ADSR envAccent => dac;
 
             (1::ms, 5::ms, 0.0, 15::ms) => envClick.set;
+            (1::ms, 5::ms, 0.0, 15::ms) => envAccent.set;
 
-            880.0 => float CLICK_FREQ;
-            0.6 => float CLICK_GAIN;
+            // diff freqs for click, accent (on the downbeat)
+            880.0 => click.freq;
+            1760.0 => clickAccent.freq; 
 
+            0.3 => click.gain;
+            0.35 => clickAccent.gain;
+
+            // bpm and timing
             (60.0 / BPM)::second => dur beat_dur;
-            
-            // Play a single metronome click
-            // isAccent: true for beat 1 downbeat, false for other beats
-            fun void playClick(int isAccent, float beat_note) {{
-                // calculate hold and release times
-                beat_note * beat_dur => dur total_time;
-                envClick.releaseTime() => dur release_time;
-                total_time - release_time => dur hold_time;
+
+            // play a single metronome click
+            fun void playClick(int isAccent) {{
+                if (isAccent) {{
+                    envAccent.releaseTime() => dur release_time;
+                    beat_dur - release_time => dur hold_time;
+                    
+                    envAccent.keyOn();
+                    hold_time => now;
+                    envAccent.keyOff();
+                    release_time => now;
+                }} else {{
+                    envClick.releaseTime() => dur release_time;
+                    beat_dur - release_time => dur hold_time;
                 
-                // play sound
-                envClick.keyOn();
-                hold_time => now;
-                
-                envClick.keyOff();
-                release_time => now;
+                    envClick.keyOn();
+                    hold_time => now;
+                    envClick.keyOff();
+                    release_time => now;
+                }}
             }}
 
-            playClick(0, 1.0);
-            "));
+            playClick(0);"));
         }
     }
 }
