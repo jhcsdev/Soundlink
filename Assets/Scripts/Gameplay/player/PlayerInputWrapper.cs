@@ -8,14 +8,15 @@ namespace Player
     public class PlayerInputWrapper : MonoBehaviour
     {
         public PlayerInputActions playerInput;
-        public InputAction SELECT, INVENTORY_BUTTON, MAP, LEFT_CLICK, MOVE, ROTATE;
+        public InputAction SELECT, INVENTORY_BUTTON, GRID, LEFT_CLICK, MOVE, ROTATE, ESCAPE;
 
         private void Awake()
         {
             playerInput = new();
             SELECT = playerInput.Player.Select;
-            INVENTORY_BUTTON = playerInput.Player.ReturnToinventory;
-            MAP = playerInput.Player.Map;
+            INVENTORY_BUTTON = playerInput.Player.ReturnToInventory;
+            GRID = playerInput.Player.Grid;
+            ESCAPE = playerInput.Player.Escape;
             LEFT_CLICK = playerInput.Player.LeftClick;
             MOVE = playerInput.Player.Move;
             ROTATE = playerInput.Player.Rotate;
