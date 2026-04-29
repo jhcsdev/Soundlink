@@ -1,6 +1,3 @@
-
-
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using DG.Tweening;
@@ -48,15 +45,20 @@ namespace PuzzleGrid
         private SpriteRenderer pointerRenderer;
         [SerializeField] private List<Sprite> gridTiles;
         #endregion
-        
-        #region other variables
-        PuzzleGrid grid;
-        private Vector2 maximumKnownTile = Vector2.zero;
+
+        #region camera
         private Camera cam;
-        [SerializeField] private Vector2 camOffset = new(5, 0);
+        [SerializeField] private Vector2 camOffset = new(1.5f, 0);
         [SerializeField] private int displayGridTilesX;
         [SerializeField] private int displayGridTilesY;
         [SerializeField] private float camMoveTime = 0.15f;
+        [SerializeField, Tooltip("applied to zooming to give slight buffer at edges")] 
+        private float camZoomRatioMult = 1.25f; 
+        #endregion
+        
+        #region other variables
+        PuzzleGrid grid;
+        private Vector2 maximumKnownTilePosition = Vector2.zero;
         private Vector2 maximumKnownPosition = Vector2.negativeInfinity;
         private Vector2 minimumKnownPosition = Vector2.positiveInfinity;
         #endregion
@@ -82,6 +84,7 @@ namespace PuzzleGrid
             grid.OnNewHover += HoverPositionChanged;
             grid.OnHoveringTile += HoverTile;
             grid.OnGridTileInitialize += InitializeTile;
+            grid.OnGridFinishedInitialize += InitializeGrid;
             
             grid.OnPieceYoinked += PickupPiece;
             grid.OnPiecePlacementSuccess += PlacePieceSuccess;
@@ -94,6 +97,38 @@ namespace PuzzleGrid
             grid.OnNewFocusedTile -= FocusPositionSuccessfullyChanged;
             grid.OnGridFocused -= GridFocused;
             grid.OnGridUnfocused -= GridUnfocused;
+
+            grid.OnNewHover -= HoverPositionChanged;
+            grid.OnHoveringTile -= HoverTile;
+            grid.OnGridTileInitialize -= InitializeTile;
+            grid.OnGridFinishedInitialize -= InitializeGrid;
+            
+            grid.OnPieceYoinked -= PickupPiece;
+            grid.OnPiecePlacementSuccess -= PlacePieceSuccess;
+            grid.OnPiecePlacementFailure -= PlacePieceFailure;
+            grid.OnPieceSentBackToInventory -= SendPieceToInventory;
+        }
+
+        void InitializeTile(GridTile tile, GridTileType type, Vector2 position)
+        {
+            tile.ResetChildRenderer("GridTileRenderer");
+            int spriteIndex = (int)(position.x + position.y) % gridTiles.Count;
+            tile.SetSprite(gridTiles[spriteIndex]);
+            if (tile.HasLinkPlacementData()) tile.SetLinkColorByPlacementData();
+            Vector2 worldPos = tile.transform.position;
+
+            maximumKnownTilePosition = Vector2.Max(maximumKnownTilePosition, position);
+            minimumKnownPosition = Vector2.Min(minimumKnownPosition, worldPos);
+            maximumKnownPosition = Vector2.Max(maximumKnownPosition, worldPos);
+        }
+
+        void InitializeGrid()
+        {
+            Vector3 halfway = minimumKnownPosition + (maximumKnownPosition - minimumKnownPosition) / 2;
+            cam.transform.position = new(halfway.x + camOffset.x, halfway.y + camOffset.y, cam.transform.position.z); 
+
+            float distance = maximumKnownPosition.y - minimumKnownPosition.y;
+            cam.orthographicSize = distance * (camZoomRatioMult + (distance > 10 ? 0 : 1/distance)) / cam.aspect;
         }
 
         #endregion
@@ -154,7 +189,7 @@ namespace PuzzleGrid
                     gridPointer.DOScale(Vector3.one * pointerNormalSize, 0)
                 ).Play();
 
-            Vector2 gridTileCount = maximumKnownTile + Vector2.one;
+            Vector2 gridTileCount = maximumKnownTilePosition + Vector2.one;
 
             Vector2 tileSize = new(
                 gridTileCount.x > 1 ? (maximumKnownPosition.x - minimumKnownPosition.x) / (gridTileCount.x - 1) : 1f,
@@ -219,27 +254,7 @@ namespace PuzzleGrid
 
         #endregion
 
-        #region links
-        void LinkFormed(GridLink link)
-        {
-            
-        }
-        #endregion
-
         #region tile updates
-        void InitializeTile(GridTile tile, GridTileType type, Vector2 position)
-        {
-            tile.ResetChildRenderer("GridTileRenderer");
-            int spriteIndex = (int)(position.x + position.y) % gridTiles.Count;
-            tile.SetSprite(gridTiles[spriteIndex]);
-            if (tile.HasLinkPlacementData()) tile.SetLinkColorByPlacementData();
-            Vector2 worldPos = tile.transform.position;
-
-            maximumKnownTile = Vector2.Max(maximumKnownTile, position);
-            minimumKnownPosition = Vector2.Min(minimumKnownPosition, worldPos);
-            maximumKnownPosition = Vector2.Max(maximumKnownPosition, worldPos);
-        }
-
         void HoverTile(GridTile tile)
         {
             if (hoverSequences == null) { Debug.LogWarning("hover list null, allocating, but it shouldn't be"); hoverSequences = new(); }
