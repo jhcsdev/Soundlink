@@ -167,10 +167,15 @@ namespace Inventory
                     ).SetAutoKill(false).Pause();
             } 
 
-            if (takingPieceOut != null)
+            if (takingPieceOut != null && takingPieceOut.IsActive())
+            {
+                Debug.Log("taking piece out");
                 takingPieceOut.OnComplete(() => unfocusSequence.Restart());
-            else
+            }
+            else {
+                Debug.Log("resarting unfocus");
                 unfocusSequence.Restart();
+            }
         }
 
         /// <summary>
