@@ -38,7 +38,6 @@ namespace TrackSounds
             .85 => float CLAP_GAIN;
             2.0 => clapGain.gain;
 
-            120 => float BPM;
             (60.0 / BPM)::second => dur beat_dur;
 
             fun void playKick(float beat_note) {{   

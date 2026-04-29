@@ -13,16 +13,16 @@ MonoBehaviour:
   m_Name: PieceSixJames
   m_EditorClassIdentifier: Assembly-CSharp::GamePieces.PieceData
   tiles:
+  - relativeOffset: {x: 0, y: 0}
+    isOrigin: 1
+    type: 0
+    glue: 
+    tileType: 14
+    spriteDirection: 2
   - relativeOffset: {x: 0, y: 1}
     isOrigin: 0
     type: 0
     glue: 00000000
-    tileType: 0
-    spriteDirection: 0
-  - relativeOffset: {x: 0, y: 0}
-    isOrigin: 0
-    type: 0
-    glue: 
-    tileType: 0
+    tileType: 14
     spriteDirection: 0
   isSilentPiece: 0

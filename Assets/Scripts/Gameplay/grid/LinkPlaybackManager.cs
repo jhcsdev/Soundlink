@@ -36,6 +36,7 @@ namespace GridLinks
             puzzleGrid = GetComponent<PuzzleGrid.PuzzleGrid>();
             if (beatsInLoop == 0) Debug.LogWarning("loop beats 0 in link playback");
             secondsPerBeat = 60 / bpm;
+            // TODO: should these be sixteenth notes? 
         }
 
         void OnEnable()
