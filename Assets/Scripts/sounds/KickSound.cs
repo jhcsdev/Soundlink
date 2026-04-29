@@ -15,17 +15,16 @@ namespace TrackSounds
 
             if (myChuck == null) Debug.Log("There is no Chuck!");
 
-            Debug.Log("Play kick!");
-
             myChuck.RunCode( string.Format( @"
+            global float BPM;
+
             SinOsc kick => ADSR envKick => Gain kickGain => dac;
 
             (.05::ms, 10::ms, 0, 10::ms) => envKick.set;
             2.0 => kickGain.gain;
             150 => kick.freq;
             1.0 => float KICK_GAIN;
-
-            60 => float BPM;
+            
             (60.0 / BPM)::second => dur beat_dur;
 
             fun void playKick(float beat_note) {{

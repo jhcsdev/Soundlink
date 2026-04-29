@@ -14,17 +14,16 @@ namespace TrackSounds
 
             if (myChuck == null) Debug.Log("There is no Chuck!");
 
-            Debug.Log("Play hat!");
-
             myChuck.RunCode( string.Format( @"
+            global float BPM;
             Noise hat => HPF hpf => ADSR envHat => dac;
+
 
             (1::ms, 20::ms, 0, 10::ms) => envHat.set;
             8000 => hpf.freq;
             8 => hpf.Q;
             .45 => float HAT_GAIN;
 
-            60 => float BPM;
             (60.0 / BPM)::second => dur beat_dur;
 
             fun void playHat(float beat_note) {{
