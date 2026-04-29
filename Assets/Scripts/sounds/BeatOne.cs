@@ -14,16 +14,13 @@ namespace TrackSounds
         {
             myChuck = ChuckManager.Instance.chuckSubInstance;
 
-            Debug.Log($"myChuck is (BeatOne): {myChuck}");
-
             if (myChuck == null) Debug.Log("There is no Chuck!");
-
-            Debug.Log("Play BeatOne!");
 
             myChuck.RunCode( string.Format( @"
             // super simple beat: kick, clap, kick, clap
             global Event beatStart;
             global Event beatDone;
+            global float BPM;
 
             beatStart.signal();
 
@@ -41,7 +38,6 @@ namespace TrackSounds
             .85 => float CLAP_GAIN;
             2.0 => clapGain.gain;
 
-            120 => float BPM;
             (60.0 / BPM)::second => dur beat_dur;
 
             fun void playKick(float beat_note) {{   

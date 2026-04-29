@@ -5,6 +5,7 @@ using System.Linq;
 using GamePieces;
 using PuzzleGrid;
 using UnityEngine;
+using TrackSounds;
 
 namespace GridLinks
 {
@@ -12,6 +13,7 @@ namespace GridLinks
     public class LinkPlaybackManager : MonoBehaviour
     {
         public static LinkPlaybackManager Instance;
+        [SerializeField] TrackSound metronome;
 
         [SerializeField] float bpm;
         [SerializeField, Tooltip("number of beats for the playback loop")] private int beatsInLoop;
@@ -33,7 +35,8 @@ namespace GridLinks
 
             puzzleGrid = GetComponent<PuzzleGrid.PuzzleGrid>();
             if (beatsInLoop == 0) Debug.LogWarning("loop beats 0 in link playback");
-            secondsPerBeat = 60 / bpm;
+            secondsPerBeat = 60 / bpm / 4;
+            // TODO: should these be sixteenth notes? 
         }
 
         void OnEnable()
@@ -105,6 +108,13 @@ namespace GridLinks
                             break; 
                         } 
                     }
+                }
+
+                // play metronome sound on every beat ... 
+                // TODO: need to implement the "four" thing"
+                if (curBeat % 2 == 0)
+                {
+                    metronome?.PlaySound();   
                 }
 
                 yield return waitBeat;

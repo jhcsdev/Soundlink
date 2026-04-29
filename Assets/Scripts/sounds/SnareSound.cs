@@ -18,6 +18,8 @@ namespace TrackSounds
             Debug.Log("Play snare!");
 
             myChuck.RunCode( string.Format( @"
+            global float BPM;
+
             Noise snare => LPF lpf => ADSR envSnare => dac;
 
             (2::ms, 50::ms, 0, 10::ms) => envSnare.set;
@@ -25,7 +27,6 @@ namespace TrackSounds
             1.5 => lpf.Q;
             .7 => float SNARE_GAIN;
 
-            60 => float BPM;
             (60.0 / BPM)::second => dur beat_dur;
 
             // play snare sound for given beat duration

@@ -9,18 +9,21 @@ namespace ChuckChuckChuck
 
         [SerializeField] public ChuckMainInstance chuckMainInstance;
         [SerializeField] public ChuckSubInstance chuckSubInstance;
+        public static float BPM = 90f;
 
         void Awake()
         {
             if (Instance == null) Instance = this;
             else Destroy(gameObject);
 
-            // TODO: here ... define functions that are going to be shared across the sounds and stuff like that.
+            // define global BPM
+            chuckSubInstance.RunCode( string.Format(@"
+                {0} => global float BPM;
+            ", BPM));
         }
 
         void Start()
         {
-            // TODO: add if I want ... 
         }
     }
 }
