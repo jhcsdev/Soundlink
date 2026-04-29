@@ -14,6 +14,7 @@ namespace GamePieces
 
         [SerializeField] private List<TileSpriteTypeToSprite> basicTileSprite; 
         [SerializeField] private Sprite verticalSingleGlueSprite; // todo:: this means that we can have up to 4 spriteRenders for what realistically shoudl just be one; needs to be changed
+        [SerializeField] private Sprite passthroughSprite; // todo:: multiple variants of passthrough?
         private Dictionary<PieceTileSpriteType, Sprite> tileSpriteLookup = new();
 
         void Awake()
@@ -33,8 +34,15 @@ namespace GamePieces
             GameObject tile = new("Tile");
 
             SpriteRenderer sr = tile.AddComponent<SpriteRenderer>();
-            sr.sprite = tileSpriteLookup[data.tileType];
-            sr.sortingOrder = (int)SPRITE_ORDER.PIECE_TILE_SPRITE_INDEX;
+            if (data.type == PieceTileType.PASSTHROUGH)
+            {
+                sr.sprite = passthroughSprite;
+                sr.sortingOrder = (int)SPRITE_ORDER.PIECE_TILE_PASSTHROUGH_SPRITE_INDEX;
+            } else
+            {
+                sr.sprite = tileSpriteLookup[data.tileType];
+                sr.sortingOrder = (int)SPRITE_ORDER.PIECE_TILE_SPRITE_INDEX;
+            }
 
             tile.transform.rotation = Quaternion.Euler(0, 0, GetSpriteRotationDegrees(data.spriteDirection));
 
@@ -48,7 +56,13 @@ namespace GamePieces
             GameObject canvasTile = new("CanvasTile");
 
             Image image = canvasTile.AddComponent<Image>();
-            image.sprite = tileSpriteLookup[data.tileType];
+            if (data.type == PieceTileType.PASSTHROUGH)
+            {
+                image.sprite = passthroughSprite;
+            } else
+            {
+                image.sprite = tileSpriteLookup[data.tileType];
+            }
 
             foreach (var glueCardinality in data.glue)
             {

@@ -227,7 +227,7 @@ namespace PuzzleGrid
                 if (linksForBasePiece.Count > 0)
                 {
                     // todo - does not account for switches
-                    linksForBasePiece[0].AddPiece(neighborPiece, p);
+                    UpdateLink(linksForBasePiece[0], neighborPiece, p);
                     connectedTracks++;
                 }
                 else
