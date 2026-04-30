@@ -101,10 +101,10 @@ namespace Player
             {
                 referencedPiece = currentGrid.TakeAtFocusPosition();
 
-                referencedPiece.LimboMode();
+                if (referencedPiece != null) referencedPiece.LimboMode();
                 SwapGrid();
 
-                currentGrid.Hover(referencedPiece);
+                if (referencedPiece != null) currentGrid.Hover(referencedPiece);
 
                 return;
             }
@@ -151,7 +151,7 @@ namespace Player
 
         private void OnEscape(InputAction.CallbackContext ctx)
         {
-            
+            // todo:: pause
         }
 
         private void OnRotate(InputAction.CallbackContext ctx)
