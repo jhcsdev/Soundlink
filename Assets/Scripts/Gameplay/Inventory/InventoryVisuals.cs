@@ -61,7 +61,7 @@ namespace Inventory
         #endregion
 
         #region state management
-
+        private bool firstFocus = true;
         private List<RectTransform> _rowObjects = new();
 
         // dictionary of actual pieces; does not have entries for empty locations
@@ -121,17 +121,8 @@ namespace Inventory
 
             if (focusSequence == null)
             {
-                Vector2 destinationMin = new(focusedAnchorX, 0);
-                Vector2 destinationMax = new(focusedAnchorX + inventoryAnchorWidth, 1);
                 focusSequence = DOTween.Sequence()
                     .Append(
-                        inventoryCanvas.DOAnchorMin(destinationMin, focusUnfocusAnimationTime)
-                            .ChangeStartValue(new(unfocusedAnchorX, 0))
-                    ).Join(
-                        inventoryCanvas.DOAnchorMax(destinationMax, focusUnfocusAnimationTime)
-                            .ChangeStartValue(new(unfocusedAnchorX + inventoryAnchorWidth, 1))
-                    ).Insert(
-                        focusUnfocusAnimationTime * pointerAppearAtRatioTime,
                         pointerObject.DOScale(Vector3.one * pointerNormalSize, pointerReappearTime)
                             .ChangeStartValue(Vector3.zero)
                             .SetEase(Ease.OutCubic)
@@ -151,13 +142,6 @@ namespace Inventory
                 Vector2 destinationMax = new(unfocusedAnchorX + inventoryAnchorWidth, 1);
                 unfocusSequence = DOTween.Sequence()
                     .Append(
-                        inventoryCanvas.DOAnchorMin(destinationMin, focusUnfocusAnimationTime)
-                            .ChangeStartValue(new(focusedAnchorX, 0))
-                    ).Join(
-                        inventoryCanvas.DOAnchorMax(destinationMax, focusUnfocusAnimationTime)
-                            .ChangeStartValue(new(focusedAnchorX + inventoryAnchorWidth, 1))
-                    ).Insert(
-                        focusUnfocusAnimationTime * pointerDisappearAtRatioTime,
                         pointerObject.DOScale(Vector3.zero, pointerVanishTime)
                             .ChangeStartValue(Vector3.one * pointerNormalSize)
                             .SetEase(Ease.OutCubic)
@@ -172,6 +156,7 @@ namespace Inventory
 
         void FocusLocationChanged(Vector2Int direction, Vector2Int newFocus)
         {
+            firstFocus = false;
             if (!_slotAnchors.TryGetValue(newFocus, out RectTransform targetPos))
             {
                 Debug.LogWarning($"FocusLocationChanged: no slot anchor at {newFocus}");
@@ -280,6 +265,12 @@ namespace Inventory
             canvasPieceTransform.anchoredPosition = Vector2.zero;
 
             _pieceAtPosition[spot] = canvasPieceTransform;
+
+            if (firstFocus)
+            {
+                pointerObject.transform.position = _slotAnchors[Vector2Int.zero].transform.position;
+                firstFocus = false;
+            }
         }
 
         void PieceTakenOut(Piece piece)
