@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using DG.Tweening;
 using GamePieces;
 using UnityEngine;
@@ -7,15 +6,6 @@ using UnityEngine.UI;
 
 namespace Inventory
 {
-    /// <summary>
-    /// The inventory data is entirely controlled by the Inventory class. Inventory Visuals assumes that whatever it is sent is
-    /// the absolute source of truth, and it also assumes that following those instructions will not cause visual conflicts 
-    /// (which imo is fine). 
-    /// 
-    /// It is a canvas object, and it is arranged into row objects, which each get piece canvas objects placed as children beneath them. 
-    /// When moving left / right, you move between rows; when moving up & down, the entire grid may have to shift in order to bring pieces 
-    /// into the screen.
-    /// </summary>
     [RequireComponent(typeof(Inventory))]
     public class InventoryVisuals : MonoBehaviour
     {
@@ -48,33 +38,37 @@ namespace Inventory
         [SerializeField] private float pointerFailedMovementTime = 0.2f;
         [SerializeField] private Color pointerFailedMovementColor = new(0.9f, 0.5f, 0.5f);
         private Color pointerNormalColor;
-        [SerializeField, Tooltip("the percent of the way through that the focus pointer will appear when grid is focused")] 
+        [SerializeField, Tooltip("the percent of the way through that the focus pointer will appear when grid is focused")]
         private float pointerAppearAtRatioTime = 0.7f;
-        [SerializeField, Tooltip("vice-versa to above")] 
+        [SerializeField, Tooltip("vice-versa to above")]
         private float pointerDisappearAtRatioTime = 0.3f;
 
         [Header("Scroll animation")]
         [SerializeField] private float scrollAnimationTime = 0.15f;
 
         [Header("pieces")]
-        [SerializeField] float pointerScaleDownTime = 0.2f;
-
+        [SerializeField] private float pointerScaleDownTime = 0.2f;
         #endregion
 
         #region objs / textures
         [Header("Objects")]
         [SerializeField] private RectTransform inventoryCanvas;
         [SerializeField] private RectTransform inventoryRows;
-        [SerializeField] private RectTransform pointerObject; 
+        [SerializeField] private RectTransform pointerObject;
         private Image pointerImageComponent;
         #endregion
-        
+
         #endregion
 
-        #region state management 
-        private int _currentFocusedRow;
-        private int _totalNumberOfRows;
+        #region state management
+
         private List<RectTransform> _rowObjects = new();
+
+        // dictionary of actual pieces; does not have entries for empty locations
+        private Dictionary<Vector2Int, RectTransform> _pieceAtPosition = new();
+
+        // has an entry for every potential spot in the grid
+        private Dictionary<Vector2Int, RectTransform> _slotAnchors = new();
 
         #region saved animations
         Sequence unfocusSequence;
@@ -84,13 +78,15 @@ namespace Inventory
         Sequence takingPieceOut;
         Sequence activeScrollSequence;
         #endregion
+
         #endregion
 
         private Inventory inventory;
 
         public void Awake()
         {
-            if (!TryGetComponent(out inventory)) Debug.LogWarning("Missing required Inventory component on " + name);
+            if (!TryGetComponent(out inventory))
+                Debug.LogWarning("Missing required Inventory component on " + name);
 
             rowAnchorYHeight = 1f / maxRowsDisplayedAtOnce;
             pointerImageComponent = pointerObject.GetComponent<Image>();
@@ -135,18 +131,19 @@ namespace Inventory
                         inventoryCanvas.DOAnchorMax(destinationMax, focusUnfocusAnimationTime)
                             .ChangeStartValue(new(unfocusedAnchorX + inventoryAnchorWidth, 1))
                     ).Insert(
-                        focusUnfocusAnimationTime * pointerAppearAtRatioTime, 
+                        focusUnfocusAnimationTime * pointerAppearAtRatioTime,
                         pointerObject.DOScale(Vector3.one * pointerNormalSize, pointerReappearTime)
                             .ChangeStartValue(Vector3.zero)
                             .SetEase(Ease.OutCubic)
                     ).SetAutoKill(false);
                 focusSequence.Play();
-            } else focusSequence.Restart();
+            }
+            else focusSequence.Restart();
         }
 
         void UnfocusGrid()
         {
-            focusSequence.Pause();
+            focusSequence?.Pause();
 
             if (unfocusSequence == null)
             {
@@ -160,56 +157,50 @@ namespace Inventory
                         inventoryCanvas.DOAnchorMax(destinationMax, focusUnfocusAnimationTime)
                             .ChangeStartValue(new(focusedAnchorX + inventoryAnchorWidth, 1))
                     ).Insert(
-                        focusUnfocusAnimationTime * pointerDisappearAtRatioTime, 
+                        focusUnfocusAnimationTime * pointerDisappearAtRatioTime,
                         pointerObject.DOScale(Vector3.zero, pointerVanishTime)
                             .ChangeStartValue(Vector3.one * pointerNormalSize)
                             .SetEase(Ease.OutCubic)
                     ).SetAutoKill(false).Pause();
-            } 
+            }
 
             if (takingPieceOut != null && takingPieceOut.IsActive())
-            {
-                Debug.Log("taking piece out");
                 takingPieceOut.OnComplete(() => unfocusSequence.Restart());
-            }
-            else {
-                Debug.Log("resarting unfocus");
+            else
                 unfocusSequence.Restart();
-            }
         }
 
-        /// <summary>
-        /// moves the pointer object and squeezes it a bit. 
-        /// </summary>
-        /// <param name="direction"></param>
-        /// <param name="newFocus"></param>
         void FocusLocationChanged(Vector2Int direction, Vector2Int newFocus)
         {
-            // move the pointer
-            if (newFocus.y >= _rowObjects.Count) { Debug.LogWarning($"Tried to move to: {newFocus}, but there are only {_rowObjects.Count} rows!"); return; }
-            if (newFocus.x >= _rowObjects[newFocus.y].childCount) { Debug.LogWarning($"Tried to move to: {newFocus}; the row exists, but it only has {_rowObjects[newFocus.y].childCount} children"); return; }
+            if (!_slotAnchors.TryGetValue(newFocus, out RectTransform targetPos))
+            {
+                Debug.LogWarning($"FocusLocationChanged: no slot anchor at {newFocus}");
+                return;
+            }
 
-            RectTransform targetPos = (RectTransform)_rowObjects[newFocus.y].GetChild(newFocus.x);
-
-            if (activeFocusObjectMovementSequence != null) activeFocusObjectMovementSequence.Complete();
+            if (activeFocusObjectMovementSequence != null)
+                activeFocusObjectMovementSequence.Complete();
 
             pointerObject.localScale = Vector3.one * pointerNormalSize;
 
             activeFocusObjectMovementSequence = DOTween.Sequence()
                 .Append(
-                    pointerObject.DOAnchorPos((Vector2)pointerObject.parent.InverseTransformPoint(targetPos.position), pointerMoveTime)
+                    pointerObject.DOAnchorPos(
+                        (Vector2)pointerObject.parent.InverseTransformPoint(targetPos.position),
+                        pointerMoveTime)
                 ).Join(
-                    pointerObject.DOPunchScale(new(-pointerSquishTo * Mathf.Abs(direction.y), -pointerSquishTo * Mathf.Abs(direction.x), 1), pointerMoveTime)
+                    pointerObject.DOPunchScale(
+                        new(-pointerSquishTo * Mathf.Abs(direction.y),
+                             -pointerSquishTo * Mathf.Abs(direction.x), 1),
+                        pointerMoveTime)
                 ).Append(
                     pointerObject.DOScale(Vector3.one * pointerNormalSize, 0)
                 ).Play();
 
-            // vertical scroll the inventory rows if necessary 
             int totalRows = _rowObjects.Count;
             if (totalRows > maxRowsDisplayedAtOnce)
             {
                 float rowHeight = inventoryCanvas.rect.height / maxRowsDisplayedAtOnce;
-
                 float targetScrollY = Mathf.Clamp(
                     (newFocus.y - (maxRowsDisplayedAtOnce - 1) * 0.5f) * rowHeight,
                     0f,
@@ -227,7 +218,6 @@ namespace Inventory
 
         void FocusLocationFailedChange(Vector2Int directionFailed)
         {
-            // Thought: Stretch the focus shape in a given direction, color it red for now
             if (activeFailedMovement != null) activeFailedMovement.Complete();
 
             pointerObject.localScale = Vector3.one * pointerNormalSize;
@@ -239,56 +229,84 @@ namespace Inventory
                     pointerImageComponent.DOColor(pointerFailedMovementColor, pointerFailedMovementTime * 0.6f)
                 ).Join(
                     pointerObject.DOPunchScale(
-                        new(-pointerSquishTo * Mathf.Abs(directionFailed.y) * 0.3f, -pointerSquishTo * Mathf.Abs(directionFailed.x) * 0.3f, 1),
-                        pointerFailedMovementTime
-                    )
+                        new(-pointerSquishTo * Mathf.Abs(directionFailed.y) * 0.3f,
+                             -pointerSquishTo * Mathf.Abs(directionFailed.x) * 0.3f, 1),
+                        pointerFailedMovementTime)
                 ).Insert(
-                    pointerFailedMovementTime * 0.6f, 
+                    pointerFailedMovementTime * 0.6f,
                     pointerImageComponent.DOColor(pointerNormalColor, pointerFailedMovementTime * 0.7f)
                 ).Append(
                     pointerObject.DOScale(Vector3.one * pointerNormalSize, 0)
                 ).Play();
         }
 
-        /// <summary>
-        /// positions a piece in the given spot, assigning the canvas representation to the row transform and hiding the actual piece object
-        /// does some extra effects too
-        /// </summary>
-        /// <param name="piece"></param>
-        /// <param name="spot"></param>
         void PlacePieceInNewSpot(Piece piece, Vector2Int spot)
         {
+            Debug.Log("Place piece in new spot");
             piece.transform.position = piecePositionWhileInInventory;
 
-            // first - check if we have a row ready (y axis of "spot")
-            while (_rowObjects.Count <= spot.y) // this means no, we don't, so gotta make a new row
+            while (_rowObjects.Count <= spot.y)
             {
-                GameObject row = new($"Row {_rowObjects.Count}", typeof(RectTransform));
+                int newRowIndex = _rowObjects.Count;
+                GameObject row = new($"Row {newRowIndex}", typeof(RectTransform));
                 RectTransform rowTransform = row.GetComponent<RectTransform>();
                 rowTransform.SetParent(inventoryRows, false);
 
-                // set the position of the row based on the y axis of spot; it should be perfectly halfway on inventory canvas and some amount down
-                float anchorY = 1f - (spot.y + 0.5f) / maxRowsDisplayedAtOnce;
+                float anchorY = 1f - (newRowIndex + 0.5f) / maxRowsDisplayedAtOnce;
                 rowTransform.anchorMin = new(minRowAnchorX, anchorY - 0.5f * rowAnchorYHeight);
                 rowTransform.anchorMax = new(maxRowAnchorX, anchorY + 0.5f * rowAnchorYHeight);
                 _rowObjects.Add(rowTransform);
+
+                for (int col = 0; col < columnsDisplayedAtOnce; col++)
+                {
+                    GameObject anchor = new($"Anchor ({col},{newRowIndex})", typeof(RectTransform));
+                    RectTransform anchorTransform = anchor.GetComponent<RectTransform>();
+                    anchorTransform.SetParent(rowTransform, false);
+                    anchorTransform.sizeDelta = Vector2.zero;
+
+                    float anchorX = (col + 0.5f) / columnsDisplayedAtOnce;
+                    anchorTransform.anchorMin = anchorTransform.anchorMax = new(anchorX, 0.5f);
+
+                    _slotAnchors[new Vector2Int(col, newRowIndex)] = anchorTransform;
+                }
             }
+
             RectTransform canvasPieceTransform = (RectTransform)piece.GetCanvasPiece().transform;
-            canvasPieceTransform.SetParent(_rowObjects[spot.y].transform, false);
+            canvasPieceTransform.SetParent(_rowObjects[spot.y], false);
             canvasPieceTransform.localScale = Vector2.one * pieceScalingMultiplier;
 
-            // then set the anchor position based on the number of objects we can have in a row, so that they are equally spaced apart
-            float anchorX = (spot.x + 0.5f) / columnsDisplayedAtOnce;
-            canvasPieceTransform.anchorMin = canvasPieceTransform.anchorMax = new(anchorX, 0.5f);
+            float pieceAnchorX = (spot.x + 0.5f) / columnsDisplayedAtOnce;
+            canvasPieceTransform.anchorMin = canvasPieceTransform.anchorMax = new(pieceAnchorX, 0.5f);
+            canvasPieceTransform.anchoredPosition = Vector2.zero;
+
+            _pieceAtPosition[spot] = canvasPieceTransform;
         }
 
         void PieceTakenOut(Piece piece)
         {
+            RectTransform canvasPieceTransform = (RectTransform)piece.GetCanvasPiece().transform;
+
+            Vector2Int removedKey = default;
+            bool found = false;
+            foreach (var kvp in _pieceAtPosition)
+            {
+                if (kvp.Value != canvasPieceTransform) continue;
+                removedKey = kvp.Key;
+                found = true;
+                break;
+            }
+
+            if (found)
+                _pieceAtPosition.Remove(removedKey);
+            else
+                Debug.LogWarning($"PieceTakenOut: canvas piece for '{piece.name}' not found in _pieceAtPosition");
+
             if (takingPieceOut != null) takingPieceOut.Complete();
+
             takingPieceOut = DOTween.Sequence()
-                .Append(((RectTransform)piece.GetCanvasPiece().transform).DOScale(0, pointerScaleDownTime))
+                .Append(canvasPieceTransform.DOScale(0, pointerScaleDownTime))
+                .AppendCallback(() => canvasPieceTransform.SetParent(transform))
                 .Play();
-            
         }
 
         #endregion
