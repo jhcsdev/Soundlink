@@ -75,6 +75,7 @@ namespace Player
             {
                 _allowNextRapidMoveAt = curTime + rapidMoveInterval;
                 movement = currentGrid.ShiftFocusPosition(inputDirection);
+                if (referencedPiece != null) currentGrid.Hover(referencedPiece);
             }
 
             if (movement != Vector2.zero) SwapGrid();
@@ -101,10 +102,10 @@ namespace Player
             {
                 referencedPiece = currentGrid.TakeAtFocusPosition();
 
-                referencedPiece.LimboMode();
+                if (referencedPiece != null) referencedPiece.LimboMode();
                 SwapGrid();
 
-                currentGrid.Hover(referencedPiece);
+                if (referencedPiece != null) currentGrid.Hover(referencedPiece);
 
                 return;
             }
@@ -151,7 +152,7 @@ namespace Player
 
         private void OnEscape(InputAction.CallbackContext ctx)
         {
-            
+            // todo:: pause
         }
 
         private void OnRotate(InputAction.CallbackContext ctx)
