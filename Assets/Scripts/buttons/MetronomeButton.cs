@@ -13,8 +13,6 @@ public class MetronomeButtonAction : MonoBehaviour
     private bool isPlaying = false;
     private bool initialized = false;
 
-    // TODO: play the metronome sound when on click, stop when not cliced
-
     void Start()
     {
         // grab same chuck subsinstance as track sound 

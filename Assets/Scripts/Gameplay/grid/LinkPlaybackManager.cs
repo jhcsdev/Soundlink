@@ -6,6 +6,7 @@ using GamePieces;
 using PuzzleGrid;
 using UnityEngine;
 using TrackSounds;
+using ChuckChuckChuck;
 
 namespace GridLinks
 {
@@ -16,6 +17,7 @@ namespace GridLinks
 
         [SerializeField] float bpm;
         [SerializeField, Tooltip("number of beats for the playback loop")] private int beatsInLoop;
+        [SerializeField] TrackSound referenceSound;
         private float secondsPerBeat;
         private PuzzleGrid.PuzzleGrid puzzleGrid;
 
@@ -25,6 +27,7 @@ namespace GridLinks
         private Dictionary<int /*soundid*/, int /*currentschedulerindex*/> scheduleIndexTracker = new();
         private class SchedulerInformation { public List<EventTiming> scheduledBeats; public GridLink link; }
         private class EventTiming { public int beat; public bool silent; }
+        private ChuckSubInstance myChuck;
 
         #region unity functions
         void Awake()
@@ -35,7 +38,20 @@ namespace GridLinks
             puzzleGrid = GetComponent<PuzzleGrid.PuzzleGrid>();
             if (beatsInLoop == 0) Debug.LogWarning("loop beats 0 in link playback");
             secondsPerBeat = 60 / bpm / 4;
-            // TODO: should these be sixteenth notes? 
+        }
+
+        // stop link playback and play reference beat
+        public void PlayReferenceBeat()
+        {
+            soundPlaybackEnabled = false;
+            myChuck.BroadcastEvent("playReference");
+        }
+
+        // stop reference beat and start link playback
+        public void PauseReferenceBeat()
+        {
+            myChuck.BroadcastEvent("pauseReference");
+            soundPlaybackEnabled = true;
         }
 
         void OnEnable()
@@ -52,6 +68,19 @@ namespace GridLinks
         void Start()
         {
             StartCoroutine(PlaybackLoop());
+
+            // initiate chuck subsinstance
+            myChuck = ChuckManager.Instance.chuckSubInstance;
+
+            // must declare Chuck events before creating listeners
+            // this is to coordinate reference beat playback
+            myChuck.RunCode( string.Format( @"
+                global Event playReference;
+                global Event pauseReference;
+            "));
+
+            // intialize those events 
+            referenceSound?.PlaySound();
         }
         #endregion
 
