@@ -61,35 +61,32 @@ namespace Inventory
         // find next open position in inventory
         // NOTE: we should ALWAYS be able to find an open position and add to inventory
         public Vector2Int FindOpenPosition() {
-            Vector2Int maxPosition = new(-1,0);
-            
-            // iterate through all pieces in inventory, return first empty location
+            Vector2Int maxPosition = new(-1, 0);
+
             foreach (KeyValuePair<Vector2Int, Piece> kvp in piecesLookup)
             {
-                Vector2Int position = kvp.Key;
-                Piece piece = kvp.Value;
+                if (isMaxPosition(kvp.Key, maxPosition))
+                    maxPosition = kvp.Key;
+            }
 
-                if (piece == null) {
-                    return position;
-                }
+            // Scan in order from (0,0) to maxPosition, looking for gaps
+            for (int y = 0; y <= maxPosition.y; y++)
+            {
+                for (int x = 0; x < inventoryData.rowSize; x++)
+                {
+                    Vector2Int candidate = new(x, y);
+                    if (!piecesLookup.TryGetValue(candidate, out Piece piece) || piece == null)
+                        return candidate;
 
-                if (isMaxPosition(position, maxPosition)) {
-                    maxPosition = position;
+                    if (candidate == maxPosition) break;
                 }
             }
-            
-            // if there are no empty locations, need to append to inventory's dictionary
-            // however, also need to check if we are currently at end of row 
-            // if end of row, create a new row object
-            // otherwise: just place in next new space
+
+            // No gaps found, append after max
             if (maxPosition.x == inventoryData.rowSize - 1)
-            {
                 return new Vector2Int(0, maxPosition.y + 1);
-            }
             else
-            {
                 return new Vector2Int(maxPosition.x + 1, maxPosition.y);
-            }
         }
 
         // put Piece in next available position
@@ -112,36 +109,20 @@ namespace Inventory
             if (direction == Vector2.zero) return Vector2Int.zero;
             direction.y *= -1;
 
-            // going back to the game grid
-            // if ((focusPosition + direction).x < 0) return Vector2Int.up;
-
             int maxY = 0;
-            foreach (var key in piecesLookup.Keys)
-                if (key.y > maxY) maxY = key.y;
+            foreach (var key in piecesLookup.Keys) if (key.y > maxY) maxY = key.y;
 
             Vector2Int candidate = focusPosition + direction;
 
-            while (true)
+            if (candidate.x < 0 || candidate.x >= inventoryData.rowSize || candidate.y < 0 || candidate.y > maxY)
             {
-                // out of bounds, hence movement fails
-                if (candidate.x < 0 || candidate.x >= inventoryData.rowSize || 
-                    candidate.y < 0 || candidate.y > maxY)
-                {
-                    OnFocusMovementFailure?.Invoke(direction);
-                    return Vector2Int.zero;
-                }
-
-                // occupied spot is what we want, yoink
-                if (piecesLookup.TryGetValue(candidate, out Piece piece) && piece != null)
-                {
-                    focusPosition = candidate;
-                    OnFocusMovementSuccess?.Invoke(direction, focusPosition);
-                    return Vector2Int.zero;
-                }
-
-                // otherwise it's an empty spot and we're gonna skip it
-                candidate += direction;
+                OnFocusMovementFailure?.Invoke(direction);
+                return Vector2Int.zero;
             }
+
+            focusPosition = candidate;
+            OnFocusMovementSuccess?.Invoke(direction, focusPosition);
+            return Vector2Int.zero;
         }
 
         public override void FocusGrid()
