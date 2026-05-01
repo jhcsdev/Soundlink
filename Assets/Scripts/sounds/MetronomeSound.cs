@@ -31,8 +31,8 @@ namespace TrackSounds
             880.0 => click.freq;
             1760.0 => clickAccent.freq; 
 
-            0.8 => click.gain;
-            0.85 => clickAccent.gain;
+            0.95 => click.gain;
+            1.0 => clickAccent.gain;
 
             1.5 => clickGain.gain;
             1.75 => accentGain.gain;
