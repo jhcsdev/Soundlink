@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using ChuckChuckChuck;
 using TrackSounds;
 using GridLinks;
+using UnityEngine.EventSystems;
 
 public class ReferenceButtonAction : MonoBehaviour
 {
@@ -13,10 +14,6 @@ public class ReferenceButtonAction : MonoBehaviour
     public Button myButton;
     public TrackSound sound;
     private ChuckSubInstance myChuck;
-
-    public Color idleColor = Color.white;
-    public Color playingColor = Color.green;
-    private Text buttonText;
     private bool isPlaying = false;
 
     // TODO: when the reference beat starts, should make sure that everything else stops
@@ -29,9 +26,6 @@ public class ReferenceButtonAction : MonoBehaviour
 
     void Start()
     {
-        // initialize text
-        buttonText = myButton.GetComponentInChildren<Text>();
-
         // grab same chuck subsinstance as track sound 
         myChuck = ChuckManager.Instance.chuckSubInstance;
 
@@ -46,8 +40,11 @@ public class ReferenceButtonAction : MonoBehaviour
 
     public void PlayReference()
     {
-        isPlaying = !isPlaying;
+        // deselect button so it cannot receive keyboard submit events 
+        EventSystem.current.SetSelectedGameObject(null);
+        Debug.Log("PlayReference called!\n" + System.Environment.StackTrace);
 
+        isPlaying = !isPlaying;
 
         // toggle sprite
         buttonImage.sprite = isPlaying ? pauseSprite : playSprite;

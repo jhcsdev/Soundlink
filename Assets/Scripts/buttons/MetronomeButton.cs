@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using ChuckChuckChuck;
 using TrackSounds;
 using GridLinks;
+using UnityEngine.EventSystems;
 
 public class MetronomeButtonAction : MonoBehaviour
 {
@@ -31,6 +32,9 @@ public class MetronomeButtonAction : MonoBehaviour
 
     public void PlayMetronome()
     {
+        // deselect button so it cannot receive keyboard submit events 
+        EventSystem.current.SetSelectedGameObject(null);
+
         isPlaying = !isPlaying;
 
         if (isPlaying)
