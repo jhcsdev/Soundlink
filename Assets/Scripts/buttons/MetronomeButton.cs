@@ -8,16 +8,14 @@ public class MetronomeButtonAction : MonoBehaviour
 {
     public Button myButton;
     public TrackSound sound;
-    public LinkPlaybackManager linkManager;
     private ChuckSubInstance myChuck;
     private bool isPlaying = false;
+    private bool initialized = false;
 
     // TODO: play the metronome sound when on click, stop when not cliced
 
     void Start()
     {
-        myButton.onClick.AddListener(LogClick);
-        
         // grab same chuck subsinstance as track sound 
         myChuck = ChuckManager.Instance.chuckSubInstance;
 
@@ -30,16 +28,19 @@ public class MetronomeButtonAction : MonoBehaviour
         sound?.PlaySound();
     }
 
-    void LogClick()
+
+    public void PlayMetronome()
     {
         isPlaying = !isPlaying;
 
         if (isPlaying)
         {
+            Debug.Log("Play metronome");
             myChuck.BroadcastEvent("playMetronome");
         } 
         else
         {
+            Debug.Log("Pause metronome");
             myChuck.BroadcastEvent("pauseMetronome");
         }
     }

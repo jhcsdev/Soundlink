@@ -1039,13 +1039,13 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 11500000, guid: 23185ae787b094c53af48fcde47b68b2, type: 3}
-        m_TargetAssemblyTypeName: 
-        m_MethodName: 
+      - m_Target: {fileID: 771828668}
+        m_TargetAssemblyTypeName: ReferenceButtonAction, Assembly-CSharp
+        m_MethodName: PlayReference
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
@@ -1106,7 +1106,6 @@ MonoBehaviour:
   buttonImage: {fileID: 771828666}
   myButton: {fileID: 771828665}
   sound: {fileID: 11400000, guid: d16c574643abe4451b64fc54c14ff424, type: 2}
-  linkManager: {fileID: 1771607254}
   idleColor: {r: 1, g: 1, b: 1, a: 1}
   playingColor: {r: 0, g: 1, b: 0, a: 1}
 --- !u!114 &771828669
@@ -2191,7 +2190,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b620929824064f23849dd7cddc2afe5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GridLinks.LinkPlaybackManager
-  metronome: {fileID: 11400000, guid: 764ecaa10a291435dae541c97b79a9f4, type: 2}
   bpm: 90
   beatsInLoop: 8
   soundPlaybackEnabled: 1
@@ -2280,7 +2278,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1877936227}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1877936229}
+        m_TargetAssemblyTypeName: MetronomeButtonAction, Assembly-CSharp
+        m_MethodName: PlayMetronome
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1877936227
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2333,7 +2343,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MetronomeButtonAction
   myButton: {fileID: 1877936226}
   sound: {fileID: 11400000, guid: 764ecaa10a291435dae541c97b79a9f4, type: 2}
-  linkManager: {fileID: 1771607254}
 --- !u!114 &1877936230
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -12,7 +12,6 @@ public class ReferenceButtonAction : MonoBehaviour
 
     public Button myButton;
     public TrackSound sound;
-    public LinkPlaybackManager linkManager;
     private ChuckSubInstance myChuck;
 
     public Color idleColor = Color.white;
@@ -30,8 +29,6 @@ public class ReferenceButtonAction : MonoBehaviour
 
     void Start()
     {
-        myButton.onClick.AddListener(LogClick);
-
         // initialize text
         buttonText = myButton.GetComponentInChildren<Text>();
 
@@ -47,19 +44,22 @@ public class ReferenceButtonAction : MonoBehaviour
         sound?.PlaySound();
     }
 
-    void LogClick()
+    public void PlayReference()
     {
         isPlaying = !isPlaying;
+
 
         // toggle sprite
         buttonImage.sprite = isPlaying ? pauseSprite : playSprite;
 
         if (isPlaying)
         {
+            Debug.Log("Play reference");
             myChuck.BroadcastEvent("playReference");
         } 
         else
         {
+            Debug.Log("Pause reference");
             myChuck.BroadcastEvent("pauseReference");
         }
     }

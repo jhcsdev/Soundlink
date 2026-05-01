@@ -13,7 +13,6 @@ namespace GridLinks
     public class LinkPlaybackManager : MonoBehaviour
     {
         public static LinkPlaybackManager Instance;
-        [SerializeField] TrackSound metronome;
 
         [SerializeField] float bpm;
         [SerializeField, Tooltip("number of beats for the playback loop")] private int beatsInLoop;
@@ -96,6 +95,7 @@ namespace GridLinks
                     {
                         if (knownLinks[key].scheduledBeats[scheduleIndexTracker[key]].beat == curBeat)
                         {
+                            Debug.Log($"Playing sound type: {knownLinks[key].link.GetType().Name}");
                             knownLinks[key].link.IndexPlaySound(
                                 scheduleIndexTracker[key], 
                                 knownLinks[key].scheduledBeats[scheduleIndexTracker[key]].silent
@@ -109,13 +109,6 @@ namespace GridLinks
                         } 
                     }
                 }
-
-                // play metronome sound (kind of hacky tbh ...)
-                // TODO: sync the mhould make sure that we are synced, right?
-                // if (curBeat % 2 == 0)
-                // {
-                //     metronome?.PlaySound();   
-                // }
 
                 yield return waitBeat;
                 curBeat += 1;                       
