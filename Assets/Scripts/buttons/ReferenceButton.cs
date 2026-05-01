@@ -4,7 +4,7 @@ using ChuckChuckChuck;
 using TrackSounds;
 using GridLinks;
 
-public class ButtonAction : MonoBehaviour
+public class ReferenceButtonAction : MonoBehaviour
 {
     [SerializeField] Sprite playSprite;
     [SerializeField] Sprite pauseSprite;
@@ -20,9 +20,16 @@ public class ButtonAction : MonoBehaviour
     private Text buttonText;
     private bool isPlaying = false;
 
+    // TODO: when the reference beat starts, should make sure that everything else stops
+    // and everything else should stop when i play the reference beat;
+    
+    // TODO: basically, the metronome, reference, and link playback have to communicate with each other .. how am I going to do that
+    // FIRST: get the metronome playback working off a button or something
+
+    // TODO: it would also be cool if everything could sync .. so you could play metronome with either the reference or the link playback and it would sync
+
     void Start()
     {
-
         myButton.onClick.AddListener(LogClick);
 
         // initialize text
@@ -33,8 +40,8 @@ public class ButtonAction : MonoBehaviour
 
         // must declare Chuck events before creating listeners
         myChuck.RunCode( string.Format( @"
-            global Event playBeat;
-            global Event pauseBeat;
+            global Event playReference;
+            global Event pauseReference;
         "));
 
         sound?.PlaySound();
@@ -49,11 +56,11 @@ public class ButtonAction : MonoBehaviour
 
         if (isPlaying)
         {
-            myChuck.BroadcastEvent("playBeat");
+            myChuck.BroadcastEvent("playReference");
         } 
         else
         {
-            myChuck.BroadcastEvent("pauseBeat");
+            myChuck.BroadcastEvent("pauseReference");
         }
     }
 }

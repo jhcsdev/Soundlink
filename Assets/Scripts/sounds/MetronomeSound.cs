@@ -17,10 +17,12 @@ namespace TrackSounds
 
             myChuck.RunCode( string.Format( @"
             global float BPM;
+            global Event playMetronome;
+            global Event pauseMetronome;
 
             // metronome
-            SinOsc click => ADSR envClick => dac;
-            SinOsc clickAccent => ADSR envAccent => dac;
+            SinOsc click => ADSR envClick => Gain clickGain => dac;
+            SinOsc clickAccent => ADSR envAccent => Gain accentGain => dac;
 
             (1::ms, 5::ms, 0.0, 15::ms) => envClick.set;
             (1::ms, 5::ms, 0.0, 15::ms) => envAccent.set;
@@ -29,11 +31,15 @@ namespace TrackSounds
             880.0 => click.freq;
             1760.0 => clickAccent.freq; 
 
-            0.3 => click.gain;
-            0.35 => clickAccent.gain;
+            0.8 => click.gain;
+            0.85 => clickAccent.gain;
+
+            1.5 => clickGain.gain;
+            1.75 => accentGain.gain;
 
             // bpm and timing
             (60.0 / BPM)::second => dur beat_dur;
+            beat_dur / 4 => dur sixteenth;
 
             // play a single metronome click
             fun void playClick(int isAccent) {{
@@ -56,7 +62,28 @@ namespace TrackSounds
                 }}
             }}
 
-            playClick(0);"));
+            // play whole meausre
+            fun void playMeasure() {{
+                playClick(1);
+                playClick(0);
+                playClick(0);
+                playClick(0); 
+            }}
+
+            // loop the whole beat
+            fun void beatLoop() {{
+                while (true) {{
+                    spork ~ playMeasure();
+                    4.0 * beat_dur => now;  
+                }}
+            }}
+
+            while (true) {{
+                playMetronome => now;
+                spork ~ beatLoop() @=> Shred @ myShred;
+                pauseMetronome => now;
+                myShred.exit();
+            }}"));
         }
     }
 }

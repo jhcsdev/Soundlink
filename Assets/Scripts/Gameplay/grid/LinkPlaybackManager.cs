@@ -110,12 +110,12 @@ namespace GridLinks
                     }
                 }
 
-                // play metronome sound on every beat ... 
-                // TODO: need to implement the "four" thing"
-                if (curBeat % 2 == 0)
-                {
-                    metronome?.PlaySound();   
-                }
+                // play metronome sound (kind of hacky tbh ...)
+                // TODO: sync the mhould make sure that we are synced, right?
+                // if (curBeat % 2 == 0)
+                // {
+                //     metronome?.PlaySound();   
+                // }
 
                 yield return waitBeat;
                 curBeat += 1;                       

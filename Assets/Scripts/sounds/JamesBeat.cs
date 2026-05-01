@@ -18,8 +18,8 @@ namespace TrackSounds
 
             myChuck.RunCode( string.Format(@"
             // super simple beat: kick, clap, kick, clap
-            global Event playBeat;
-            global Event pauseBeat;
+            global Event playReference;
+            global Event pauseReference;
             global float BPM;
 
             // load sounds
@@ -144,9 +144,9 @@ namespace TrackSounds
             }}
 
             while (true) {{
-                playBeat => now;
+                playReference => now;
                 spork ~ beatLoop() @=> Shred @ myShred;
-                pauseBeat => now;
+                pauseReference => now;
                 myShred.exit();
             }}
 
