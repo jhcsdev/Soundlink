@@ -75,6 +75,7 @@ namespace Player
             {
                 _allowNextRapidMoveAt = curTime + rapidMoveInterval;
                 movement = currentGrid.ShiftFocusPosition(inputDirection);
+                if (referencedPiece != null) currentGrid.Hover(referencedPiece);
             }
 
             if (movement != Vector2.zero) SwapGrid();
