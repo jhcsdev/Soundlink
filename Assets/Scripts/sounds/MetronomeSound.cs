@@ -72,6 +72,8 @@ namespace TrackSounds
 
             // loop the whole beat
             fun void beatLoop() {{
+                // snap to timing
+                beat_dur - (now % beat_dur) => now;  // snap to grid
                 while (true) {{
                     spork ~ playMeasure();
                     4.0 * beat_dur => now;  

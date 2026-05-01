@@ -137,6 +137,7 @@ namespace TrackSounds
 
             // loop the whole beat
             fun void beatLoop() {{
+                beat_dur - (now % beat_dur) => now;  // snap to grid
                 while (true) {{
                     spork ~ wholePattern();
                     8.0 * sixteenth => now;  

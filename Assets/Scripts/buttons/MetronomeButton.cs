@@ -37,7 +37,7 @@ public class MetronomeButtonAction : MonoBehaviour
 
         if (isPlaying)
         {
-            Debug.Log("Play metronome");
+            LinkPlaybackManager.Instance.SetMetronomeStartTime();
             myChuck.BroadcastEvent("playMetronome");
         } 
         else
