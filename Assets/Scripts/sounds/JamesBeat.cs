@@ -18,13 +18,9 @@ namespace TrackSounds
 
             myChuck.RunCode( string.Format(@"
             // super simple beat: kick, clap, kick, clap
-            global Event beatStart;
-            global Event beatDone;
+            global Event playReference;
+            global Event pauseReference;
             global float BPM;
-
-            beatStart.signal();
-
-            // this is the james level (first iteration)
 
             // load sounds
             SinOsc kick => ADSR envKick => Gain kickGain => dac;
@@ -129,16 +125,32 @@ namespace TrackSounds
                 playHat(1.0);
             }}
 
-            // play main beat
-            for (0 => int i; i < 2; i++) {{
+            // TODO: going to want to play this on repeat when the event is true, i think ...
+
+            // play whole beat once
+            fun void wholePattern() {{
                 spork ~ kickPattern();
                 spork ~ clapPattern();
                 spork ~ hatPattern();
-                8.0 * sixteenth => dur total_dur;
-                total_dur => now;    
+                8.0 * sixteenth => now;    
             }}
 
-            beatDone.signal();
+            // loop the whole beat
+            fun void beatLoop() {{
+                beat_dur - (now % beat_dur) => now;  // snap to grid
+                while (true) {{
+                    spork ~ wholePattern();
+                    8.0 * sixteenth => now;  
+                }}
+            }}
+
+            while (true) {{
+                playReference => now;
+                spork ~ beatLoop() @=> Shred @ myShred;
+                pauseReference => now;
+                myShred.exit();
+            }}
+
             "));
         }
     }

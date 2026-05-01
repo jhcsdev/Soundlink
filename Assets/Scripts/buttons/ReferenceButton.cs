@@ -2,78 +2,42 @@ using UnityEngine;
 using UnityEngine.UI;
 using ChuckChuckChuck;
 using TrackSounds;
-using System.Collections;
 using GridLinks;
+using UnityEngine.EventSystems;
 
-public class ButtonAction : MonoBehaviour
+public class ReferenceButtonAction : MonoBehaviour
 {
-    public Button myButton;
-    public TrackSound sound;
-    public LinkPlaybackManager linkManager;
-    private ChuckSubInstance myChuck;
+    [SerializeField] Sprite playSprite;
+    [SerializeField] Sprite pauseSprite;
+    [SerializeField] Image buttonImage;
+    private bool isPlaying = false;
 
-    public string idleText = "Play Reference";
-    public string playingText = "Playing ...";
-    public Color idleColor = Color.white;
-    public Color playingColor = Color.green;
-    private Text buttonText;
-
+    // TODO: 
+    // - metronome should sync with reference beat or link playback
+    // - that should happen either way, regardless of which is played first
     void Start()
     {
-        myButton.onClick.AddListener(LogClick);
-
-        // initialize text
-        buttonText = myButton.GetComponentInChildren<Text>();
-
-        // grab same chuck subsinstance as track sound 
-        myChuck = ChuckManager.Instance.chuckSubInstance;
-
-        // must declare Chuck events before creating listeners
-        myChuck.RunCode( string.Format( @"
-            global Event beatStart;
-            global Event beatDone;
-        "));
-
-        // Debug.Log($"myChuck is (RefenceButton): {myChuck}");
-        // Debug.Log($"buttonText is: {buttonText}");
-
-        // create listener for when beat starts
-        // create a ChuckEventListener, call SetButtonPlaying() during Update() after every broadcast from "beatStart"
-        ChuckEventListener beatStartListener = gameObject.AddComponent<ChuckEventListener>();
-        beatStartListener.ListenForEvent( myChuck, "beatStart", SetButtonPlaying);
-
-        // create listener for when beat ends
-        // create a ChuckEventListener, call SetButtonIdle() during Update() after every broadcast from "beatDone"
-        ChuckEventListener beatDoneListener = gameObject.AddComponent<ChuckEventListener>();
-        beatDoneListener.ListenForEvent( myChuck, "beatDone", SetButtonIdle);
     }
 
-    void LogClick()
+    public void PlayReference()
     {
-        sound?.PlaySound();
-    }
+        // deselect button so it cannot receive keyboard submit events 
+        EventSystem.current.SetSelectedGameObject(null);
+        
+        isPlaying = !isPlaying;
 
-    // disable link sound playback, change button visuals
-    void SetButtonPlaying()
-    {
-        linkManager.DisableSoundPlayback();
-        myButton.interactable = false;
-        buttonText.text = playingText;
+        // toggle sprite
+        buttonImage.sprite = isPlaying ? pauseSprite : playSprite;
 
-        ColorBlock colors = myButton.colors;
-        colors.disabledColor = playingColor;
-        myButton.colors = colors;
-    }
-
-    // enable link sound playback, change button visuals
-    void SetButtonIdle()
-    {
-        linkManager.EnableSoundPlayback();
-        myButton.interactable = true;
-        buttonText.text = idleText;
-
-        ColorBlock colors = myButton.colors;
-        colors.normalColor = idleColor;
-        myButton.colors = colors;
+        if (isPlaying)
+        {
+            // instead of broadcast, use manager instance
+            LinkPlaybackManager.Instance.PlayReferenceBeat();
+        } 
+        else
+        {
+            Debug.Log("Pause reference");
+            LinkPlaybackManager.Instance.PauseReferenceBeat();
+        }
     }
 }

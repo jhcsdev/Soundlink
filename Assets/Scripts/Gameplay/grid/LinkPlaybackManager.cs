@@ -6,6 +6,7 @@ using GamePieces;
 using PuzzleGrid;
 using UnityEngine;
 using TrackSounds;
+using ChuckChuckChuck;
 
 namespace GridLinks
 {
@@ -13,10 +14,10 @@ namespace GridLinks
     public class LinkPlaybackManager : MonoBehaviour
     {
         public static LinkPlaybackManager Instance;
-        [SerializeField] TrackSound metronome;
 
         [SerializeField] float bpm;
         [SerializeField, Tooltip("number of beats for the playback loop")] private int beatsInLoop;
+        [SerializeField] TrackSound referenceSound;
         private float secondsPerBeat;
         private PuzzleGrid.PuzzleGrid puzzleGrid;
 
@@ -26,6 +27,9 @@ namespace GridLinks
         private Dictionary<int /*soundid*/, int /*currentschedulerindex*/> scheduleIndexTracker = new();
         private class SchedulerInformation { public List<EventTiming> scheduledBeats; public GridLink link; }
         private class EventTiming { public int beat; public bool silent; }
+        private ChuckSubInstance myChuck;
+        private int curBeat = 1;
+        private float metronomeStartTime = -1f;
 
         #region unity functions
         void Awake()
@@ -35,10 +39,55 @@ namespace GridLinks
 
             puzzleGrid = GetComponent<PuzzleGrid.PuzzleGrid>();
             if (beatsInLoop == 0) Debug.LogWarning("loop beats 0 in link playback");
-            secondsPerBeat = 60 / bpm / 4;
-            // TODO: should these be sixteenth notes? 
+            secondsPerBeat = 60f / bpm / 4f;
         }
 
+        // stop link playback and play reference beat
+        public void PlayReferenceBeat()
+        {
+            soundPlaybackEnabled = false;
+            myChuck.BroadcastEvent("playReference");
+        }
+
+        // stop reference beat and start link playback
+        public void PauseReferenceBeat()
+        {
+            myChuck.BroadcastEvent("pauseReference");
+
+            // pause linkplayback for half a second to ensure no overlap
+            StartCoroutine(pauseLinkPlaybackForSeconds(1.5f));
+        }
+
+        private IEnumerator pauseLinkPlaybackForSeconds(float numSeconds)
+        {
+            soundPlaybackEnabled = false;
+            yield return new WaitForSeconds(numSeconds); 
+            soundPlaybackEnabled = true;
+        }
+
+        public void SetMetronomeStartTime()
+        {
+            metronomeStartTime = Time.time;
+        }
+
+        public IEnumerator SyncAndStart()
+        {
+            if (metronomeStartTime < 0f)
+            {
+                // metronome never started, just begin immediately
+                curBeat = 1;
+                EnableSoundPlayback();
+                yield break;
+            }
+
+            float T = secondsPerBeat * beatsInLoop;
+            float elapsed = Time.time - metronomeStartTime;
+            float timeUntilNextMeasure = T - (elapsed % T);
+            yield return new WaitForSeconds(timeUntilNextMeasure);
+            curBeat = 1;
+            EnableSoundPlayback();
+        }
+        
         void OnEnable()
         {
             puzzleGrid.OnAStartLinkUpdated += ScheduleSingleLink;
@@ -53,41 +102,58 @@ namespace GridLinks
         void Start()
         {
             StartCoroutine(PlaybackLoop());
+
+            // initiate chuck subsinstance
+            myChuck = ChuckManager.Instance.chuckSubInstance;
+
+            // must declare Chuck events before creating listeners
+            // this is to coordinate reference beat playback
+            myChuck.RunCode( string.Format( @"
+                global Event playReference;
+                global Event pauseReference;
+            "));
+
+            // intialize those events 
+            referenceSound?.PlaySound();
+
+            // if playback is already enabled in inspector, sync to metronome on start
+            if (soundPlaybackEnabled)
+            {
+                soundPlaybackEnabled = false; // disable until sync completes
+                StartCoroutine(SyncAndStart());
+            }
         }
         #endregion
 
         private IEnumerator PlaybackLoop()
         {
-            WaitForSeconds waitBeat = new(secondsPerBeat); 
+            float nextBeatTime = Time.time;
             WaitUntil untilSchedulerHasSounds = new(DoesSchedulerHaveAnyScheduledBeat);
-            int curBeat = 1;
 
-            while(true)
+            while (true)
             {
                 if (!soundPlaybackEnabled)
                 {
+                    nextBeatTime = Time.time;
                     yield return null;
                     continue;
                 }
 
+                yield return new WaitUntil(() => Time.time >= nextBeatTime);
+                nextBeatTime += secondsPerBeat;
+
                 if (!DoesSchedulerHaveAnyScheduledBeat()) {
                     Debug.Log("No sounds in scheduler!");
-                    yield return untilSchedulerHasSounds; // wait until there's actually something to play
+                    nextBeatTime = Time.time; // reset so no catchup after waiting
+                    yield return untilSchedulerHasSounds;
                 }
 
-                // check if curBeat exceeds loop; if it does, restart the loop
                 if (curBeat > beatsInLoop) { 
                     curBeat = 1; 
                     foreach(var key in scheduleIndexTracker.Keys.ToList()) 
-                    {
-                        Debug.Log($"reset schedule of {key}"); 
                         scheduleIndexTracker[key] = 0;
-                    }
                 }
 
-                Debug.Log($"Beat: {curBeat}");
-
-                // shift up to the maximum beat we can for each known beat
                 foreach (var key in knownLinks.Keys)
                 {
                     if (!scheduleIndexTracker.ContainsKey(key)) scheduleIndexTracker[key] = 0;
@@ -96,6 +162,7 @@ namespace GridLinks
                     {
                         if (knownLinks[key].scheduledBeats[scheduleIndexTracker[key]].beat == curBeat)
                         {
+                            Debug.Log($"Playing sound type: {knownLinks[key].link.GetType().Name}");
                             knownLinks[key].link.IndexPlaySound(
                                 scheduleIndexTracker[key], 
                                 knownLinks[key].scheduledBeats[scheduleIndexTracker[key]].silent
@@ -110,15 +177,8 @@ namespace GridLinks
                     }
                 }
 
-                // play metronome sound on every beat ... 
-                // TODO: need to implement the "four" thing"
-                if (curBeat % 2 == 0)
-                {
-                    metronome?.PlaySound();   
-                }
-
-                yield return waitBeat;
-                curBeat += 1;                       
+                curBeat += 1;
+                // NO yield return waitBeat here — WaitUntil at the top handles timing
             }
         }
 
