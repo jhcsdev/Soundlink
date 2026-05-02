@@ -43,7 +43,7 @@ namespace GamePieces
 
             foreach (PieceTileData ptd in data.tiles)
             {
-                PieceTile t = TileManager.Instance.CreatePieceAndCanvasTile(ptd, out GameObject canvasVisual)
+                PieceTile t = TileManager.Instance.CreatePieceAndCanvasTile(ptd, out GameObject canvasVisual, isSilent: data.isSilentPiece)
                     .Initialize(ptd, this)
                     .SetParent(transform)
                     .SetLocalPositionAndScaleByTileSize(tileScale)

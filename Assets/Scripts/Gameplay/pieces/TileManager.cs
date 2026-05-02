@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -13,9 +14,11 @@ namespace GamePieces
         public static TileManager Instance;
 
         [SerializeField] private List<TileSpriteTypeToSprite> basicTileSprite; 
+        [SerializeField] private List<TileSpriteTypeToSprite> silentTileSprites;
         [SerializeField] private Sprite verticalSingleGlueSprite; // todo:: this means that we can have up to 4 spriteRenders for what realistically shoudl just be one; needs to be changed
         [SerializeField] private Sprite passthroughSprite; // todo:: multiple variants of passthrough?
         private Dictionary<PieceTileSpriteType, Sprite> tileSpriteLookup = new();
+        private Dictionary<PieceTileSpriteType, Sprite> silentSpriteLookup = new();
 
         void Awake()
         {
@@ -27,9 +30,13 @@ namespace GamePieces
             {
                 tileSpriteLookup.Add(t.type, t.sprite);
             }
+            foreach (var t in silentTileSprites)
+            {
+                silentSpriteLookup.Add(t.type, t.sprite);
+            }
         }
 
-        public PieceTile CreateTile(PieceTileData data)
+        public PieceTile CreateTile(PieceTileData data, bool isSilent)
         {
             GameObject tile = new("Tile");
 
@@ -40,7 +47,7 @@ namespace GamePieces
                 sr.sortingOrder = (int)SPRITE_ORDER.PIECE_TILE_PASSTHROUGH_SPRITE_INDEX;
             } else
             {
-                sr.sprite = tileSpriteLookup[data.tileType];
+                sr.sprite = isSilent ? silentSpriteLookup[data.tileType] : tileSpriteLookup[data.tileType];
                 sr.sortingOrder = (int)SPRITE_ORDER.PIECE_TILE_SPRITE_INDEX;
             }
 
@@ -51,7 +58,7 @@ namespace GamePieces
             return pt.SetSpriteVariable(tileSpriteLookup[data.tileType]).SetTileDirection(data.spriteDirection).SetGlueSprite(verticalSingleGlueSprite);
         }
 
-        public GameObject CreateCanvasTile(PieceTileData data)
+        public GameObject CreateCanvasTile(PieceTileData data, bool isSilent)
         {
             GameObject canvasTile = new("CanvasTile");
 
@@ -59,9 +66,10 @@ namespace GamePieces
             if (data.type == PieceTileType.PASSTHROUGH)
             {
                 image.sprite = passthroughSprite;
-            } else
+            } 
+            else
             {
-                image.sprite = tileSpriteLookup[data.tileType];
+                image.sprite = isSilent ? silentSpriteLookup[data.tileType] : tileSpriteLookup[data.tileType];
             }
 
             foreach (var glueCardinality in data.glue)
@@ -79,10 +87,10 @@ namespace GamePieces
 
             return canvasTile;
         }
-        public PieceTile CreatePieceAndCanvasTile(PieceTileData data, out GameObject canvasTile)
+        public PieceTile CreatePieceAndCanvasTile(PieceTileData data, out GameObject canvasTile, bool isSilent = false)
         {
-            canvasTile = CreateCanvasTile(data);
-            return CreateTile(data);
+            canvasTile = CreateCanvasTile(data, isSilent);
+            return CreateTile(data, isSilent);
         }
 
         public static float GetSpriteRotationDegrees(TileSpriteDirection data) => data switch
