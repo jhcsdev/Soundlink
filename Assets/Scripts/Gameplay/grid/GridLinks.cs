@@ -10,7 +10,7 @@ namespace PuzzleGrid
     public class GridLink
     {
         // list of pieces 
-        [SerializeField] private List<Piece> pieces = new();
+        [SerializeField] private List<LinkData> pieces = new();
 
         [NonSerialized] private LinkPlacementData startPlacementData = null;
         [NonSerialized] private LinkPlacementData endPlacementData = null;
@@ -18,7 +18,7 @@ namespace PuzzleGrid
         private bool hasEndLinkRef = false;
 
         #region Getters
-        public List<Piece> GetPieces()
+        public List<LinkData> GetPieces()
         {
             return pieces;
         }
@@ -75,7 +75,7 @@ namespace PuzzleGrid
 
             startPlacementData = data;
             hasStartLinkRef = true;
-            // todo:: same as above
+            // todo:: same as above, breaking visuals
             PermanentRepaintPieces(startPlacementData.GetBaseColor());
             return this; 
         }
@@ -92,7 +92,7 @@ namespace PuzzleGrid
         // determine if Piece exists within Link
         public bool ContainsPiece(Piece piece)
         {
-            return pieces.Contains(piece);
+            return pieces.Any(ld => ld.piece == piece);
         } 
 
         public bool HasStartData() => hasStartLinkRef;
@@ -138,9 +138,9 @@ namespace PuzzleGrid
         /// <param name="thisPivot">The "piece" in this to base the merge on. </param>
         /// <returns>True on success, false on failure. See IsOtherCompatible() for definition of compatibility.
         /// </returns>
+        // todo:: does not account for tile connection points
         public bool MergeLink(GridLink other, Piece otherPivot, Piece thisPivot)
         {
-            Debug.Log($"MERGE LINK MERGE LINK MERGE LINK!! THIS: {this}, OTHER: {other}");
             // these checks remove situations where: the "other" is complete, "this" is complete, "other" & "this" both are start / end, or "other" & "this" have different soundIds 
             if (this.IsLinkComplete())
             {
@@ -153,14 +153,14 @@ namespace PuzzleGrid
                 return false;
             }
 
-            List<Piece> otherPieces = other.GetPieces();
+            List<LinkData> otherPieces = other.GetPieces();
 
             // re-orient otherPieces so that "pivot" is always at the start of the otherPieces list. 
             // todo:: (thought)  we can allow connecting to the middle of an existing piece by splitting "other"; however, this adds some other edge cases that we'd need to think through logically...
             int otherPivotIndex = -1;
             for (int i = 0; i < otherPieces.Count; i++)
             {
-                if (otherPieces[i] == otherPivot) { otherPivotIndex = i; break; }
+                if (otherPieces[i].piece == otherPivot) { otherPivotIndex = i; break; }
             }
 
             // reorient list
@@ -194,7 +194,7 @@ namespace PuzzleGrid
                 int thisPivotIndex = -1;
                 for (int i = 0; i < pieces.Count; i++)
                 {
-                    if (pieces[i] == thisPivot) { thisPivotIndex = i; break; }
+                    if (pieces[i].piece == thisPivot) { thisPivotIndex = i; break; }
                 }
                 if (thisPivotIndex == -1) { Debug.LogWarning("Could not find thisPivot in pieces."); return false; }
 
@@ -223,7 +223,7 @@ namespace PuzzleGrid
 
             for (int i = 0; i < pieces.Count; i++)
             {
-                if (pieces[i] != at) continue;
+                if (pieces[i].piece != at) continue;
 
 
                 if (i == 0 || i == pieces.Count - 1) 
@@ -240,11 +240,10 @@ namespace PuzzleGrid
                 // otherwise, need to create a new grid link. 
                 Debug.Log($"Split link - found piece; making new grid link.");
                 end = new();
-                List<Piece> newLinkPieces = pieces.Skip(i + 1).Take(pieces.Count - i - 1).ToList();
+                List<LinkData> newLinkPieces = pieces.Skip(i + 1).Take(pieces.Count - i - 1).ToList();
 
-                foreach (var p in newLinkPieces) end.AddPiece(p, null); // add all the pieces to the end of list
+                end.pieces.AddRange(newLinkPieces); // preserves startTile & endTile
 
-                // reset this link's pieces, removing the "at" link simultaneously
                 pieces = pieces.Take(i).ToList();
 
                 end.SetEndPlacementData(endPlacementData);
@@ -257,17 +256,26 @@ namespace PuzzleGrid
             return false;
         }
 
-                /// <summary>
+        /// <summary>
         /// adds piece to the proper order based on a set of conditions - if start, add after basedOn, if end, add before basedOn, todo: if complete, don't add (?)
         /// </summary>
         /// <param name="toAdd">the piece to add to the link</param>
+        /// <param name="toAddTile">the tile of toAdd that basedOnTile is connected to</param>
         /// <param name="basedOn" (nullable)>the piece that toAdd is connected to; will be used to base insertion position</param>
+        /// <param name="basedOnTile" (nullable)>the tile of basedOn that toAddTile is connected to</param>
         /// <returns>this if basedOn is null or successfully added piece; null if could not find basedOn</returns>
-        public GridLink AddPiece(Piece toAdd, Piece basedOn)
+        public GridLink AddPiece(Piece toAdd, PieceTile toAddTile, Piece basedOn, PieceTile basedOnTile, bool creatingStartLink = false)
         {
             if (basedOn == null) { 
                 Debug.Log($"Adding piece to {this} without basedOn. Ensure order!");
-                pieces.Add(toAdd); 
+                pieces.Add(
+                    new()
+                    { 
+                        piece = toAdd, 
+                        startTile = creatingStartLink ? toAddTile : null, 
+                        endTile = creatingStartLink ? null : toAddTile, 
+                    }
+                ); 
                 if (HasStartData() || HasEndData()) toAdd.SetColorPermanent(HasStartData() ? GetStartPlacementData().GetBaseColor() : GetEndPlacementData().GetBaseColor());
                 return this;
             }
@@ -276,10 +284,25 @@ namespace PuzzleGrid
             // add according to basedOn
             for (int i = 0; i < pieces.Count; i++)
             {
-                if (pieces[i] == basedOn)
+                if (pieces[i].piece == basedOn)
                 {
-                    if (HasEndData()) { pieces.Insert(i, toAdd);  } // add BEFORE basedOn
-                    else pieces.Insert(i+1, toAdd); // add AFTER basedOn
+                    if (HasEndData()) 
+                    { 
+                        // add BEFORE basedOn; this means that basedOnTile is the startTile of basedOn and toAddTile is endTile of toAdd
+                        pieces[i].startTile = basedOnTile;
+                        pieces.Insert(i, new()
+                        {
+                            piece = toAdd, endTile = toAddTile
+                        });  
+                    } 
+                    else {
+                        // add AFTER basedOn; this means that basedOnTile is the endTile of basedOn and toAddTile is  startTile of toAdd
+                        pieces[i].endTile = basedOnTile;
+                        pieces.Insert(i+1, new()
+                        {
+                            piece = toAdd, startTile = toAddTile
+                        }); 
+                    }
 
                     if (HasStartData() || HasEndData()) 
                     {
@@ -297,16 +320,17 @@ namespace PuzzleGrid
         // returns number of elements left in link
         public int RemovePiece(Piece piece)
         {
-            pieces.Remove(piece);
+            pieces.RemoveAll(ld => ld.piece == piece);
             return pieces.Count;
         }
 
-        public void IndexPlaySound(int index, bool silent = false)
+        public void IndexPlaySound(int index, bool isFirstInPiece, bool silent = false)
         {
             if (index < 0 || index > pieces.Count) { Debug.LogWarning($"Link passed index {index}, which is out of bounds for piece count {pieces.Count}"); return; }
 
-            if (!silent) GetStartPlacementData().GetTrackSound().PlaySound();
-            pieces[index].LinkPulse(startPlacementData.GetPulseColor());
+            if (!silent && isFirstInPiece) GetStartPlacementData().GetTrackSound().PlaySound();
+
+            pieces[index].piece.LinkPulse(startPlacementData.GetPulseColor(), pieces[index].startTile, pieces[index].endTile, isFirstInPiece);
         }
 
         #endregion
@@ -315,7 +339,7 @@ namespace PuzzleGrid
 
         private void PermanentRepaintPieces(Color to)
         {
-            foreach (var p in pieces) p.SetColorPermanent(to);
+            foreach (var p in pieces) p.piece.SetColorPermanent(to);
         }
 
         #endregion
@@ -328,5 +352,13 @@ namespace PuzzleGrid
             return baseStr;
         }
         #endregion
+    }
+
+    [Serializable]
+    public class LinkData
+    {
+        public PieceTile startTile;
+        public Piece piece;
+        public PieceTile endTile; // nullable
     }
 }

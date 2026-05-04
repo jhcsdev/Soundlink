@@ -21,15 +21,13 @@ namespace GamePieces
         #region initialized instance data
         [SerializeField] private PieceTileType type;
         private Sprite tileSprite; // todo:: only supports tile right now, no overlay
-        private Sprite glueSprite; // todo:: see CreateGlueSprites()
+        private Sprite glueSprite; // todo:: maybe move to piecevisual?
         private TileSpriteDirection spriteDirection;
         private Vector2Int relativeOffset;
         private List<GlueCardinality> glue;
         private bool initialized = false;
         #endregion
 
-        private Color mixColor; // todo:: move to PieceTileVisuals
-        public Color GetMixColor() => mixColor;
 
         #region chaining functions
         public PieceTile Initialize(PieceTileData data, Piece parent) // returns self for chaining purposes
@@ -66,7 +64,6 @@ namespace GamePieces
         }
         public PieceTile CreateGlueSprites()
         {
-            // todo:: questionable if these spriterenderers should really be put here...?
             if (glueSprite == null) { Debug.LogError("Called CreateGlueSprites but glueSprite is null"); return this; }
 
             foreach (var glueCardinality in glue)
@@ -87,7 +84,6 @@ namespace GamePieces
         public PieceTile SetSpriteVariable(Sprite sprite) { tileSprite = sprite; return this; }
         public PieceTile SetTileDirection(TileSpriteDirection direction)  { spriteDirection = direction; return this; }
         public PieceTile SetGlueSprite(Sprite sprite) { glueSprite = sprite; return this; }
-        public PieceTile SetMixColor(Color color) { mixColor = color; return this; }
         #endregion
 
         #region getters

@@ -24,9 +24,8 @@ namespace GridLinks
         [SerializeField] private bool soundPlaybackEnabled;
 
         private Dictionary<int /*soundid*/, SchedulerInformation> knownLinks = new();
-        private Dictionary<int /*soundid*/, int /*currentschedulerindex*/> scheduleIndexTracker = new();
-        private class SchedulerInformation { public List<EventTiming> scheduledBeats; public GridLink link; }
-        private class EventTiming { public int beat; public bool silent; }
+        private class SchedulerInformation { public List<BeatData> scheduledBeats; public GridLink link; }
+        private class BeatData { public bool firstInPiece; public bool silent; public int indexInLink; }
         private ChuckSubInstance myChuck;
         private int curBeat = 1;
         private float metronomeStartTime = -1f;
@@ -139,42 +138,51 @@ namespace GridLinks
                     continue;
                 }
 
-                yield return new WaitUntil(() => Time.time >= nextBeatTime);
-                nextBeatTime += secondsPerBeat;
+                WaitUntil wait = new(() => Time.time >= nextBeatTime);
+
+                yield return wait;
 
                 if (!DoesSchedulerHaveAnyScheduledBeat()) {
                     Debug.Log("No sounds in scheduler!");
-                    nextBeatTime = Time.time; // reset so no catchup after waiting
                     yield return untilSchedulerHasSounds;
+                    curBeat = 1;
                 }
+
+                nextBeatTime = Time.time + secondsPerBeat;
 
                 if (curBeat > beatsInLoop) { 
                     curBeat = 1; 
-                    foreach(var key in scheduleIndexTracker.Keys.ToList()) 
-                        scheduleIndexTracker[key] = 0;
                 }
 
                 foreach (var key in knownLinks.Keys)
                 {
-                    if (!scheduleIndexTracker.ContainsKey(key)) scheduleIndexTracker[key] = 0;
+                    if (knownLinks[key].scheduledBeats.Count < curBeat) continue; // only play when there is actually links to play
+                    var currentLinkBeat = knownLinks[key].scheduledBeats[curBeat - 1];
+                    Debug.Log($"{currentLinkBeat.indexInLink}, {currentLinkBeat.firstInPiece}, ");
 
-                    while(scheduleIndexTracker[key] < knownLinks[key].scheduledBeats.Count && knownLinks[key].scheduledBeats[scheduleIndexTracker[key]].beat <= curBeat)
-                    {
-                        if (knownLinks[key].scheduledBeats[scheduleIndexTracker[key]].beat == curBeat)
-                        {
-                            Debug.Log($"Playing sound type: {knownLinks[key].link.GetType().Name}");
-                            knownLinks[key].link.IndexPlaySound(
-                                scheduleIndexTracker[key], 
-                                knownLinks[key].scheduledBeats[scheduleIndexTracker[key]].silent
-                            );
-                        }
+                    knownLinks[key].link.IndexPlaySound(
+                        currentLinkBeat.indexInLink, 
+                        currentLinkBeat.firstInPiece,
+                        currentLinkBeat.silent
+                    );
 
-                        scheduleIndexTracker[key] += 1;
-                        if(!knownLinks[key].link.HasStartData()) { 
-                            Debug.LogWarning("beware: there is a grid link that made it to the scheduler without having a start link!"); 
-                            break; 
-                        } 
-                    }
+                    // while(scheduleIndexTracker[key] < knownLinks[key].scheduledBeats.Count && knownLinks[key].scheduledBeats[scheduleIndexTracker[key]].beat <= curBeat)
+                    // {
+                    //     if (knownLinks[key].scheduledBeats[scheduleIndexTracker[key]].beat == curBeat)
+                    //     {
+                    //         Debug.Log($"Playing sound type: {knownLinks[key].link.GetType().Name}");
+                    //         knownLinks[key].link.IndexPlaySound(
+                    //             scheduleIndexTracker[key], 
+                    //             knownLinks[key].scheduledBeats[scheduleIndexTracker[key]].silent
+                    //         );
+                    //     }
+
+                    //     scheduleIndexTracker[key] += 1;
+                    //     if(!knownLinks[key].link.HasStartData()) { 
+                    //         Debug.LogWarning("beware: there is a grid link that made it to the scheduler without having a start link!"); 
+                    //         break; 
+                    //     } 
+                    // }
                 }
 
                 curBeat += 1;
@@ -211,10 +219,6 @@ namespace GridLinks
             {
                 knownLinks[soundId].link = which;
                 knownLinks[soundId].scheduledBeats.Clear();
-
-                if (!scheduleIndexTracker.ContainsKey(soundId)) { 
-                    Debug.LogWarning($"knownlinks has id {soundId} but scheduler missing it"); 
-                }else scheduleIndexTracker.Remove(soundId); // fully removing it will cause a fast-speedup in the playback loop.
             } 
             else
             {
@@ -226,13 +230,23 @@ namespace GridLinks
             }
 
             // setup the schedule 
-            int curBeat = 1;
-            foreach (Piece p in which.GetPieces())
+            int indexInLink = 0;
+            foreach (Piece p in which.GetPieces().Select(ld => ld.piece))
             {
+                Debug.Log("Scheduling piece");
                 // need to schedule even if silent, but must indicate whether to play sound or not
-                knownLinks[soundId].scheduledBeats.Add(new() {beat = curBeat, silent = p.IsSilentPiece()});
-
-                curBeat += p.GetPieceTiles().Count;
+                for (int i = 0; i < p.GetPieceTiles().Count; i++)
+                {
+                    Debug.Log($"\tScheduling {i}.");
+                    knownLinks[soundId].scheduledBeats.Add(
+                        new() 
+                        {
+                            firstInPiece = i == 0, 
+                            silent = p.IsSilentPiece(), 
+                            indexInLink = indexInLink
+                        });
+                }
+                indexInLink += 1;
             }
         }
         private void StopPlaybackForLink(int soundId)
@@ -241,25 +255,7 @@ namespace GridLinks
             if (knownLinks.ContainsKey(soundId))
             {
                 knownLinks.Remove(soundId);
-                scheduleIndexTracker.Remove(soundId);
             } 
-        }
-
-        private int BinarySearchForId<T>(T forItem, List<T> searchIn) where T : IComparable<T>
-        {
-            int top = searchIn.Count;
-            int bottom = 0;
-            int half = bottom + (top - bottom) / 2;
-
-            while (top - bottom > 1 && searchIn[half].CompareTo(forItem) != 0)
-            {
-                if (searchIn[half].CompareTo(forItem) > 0) top = half;
-                else bottom = half + 1;
-
-                half = bottom + (top-bottom) / 2;
-            }
-
-            return half;
         }
 
         public void DisableSoundPlayback() => soundPlaybackEnabled = false;
