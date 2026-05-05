@@ -20,11 +20,11 @@ MonoBehaviour:
     playsSound: {fileID: 11400000, guid: 7d7f630fb01264a42bc4e7a9229cd792, type: 2}
     soundID: 0
     baseColor: {r: 0.7515006, g: 0.43734425, b: 0.7924528, a: 1}
-    pulseColor: {r: 1, g: 0.6179246, b: 0.9759951, a: 1}
+    pulseColor: {r: 1.304119, g: 0.65821093, b: 1.264166, a: 1}
   - startPos: {x: 3, y: 0}
     endPos: {x: 6, y: 5}
     playsSound: {fileID: 11400000, guid: e460ad7bde21649b1928b973ece08954, type: 2}
     soundID: 1
     baseColor: {r: 0.24830623, g: 0.6037736, b: 0.24777503, a: 1}
-    pulseColor: {r: 0.49727952, g: 1, b: 0.4764151, a: 1}
+    pulseColor: {r: 0.7106363, g: 1.304119, b: 0.6828169, a: 1}
   currentSoundID: 0

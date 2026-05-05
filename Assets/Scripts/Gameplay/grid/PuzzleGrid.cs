@@ -114,8 +114,8 @@ namespace PuzzleGrid
                 Vector2Int checkingPosition = focusPosition + pt.GetRotatedRelativeOffset();
                 GridTile tileAtPosition = tiles[checkingPosition.x, checkingPosition.y];
 
-                if (tileAtPosition.IsStartTile()) AddLinkToKnownLinks(CreateStartLink(p, tileAtPosition));
-                else if (tileAtPosition.IsEndTile()) AddLinkToKnownLinks(CreateEndLink(p, tileAtPosition));
+                if (tileAtPosition.IsStartTile()) AddLinkToKnownLinks(CreateStartLink(p, pt, tileAtPosition));
+                else if (tileAtPosition.IsEndTile()) AddLinkToKnownLinks(CreateEndLink(p, pt, tileAtPosition));
 
                 if (!tileAtPosition.TrySetPieceTile(pt)) return null;
             }
@@ -123,11 +123,9 @@ namespace PuzzleGrid
             // update links
             int connectedTracks = 0;
 
-            // todo - might need to merge links immediately if placed on a start / end tile, since there will already be a link 
-            // in existence with JUST the single tile
             foreach (PieceTile checkPiece in p.GetPieceTiles())
             {
-                if (connectedTracks >= 2) break; // break, not continue — we're fully done
+                if (connectedTracks >= 2) break; // break, not continue - we're fully done
 
                 List<GlueCardinality> pieceTileGlue = checkPiece.GetGlue;
                 if (pieceTileGlue == null || pieceTileGlue.Count == 0) continue;
@@ -142,7 +140,7 @@ namespace PuzzleGrid
                     foreach (PieceTile neighborPieceTile in neighborTile.GetPieceTiles())
                     {
                         if (neighborPieceTile == null) continue;
-                        TryConnectPieces(p, neighborPieceTile, gc, ref connectedTracks);
+                        TryConnectPieces(p, checkPiece, neighborPieceTile, gc, ref connectedTracks);
                     }
                 }
             }  
@@ -214,7 +212,7 @@ namespace PuzzleGrid
         #endregion
         
         #region link creation / manipulation
-        private void TryConnectPieces(Piece p, PieceTile neighborPieceTile, GlueCardinality gc, ref int connectedTracks)
+        private void TryConnectPieces(Piece p, PieceTile pieceTile, PieceTile neighborPieceTile, GlueCardinality gc, ref int connectedTracks)
         {
             bool hasCompatibleGlue = neighborPieceTile.GetGlue
                 .Any(neighborGC => GlueCardinalitiesCompatabile(gc, neighborGC));
@@ -229,14 +227,14 @@ namespace PuzzleGrid
             {
                 if (linksForBasePiece.Count > 0)
                 {
-                    // todo - does not account for switches
-                    UpdateLink(linksForBasePiece[0], neighborPiece, p);
+                    // todo:: does not account for switches
+                    UpdateLink(linksForBasePiece[0], neighborPiece, neighborPieceTile, p, pieceTile);
                     connectedTracks++;
                 }
                 else
                 {
                     Debug.Log("No existing link — creating new one.");
-                    AddLinkToKnownLinks(CreateNewLink(p, neighborPiece));
+                    AddLinkToKnownLinks(CreateNewLink(p, pieceTile, neighborPiece, neighborPieceTile));
                     connectedTracks++;
                 }
                 return;
@@ -259,8 +257,8 @@ namespace PuzzleGrid
                 else
                 {
                     Debug.Log("\t Updating existing link");
-                    UpdateLink(existingLink, p, neighborPiece);
-                }   
+                    UpdateLink(existingLink, p, pieceTile, neighborPiece, neighborPieceTile);
+                }
             }
         }
 
@@ -270,10 +268,6 @@ namespace PuzzleGrid
         /// <param name="piece">
         ///     the piece to be removed
         /// </param>
-        // todo - needs to also unassign start/end fields in the link if necessary. reasons i didn't do this is because:
-        // 1) what if the link covers multiple start tiles somehow? (switch)
-        // 2) what if the link covers a start and end tile? (probably also because of a switch?)
-        // not sure if either of those cases would ever occur but probably something to be wary of?
         public void RemoveFromGridLinks(Piece piece)
         {
             List<GridLink> gridsContainedIn = GetGridLinks(piece);
@@ -308,22 +302,36 @@ namespace PuzzleGrid
                 }
             }
         }
-        public GridLink CreateNewLink(Piece pieceOne, Piece pieceTwo)
+        public GridLink CreateNewLink(Piece pieceOne, PieceTile pieceOneTile, Piece pieceTwo, PieceTile pieceTwoTile)
         {
             GridLink newLink = new();
-            newLink.AddPiece(pieceOne, null);
-            newLink.AddPiece(pieceTwo, pieceOne);
+            newLink.AddPiece(pieceOne, null, null, null);
+            newLink.AddPiece(pieceTwo, pieceTwoTile, pieceOne, pieceOneTile);
             return newLink;
         }
-        public GridLink CreateStartLink(Piece piece, GridTile startTile)
+        /// <summary>
+        /// Creates a "Start Link" -- a link with just one piece and StartPlacementData.
+        /// </summary>
+        /// <param name="piece">The piece in the link.</param>
+        /// <param name="startTile">The PieceTile of piece that is connected to gridTile.</param>
+        /// <param name="gridTile">The gridTile with the StartPlacementData.</param>
+        /// <returns>Newly-created link</returns>
+        public GridLink CreateStartLink(Piece piece, PieceTile startTile, GridTile gridTile)
         {
             GridLink newLink = new(); 
-            return newLink.AddPiece(piece, null).SetStartPlacementData(startTile.GetLinkPlacementData());
+            return newLink.AddPiece(piece, startTile, null, null, true).SetStartPlacementData(gridTile.GetLinkPlacementData());
         }
-        public GridLink CreateEndLink(Piece piece, GridTile endTile)
+        /// <summary>
+        /// Creates an "End Link" -- a link with just one piece and EndPlacementData.
+        /// </summary>
+        /// <param name="piece">The piece in the link.</param>
+        /// <param name="endTile">The PieceTile above gridTile.</param>
+        /// <param name="gridTile">The GridTile with the StartPlacementData.</param>
+        /// <returns>Newly-created link</returns>
+        public GridLink CreateEndLink(Piece piece, PieceTile endTile, GridTile gridTile)
         {
             GridLink newLink = new(); 
-            return newLink.AddPiece(piece, null).SetEndPlacementData(endTile.GetLinkPlacementData());
+            return newLink.AddPiece(piece, endTile, null, null, false).SetEndPlacementData(gridTile.GetLinkPlacementData());
         }
 
         public void AddLinkToKnownLinks(GridLink what)
@@ -331,9 +339,17 @@ namespace PuzzleGrid
             gridLinks.Add(what);
             if (what.HasStartData()) OnAStartLinkUpdated?.Invoke(what);
         }
-        public void UpdateLink(GridLink what, Piece with, Piece neighborPiece)
+        /// <summary>
+        /// Adds a new piece to a given link.
+        /// </summary>
+        /// <param name="what">The link to be updated.</param>
+        /// <param name="with">The piece being added.</param>
+        /// <param name="withTile">The tile of with connected to neighborPiece.</param>
+        /// <param name="neighborPiece">The piece (already in what) that will be used to base insertion of 'with'.</param>
+        /// <param name="neighborTile">The tile of neighbor connected to withTile. </param>
+        public void UpdateLink(GridLink what, Piece with, PieceTile withTile, Piece neighborPiece, PieceTile neighborTile)
         {
-            what.AddPiece(with, neighborPiece);
+            what.AddPiece(with, withTile, neighborPiece, neighborTile);
             if (what.HasStartData()) OnAStartLinkUpdated?.Invoke(what);
         }
         public void MergeLinks(GridLink baseLink, GridLink mergeTo, Piece mergePivot, Piece basePivot)
@@ -460,10 +476,10 @@ namespace PuzzleGrid
             {
                 Debug.Log($"Link {i} has {gridLinks[i].GetPieces().Count} pieces");
 
-                foreach (Piece piece in gridLinks[i].GetPieces())
+                foreach (var pd in gridLinks[i].GetPieces())
                 {
                     // Debug.Log($"  Piece {piece.name} has {piece.GetPieceTiles().Count} piecetiles");
-                    foreach (PieceTile pt in piece.GetPieceTiles())
+                    foreach (PieceTile pt in pd.piece.GetPieceTiles())
                     {
                         Vector2Int pos = GetPositionOfPieceTile(pt);
                         // Debug.Log($"    PieceTile {pt.name} found at pos {pos}");

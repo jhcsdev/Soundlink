@@ -6,20 +6,22 @@ namespace GamePieces
 {
     public class Piece : MonoBehaviour
     {
+        [SerializeField] private PieceData data;
+        private PieceState currentState;
         private static float tileScale = 1;
         private static float gridTileScale = 1f;
 
-        private PieceState currentState;
-
-        [SerializeField] private PieceData data;
 
         private readonly List<PieceTile> tileObjects = new();
         private bool initialized = false;
+        private List<List<PieceTile>> pulseWaves;
+        private int pulseProgress = -1;
 
         // this is a canvas object that is exclusively used for visuals / the inventory. it is not a child object. 
         private GameObject canvasPiece;
         public GameObject GetCanvasPiece() => canvasPiece;
 
+        #region initialization
         void Awake()
         {
             if (data == null) return;
@@ -27,7 +29,6 @@ namespace GamePieces
             initialized = true;
             CreateTiles();
         }
-
         public void Initialize(PieceData pd)
         {
             if (initialized == true) { Debug.Log("Duplicate intiialization on piece: " + name); return; }
@@ -36,7 +37,6 @@ namespace GamePieces
             data = pd;
             CreateTiles();
         }
-
         private void CreateTiles()
         {
             canvasPiece = new GameObject("CanvasPiece", typeof(RectTransform));
@@ -57,7 +57,9 @@ namespace GamePieces
                 rt.anchoredPosition = new Vector2(ptd.relativeOffset.x * tileSize, ptd.relativeOffset.y * tileSize);
             }
         }
+        #endregion 
 
+        #region mode context
         public Piece InventoryMode()
         {
             currentState = PieceState.INVENTORY;
@@ -84,6 +86,9 @@ namespace GamePieces
                         
             return this;
         }
+        #endregion
+        
+        #region other
         public List<PieceTile> GetPieceTiles()
         {
             return tileObjects;
@@ -103,29 +108,120 @@ namespace GamePieces
                 pt.RotateRelativeOffsetCounterClockwise();
             }
         }
+        public bool IsSilentPiece() => data.isSilentPiece;
+        #endregion
 
+        #region things that should really be in a visuals class but aren't
         public void FailedPlace()
         {
-            // todo:: visuals
             foreach(PieceTile pt in tileObjects) pt.ColorPulse(Color.red, 0.5f);
-        }
-        public void LinkPulse(Color color)
-        {
-            foreach(PieceTile pt in tileObjects) pt.ColorPulse(color);
         }
         public void SetColorPermanent(Color color, float overTime=0.2f)
         {
             foreach(PieceTile pt in tileObjects) {
-                Debug.Log($"PAINTING COLOR TO {color}");
                 pt.SetColorPermanent(color, overTime);
             }
         }
-        public void SetMixColorOnPieces(Color color)
+        #endregion 
+
+        #region pulsing logic
+        public void BuildPulseOrder(PieceTile startTile, PieceTile endTile)
         {
-            
+            if (startTile == null) Debug.LogWarning("BUILD PULSE ORDER START TILE NULL");
+            if (endTile == null) Debug.LogWarning("BUILD PULSE ORDER END TILE NULL");
+
+            var rawWaves = new List<List<PieceTile>>();
+
+            var visited = new Dictionary<PieceTile, int>();
+            var queue = new Queue<PieceTile>();
+
+            visited[startTile] = 0;
+            queue.Enqueue(startTile);
+
+            while (queue.Count > 0)
+            {
+                PieceTile current = queue.Dequeue();
+                int depth = visited[current];
+
+                while (rawWaves.Count <= depth)
+                    rawWaves.Add(new List<PieceTile>());
+
+                rawWaves[depth].Add(current);
+
+                foreach (PieceTile neighbor in GetIntraPieceNeighbors(current))
+                {
+                    if (visited.ContainsKey(neighbor)) continue;
+                    visited[neighbor] = depth + 1;
+                    queue.Enqueue(neighbor);
+                }
+            }
+
+            ExpandWavesWithGapBeats(rawWaves);
         }
 
-        public bool IsSilentPiece() => data.isSilentPiece;
+        /// <summary>
+        /// adds "null" waves for waves of greater than 1 beat
+        /// </summary>
+        private void ExpandWavesWithGapBeats(List<List<PieceTile>> rawWaves)
+        {
+            pulseWaves = new List<List<PieceTile>>();
+
+            foreach (List<PieceTile> wave in rawWaves)
+            {
+                pulseWaves.Add(wave);
+
+                for (int i = 1; i < wave.Count; i++)
+                    pulseWaves.Add(null);
+            }
+        }
+
+        /// <summary>
+        /// grabs nearby tiles based off unrotated relative offset
+        /// </summary>
+        private List<PieceTile> GetIntraPieceNeighbors(PieceTile tile)
+        {
+            var neighbors = new List<PieceTile>();
+            Vector2Int pos = tile.GetUnrotatedRelativeOffset();
+
+            foreach (PieceTile other in tileObjects)
+            {
+                if (other == tile) continue;
+                Vector2Int delta = other.GetUnrotatedRelativeOffset() - pos;
+                if ((Mathf.Abs(delta.x) == 1 && delta.y == 0) ||
+                    (delta.x == 0 && Mathf.Abs(delta.y) == 1))
+                {
+                    neighbors.Add(other);
+                }
+            }
+
+            return neighbors;
+        }
+
+        /// <summary>
+        /// pulse tiles in wave order, provided pulseWaves is already created (creates if not)
+        /// </summary>
+        /// <param name="color">The pulse color</param>
+        /// <param name="startTile">The tile to begin pulsing from</param>
+        /// <param name="isFirst">If true, rebuilds the pulse order from startTile</param>
+        public void LinkPulse(Color color, PieceTile startTile, PieceTile endTile, bool isFirst)
+        {
+            if (isFirst || pulseWaves == null)
+            {
+                BuildPulseOrder(startTile, endTile);
+                pulseProgress = 0;
+            } else pulseProgress += 1;
+
+            if (pulseProgress >= pulseWaves.Count) Debug.LogWarning("Pulse progress exceeds pulseWaves.Count.");
+            else
+            {
+                if (pulseWaves[pulseProgress] == null) return;
+                foreach (PieceTile pt in pulseWaves[pulseProgress])
+                {
+                    pt.ColorPulse(color, 2);
+                }
+            }
+        }
+        #endregion
     }
 
     public enum PieceState
