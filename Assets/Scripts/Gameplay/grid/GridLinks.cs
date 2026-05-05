@@ -330,7 +330,7 @@ namespace PuzzleGrid
 
             if (!silent && isFirstInPiece) GetStartPlacementData().GetTrackSound().PlaySound();
 
-            pieces[index].piece.LinkPulse(startPlacementData.GetPulseColor(), pieces[index].startTile, pieces[index].endTile, isFirstInPiece);
+            pieces[index].piece.LinkPulse(startPlacementData.GetPulseColor(), pieces[index].startTile, isFirstInPiece);
         }
 
         #endregion
@@ -339,7 +339,6 @@ namespace PuzzleGrid
 
         private void ForceRejoinOnPieces(LinkPlacementData associatedData)
         {
-            // todo:: change method name to make more indicative of what it is actually doing
             pieces.ForEach(item => item.piece.JoinLink(HasStartData() ? startPlacementData : endPlacementData));
         }
         private void LostLinkData()

@@ -1,6 +1,7 @@
 
 
 using System.Collections.Generic;
+using DG.Tweening;
 using PuzzleGrid;
 using UnityEngine;
 
@@ -11,14 +12,35 @@ namespace GamePieces
     {
         #region vars
         #region anim config
+        // todo:: potentially abstract these into a runtime singleton that harvests values from a scriptable object? could be easier to switch out different configs
+        [Header("placement")]
+        private static float placementBetweenTileTime = 0.02f;
+        private static float placementScaleupTime = 0.15f;
+        private static Ease placementEaseMode = Ease.OutSine;
+        [Header("pickup")]
+        private static float pickupBetweenTileTime =0.02f;
+        private static float pickupScaledownTime = 0.1f;
+        private static Ease pickupEaseMode = Ease.InOutSine;
+        [Header("hovering")]
+        private static Ease hoveringInEaseMode = Ease.OutBounce;
+        private static float hoverInScaleTime = 0.75f;
+        private static float hoveringScale = 0.6f;
+        private static float placementScale = 1f;
 
         #endregion
         #region anim state management
         
+        Sequence placementSequence;
+        Sequence failedPlacementSequence;
+        Sequence pickupSequence;
+        Sequence enterHoverSequence;
+        Sequence returnToInventorySequence;
+
         #endregion
         #region other
         private Piece piece;
         private List<PieceTile> pieceTiles;
+        private List<PieceTile> pieceTilesFromOrigin; // same list of tiles as above, but organized such that relative 0,0 is index 0, 0,1 is index 1, and so on
         private List<List<PieceTile>> pulseWaves;
         private int pulseProgress = -1;
         #endregion
@@ -32,6 +54,13 @@ namespace GamePieces
         void OnEnable()
         {
             pieceTiles = piece.GetPieceTiles();
+            foreach (var tile in pieceTiles)
+            {
+                if (tile.GetUnrotatedRelativeOffset() != Vector2Int.zero) continue;
+
+                pieceTilesFromOrigin = UnpackNesting(BuildPulseOrder(tile));
+                break;
+            }
             piece.OnPieceFailedToPlaceOnGrid += FailedGridPlace;
             piece.OnPiecePlacedOnGrid += SucceededGridPlace;
             piece.OnPieceBeingHovered += PieceIsHovering;
@@ -45,7 +74,16 @@ namespace GamePieces
         }
         void OnDisable()
         {
-            
+            piece.OnPieceFailedToPlaceOnGrid -= FailedGridPlace;
+            piece.OnPiecePlacedOnGrid -= SucceededGridPlace;
+            piece.OnPieceBeingHovered -= PieceIsHovering;
+            piece.OnPiecePickedUp -= PieceWasPickedUp;
+            piece.OnPieceReturnedToInventory -= PieceReturnedToInventory;
+
+            piece.OnLinkPulse -= LinkPulse;
+            piece.OnJoinedLink -= LinkJoined;
+            piece.OnLeftLink -= LinkLeft;
+            piece.OnLinkBroken -= LinkBroken;
         }
         #endregion
         #region coroutine wrappers
@@ -55,15 +93,83 @@ namespace GamePieces
         }
         private void SucceededGridPlace()
         {
+            if (placementSequence == null) // need to set up the animation sequence
+            {
+                placementSequence = DOTween.Sequence().Append(
+                    pieceTilesFromOrigin[0].transform.DOScale(
+                        placementScale, 
+                        placementScaleupTime
+                    ).SetEase(placementEaseMode)
+                );
+                for (int i = 1; i < pieceTilesFromOrigin.Count; i++)
+                {
+                    placementSequence.Insert(
+                        placementBetweenTileTime * i, 
+                        pieceTilesFromOrigin[i].transform.DOScale(
+                            placementScale, 
+                            placementScaleupTime
+                        ).ChangeStartValue(hoveringScale * Vector3.one).SetEase(placementEaseMode)
+                    );
+                }  
+                placementSequence.SetAutoKill(false);
+            }
+
+            // todo:: kill/complete other potentially race-condition-inducing animations
+            if (enterHoverSequence != null && enterHoverSequence.active) enterHoverSequence.Complete();
+            if (pickupSequence != null && pickupSequence.active) pickupSequence.Complete();
             
+            placementSequence.Restart();
         }
         private void PieceIsHovering()
         {
-            pieceTiles.ForEach(it => { it.PickedUp(); it.Hovered(); });
+            if (enterHoverSequence == null) // need to set up animation seuqence
+            {
+                enterHoverSequence = DOTween.Sequence().Append(
+                    pieceTilesFromOrigin[0].transform.DOScale(
+                        hoveringScale, 
+                        hoverInScaleTime
+                    ).SetEase(hoveringInEaseMode)
+                );
+                for (int i = 1; i < pieceTilesFromOrigin.Count; i++)
+                {
+                    enterHoverSequence.Join(
+                        pieceTilesFromOrigin[i].transform.DOScale(
+                            hoveringScale, 
+                            hoverInScaleTime
+                        ).ChangeStartValue(Vector3.zero).SetEase(hoveringInEaseMode)
+                    );
+                }  
+                enterHoverSequence.SetAutoKill(false);
+            }
+            // pieceTiles.ForEach(it => { it.PickedUp(); it.Hovered(); });
+            enterHoverSequence.Play();
         }
         private void PieceWasPickedUp()
         {
-            
+            if (pickupSequence == null) // need to set up the animation sequence
+            {
+                pickupSequence = DOTween.Sequence().Append(
+                    pieceTilesFromOrigin[0].transform.DOScale(
+                        hoveringScale, 
+                        pickupScaledownTime
+                    ).SetEase(pickupEaseMode)
+                );
+                for (int i = 1; i < pieceTilesFromOrigin.Count; i++)
+                {
+                    pickupSequence.Insert(
+                        pickupBetweenTileTime * i, 
+                        pieceTilesFromOrigin[i].transform.DOScale(
+                            hoveringScale, 
+                            pickupScaledownTime
+                        ).ChangeStartValue(placementScale * Vector3.one).SetEase(pickupEaseMode)
+                    );
+                }  
+                pickupSequence.SetAutoKill(false);
+            }
+
+            if (enterHoverSequence != null && enterHoverSequence.active) enterHoverSequence.Complete();
+            if (placementSequence != null && placementSequence.active) placementSequence.Complete();
+            pickupSequence.Restart();
         }
         private void PieceReturnedToInventory()
         {
@@ -96,11 +202,11 @@ namespace GamePieces
         /// <param name="color">The pulse color</param>
         /// <param name="startTile">The tile to begin pulsing from</param>
         /// <param name="isFirst">If true, rebuilds the pulse order from startTile</param>
-        public void LinkPulse(Color color, PieceTile startTile, PieceTile endTile, bool isFirst)
+        public void LinkPulse(Color color, PieceTile startTile, bool isFirst)
         {
             if (isFirst || pulseWaves == null)
             {
-                BuildPulseOrder(startTile, endTile);
+                pulseWaves = ExpandWavesWithGapBeats(BuildPulseOrder(startTile));
                 pulseProgress = 0;
             } else pulseProgress += 1;
 
@@ -120,10 +226,9 @@ namespace GamePieces
 
         #endregion
         #region helpers
-        public void BuildPulseOrder(PieceTile startTile, PieceTile endTile)
+        public List<List<PieceTile>> BuildPulseOrder(PieceTile startTile)
         {
             if (startTile == null) Debug.LogWarning("BUILD PULSE ORDER START TILE NULL");
-            if (endTile == null) Debug.LogWarning("BUILD PULSE ORDER END TILE NULL");
 
             var rawWaves = new List<List<PieceTile>>();
 
@@ -151,23 +256,23 @@ namespace GamePieces
                 }
             }
 
-            ExpandWavesWithGapBeats(rawWaves);
+            return rawWaves;
         }
 
         /// <summary>
         /// adds "null" waves for waves of greater than 1 beat
         /// </summary>
-        private void ExpandWavesWithGapBeats(List<List<PieceTile>> rawWaves)
+        private List<List<PieceTile>> ExpandWavesWithGapBeats(List<List<PieceTile>> baseWaves)
         {
-            pulseWaves = new List<List<PieceTile>>();
+            var newWaves = new List<List<PieceTile>>();
 
-            foreach (List<PieceTile> wave in rawWaves)
+            foreach (List<PieceTile> wave in baseWaves)
             {
-                pulseWaves.Add(wave);
+                newWaves.Add(wave);
 
-                for (int i = 1; i < wave.Count; i++)
-                    pulseWaves.Add(null);
+                for (int i = 1; i < wave.Count; i++) newWaves.Add(null);
             }
+            return newWaves;
         }
 
         /// <summary>
@@ -190,6 +295,13 @@ namespace GamePieces
             }
 
             return neighbors;
+        }
+
+        private List<PieceTile> UnpackNesting(List<List<PieceTile>> list)
+        {
+            List<PieceTile> finalList = new();
+            list.ForEach(l => finalList.AddRange(l));
+            return finalList;
         }
         #endregion 
 

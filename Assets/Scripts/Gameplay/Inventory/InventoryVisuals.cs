@@ -227,7 +227,6 @@ namespace Inventory
 
         void PlacePieceInNewSpot(Piece piece, Vector2Int spot)
         {
-            Debug.Log("Place piece in new spot");
             piece.transform.position = piecePositionWhileInInventory;
 
             while (_rowObjects.Count <= spot.y)

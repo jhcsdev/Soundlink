@@ -128,13 +128,11 @@ namespace Inventory
         public override void FocusGrid()
         {
             base.FocusGrid();
-            Debug.Log("Inventory focused");
             OnInventoryFocused?.Invoke(focusPosition);
         }
         public override void UnfocusGrid()
         {
             base.UnfocusGrid();
-            Debug.Log("inventory unfocused");
             OnInventoryUnfocused?.Invoke();
         }
 

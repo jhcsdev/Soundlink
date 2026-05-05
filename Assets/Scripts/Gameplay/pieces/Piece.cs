@@ -18,7 +18,7 @@ namespace GamePieces
         public UnityAction OnPieceBeingHovered;
         public UnityAction OnPiecePickedUp;
         public UnityAction OnPieceReturnedToInventory;
-        public UnityAction<Color, PieceTile, PieceTile, bool> OnLinkPulse;
+        public UnityAction<Color, PieceTile, bool> OnLinkPulse;
         public UnityAction<LinkPlacementData> OnJoinedLink;
         public UnityAction OnLeftLink;
         public UnityAction OnLinkBroken; // for when two conflicting links are "merged" with one another? todo:: unsure if will use
@@ -83,7 +83,8 @@ namespace GamePieces
         public Piece LimboMode()
         {
             if (currentState == PieceState.HOVER_GRID) return this;
-            OnPieceBeingHovered?.Invoke();
+            if (currentState == PieceState.PLACED_GRID) OnPiecePickedUp?.Invoke();
+            else OnPieceBeingHovered?.Invoke();
 
             currentState = PieceState.HOVER_GRID;
 
@@ -143,9 +144,9 @@ namespace GamePieces
         {
             OnLinkBroken?.Invoke();
         }
-        public void LinkPulse(Color c, PieceTile startTile, PieceTile endTile, bool isFirstInLink)
+        public void LinkPulse(Color c, PieceTile startTile, bool isFirstInLink)
         {
-            OnLinkPulse?.Invoke(c, startTile, endTile, isFirstInLink);
+            OnLinkPulse?.Invoke(c, startTile, isFirstInLink);
         }
         #endregion 
     }
