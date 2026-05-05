@@ -145,7 +145,7 @@ namespace PuzzleGrid
                 }
             }  
 
-            p.GridMode();
+            p.PlacedGrid();
             p.transform.parent = transform;
             OnPiecePlacementSuccess?.Invoke(p);
             LogLinks();

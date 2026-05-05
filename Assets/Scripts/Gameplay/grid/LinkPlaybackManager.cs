@@ -158,7 +158,7 @@ namespace GridLinks
                 {
                     if (knownLinks[key].scheduledBeats.Count < curBeat) continue; // only play when there is actually links to play
                     var currentLinkBeat = knownLinks[key].scheduledBeats[curBeat - 1];
-                    Debug.Log($"{currentLinkBeat.indexInLink}, {currentLinkBeat.firstInPiece}, ");
+                    Debug.Log($"{currentLinkBeat.indexInLink}, {currentLinkBeat.firstInPiece}, {curBeat}");
 
                     knownLinks[key].link.IndexPlaySound(
                         currentLinkBeat.indexInLink, 

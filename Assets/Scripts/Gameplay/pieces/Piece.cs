@@ -1,6 +1,7 @@
 using System.Collections.Generic;
+using PuzzleGrid;
 using UnityEngine;
-using UnityEngine.Rendering.Universal;
+using UnityEngine.Events;
 
 namespace GamePieces
 {
@@ -11,13 +12,23 @@ namespace GamePieces
         private static float tileScale = 1;
         private static float gridTileScale = 1f;
 
+        #region
+        public UnityAction OnPiecePlacedOnGrid;
+        public UnityAction OnPieceFailedToPlaceOnGrid;
+        public UnityAction OnPieceBeingHovered;
+        public UnityAction OnPiecePickedUp;
+        public UnityAction OnPieceReturnedToInventory;
+        public UnityAction<Color, PieceTile, PieceTile, bool> OnLinkPulse;
+        public UnityAction<LinkPlacementData> OnJoinedLink;
+        public UnityAction OnLeftLink;
+        public UnityAction OnLinkBroken; // for when two conflicting links are "merged" with one another? todo:: unsure if will use
+        #endregion
 
         private readonly List<PieceTile> tileObjects = new();
         private bool initialized = false;
-        private List<List<PieceTile>> pulseWaves;
-        private int pulseProgress = -1;
 
-        // this is a canvas object that is exclusively used for visuals / the inventory. it is not a child object. 
+        // this is a canvas object that is exclusively used for the inventory, and is not really within the "bounds" of being controlled by the Piece.
+        // it is not a child object. 
         private GameObject canvasPiece;
         public GameObject GetCanvasPiece() => canvasPiece;
 
@@ -36,6 +47,8 @@ namespace GamePieces
             initialized = true;
             data = pd;
             CreateTiles();
+
+            gameObject.AddComponent<PieceVisuals>();
         }
         private void CreateTiles()
         {
@@ -62,29 +75,34 @@ namespace GamePieces
         #region mode context
         public Piece InventoryMode()
         {
+            if (currentState == PieceState.INVENTORY) return this;
             currentState = PieceState.INVENTORY;
+            OnPieceReturnedToInventory?.Invoke();
             return this;
         }
         public Piece LimboMode()
         {
-            if (currentState == PieceState.HOVER_GRID) { 
-                foreach(PieceTile pt in tileObjects) pt.Hovered();
-                return this;
-            } 
+            if (currentState == PieceState.HOVER_GRID) return this;
+            OnPieceBeingHovered?.Invoke();
+
             currentState = PieceState.HOVER_GRID;
 
             transform.localScale = Vector2.one * gridTileScale; 
 
-            foreach(PieceTile pt in tileObjects) { pt.PickedUp(); pt.Hovered(); }// these are visuals
-
             return this;
         }
-        public Piece GridMode()
+        public Piece PlacedGrid()
         {
             if (currentState == PieceState.PLACED_GRID) return this;
             currentState = PieceState.PLACED_GRID;
+
+            OnPiecePlacedOnGrid?.Invoke();
                         
             return this;
+        }
+        public void FailedGridPlace()
+        {
+            OnPieceFailedToPlaceOnGrid?.Invoke();
         }
         #endregion
         
@@ -111,117 +129,25 @@ namespace GamePieces
         public bool IsSilentPiece() => data.isSilentPiece;
         #endregion
 
-        #region things that should really be in a visuals class but aren't
-        public void FailedPlace()
+        #region link stuff
+        public void JoinLink(LinkPlacementData link)
         {
-            foreach(PieceTile pt in tileObjects) pt.ColorPulse(Color.red, 0.5f);
+            Debug.Log("Joined link!");
+            OnJoinedLink?.Invoke(link);
         }
-        public void SetColorPermanent(Color color, float overTime=0.2f)
+        public void LeaveLink()
         {
-            foreach(PieceTile pt in tileObjects) {
-                pt.SetColorPermanent(color, overTime);
-            }
+            OnLeftLink?.Invoke();
+        }
+        public void BreakLink()
+        {
+            OnLinkBroken?.Invoke();
+        }
+        public void LinkPulse(Color c, PieceTile startTile, PieceTile endTile, bool isFirstInLink)
+        {
+            OnLinkPulse?.Invoke(c, startTile, endTile, isFirstInLink);
         }
         #endregion 
-
-        #region pulsing logic
-        public void BuildPulseOrder(PieceTile startTile, PieceTile endTile)
-        {
-            if (startTile == null) Debug.LogWarning("BUILD PULSE ORDER START TILE NULL");
-            if (endTile == null) Debug.LogWarning("BUILD PULSE ORDER END TILE NULL");
-
-            var rawWaves = new List<List<PieceTile>>();
-
-            var visited = new Dictionary<PieceTile, int>();
-            var queue = new Queue<PieceTile>();
-
-            visited[startTile] = 0;
-            queue.Enqueue(startTile);
-
-            while (queue.Count > 0)
-            {
-                PieceTile current = queue.Dequeue();
-                int depth = visited[current];
-
-                while (rawWaves.Count <= depth)
-                    rawWaves.Add(new List<PieceTile>());
-
-                rawWaves[depth].Add(current);
-
-                foreach (PieceTile neighbor in GetIntraPieceNeighbors(current))
-                {
-                    if (visited.ContainsKey(neighbor)) continue;
-                    visited[neighbor] = depth + 1;
-                    queue.Enqueue(neighbor);
-                }
-            }
-
-            ExpandWavesWithGapBeats(rawWaves);
-        }
-
-        /// <summary>
-        /// adds "null" waves for waves of greater than 1 beat
-        /// </summary>
-        private void ExpandWavesWithGapBeats(List<List<PieceTile>> rawWaves)
-        {
-            pulseWaves = new List<List<PieceTile>>();
-
-            foreach (List<PieceTile> wave in rawWaves)
-            {
-                pulseWaves.Add(wave);
-
-                for (int i = 1; i < wave.Count; i++)
-                    pulseWaves.Add(null);
-            }
-        }
-
-        /// <summary>
-        /// grabs nearby tiles based off unrotated relative offset
-        /// </summary>
-        private List<PieceTile> GetIntraPieceNeighbors(PieceTile tile)
-        {
-            var neighbors = new List<PieceTile>();
-            Vector2Int pos = tile.GetUnrotatedRelativeOffset();
-
-            foreach (PieceTile other in tileObjects)
-            {
-                if (other == tile) continue;
-                Vector2Int delta = other.GetUnrotatedRelativeOffset() - pos;
-                if ((Mathf.Abs(delta.x) == 1 && delta.y == 0) ||
-                    (delta.x == 0 && Mathf.Abs(delta.y) == 1))
-                {
-                    neighbors.Add(other);
-                }
-            }
-
-            return neighbors;
-        }
-
-        /// <summary>
-        /// pulse tiles in wave order, provided pulseWaves is already created (creates if not)
-        /// </summary>
-        /// <param name="color">The pulse color</param>
-        /// <param name="startTile">The tile to begin pulsing from</param>
-        /// <param name="isFirst">If true, rebuilds the pulse order from startTile</param>
-        public void LinkPulse(Color color, PieceTile startTile, PieceTile endTile, bool isFirst)
-        {
-            if (isFirst || pulseWaves == null)
-            {
-                BuildPulseOrder(startTile, endTile);
-                pulseProgress = 0;
-            } else pulseProgress += 1;
-
-            if (pulseProgress >= pulseWaves.Count) Debug.LogWarning("Pulse progress exceeds pulseWaves.Count.");
-            else
-            {
-                if (pulseWaves[pulseProgress] == null) return;
-                foreach (PieceTile pt in pulseWaves[pulseProgress])
-                {
-                    pt.ColorPulse(color, 2);
-                }
-            }
-        }
-        #endregion
     }
 
     public enum PieceState

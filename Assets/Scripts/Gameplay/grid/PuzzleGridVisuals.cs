@@ -306,7 +306,7 @@ namespace PuzzleGrid
 
         void PlacePieceFailure(Piece p)
         {
-            p.FailedPlace();
+            p.FailedGridPlace();
         }
         void PlacePieceSuccess(Piece p)
         {

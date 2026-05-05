@@ -58,14 +58,14 @@ namespace PuzzleGrid
             endPlacementData = data;
             hasEndLinkRef = true;
             // todo:: need linking visuals of some sort; if end does not match start, should break the link visually
-            PermanentRepaintPieces(endPlacementData.GetBaseColor());
+            ForceRejoinOnPieces(endPlacementData);
             return this;
         }
         public GridLink ResetEndPlacementData()
         {
             hasEndLinkRef = false;
             endPlacementData = null; 
-            if (!HasStartData()) PermanentRepaintPieces(Color.white);
+            if (!HasStartData()) LostLinkData();
             return this;
         }
 
@@ -76,14 +76,14 @@ namespace PuzzleGrid
             startPlacementData = data;
             hasStartLinkRef = true;
             // todo:: same as above, breaking visuals
-            PermanentRepaintPieces(startPlacementData.GetBaseColor());
+            ForceRejoinOnPieces(startPlacementData);
             return this; 
         }
         public GridLink ResetStartPlacementData()
         {
             hasStartLinkRef = false;
             startPlacementData = null;
-            if (!HasEndData()) PermanentRepaintPieces(Color.white);
+            if (!HasEndData()) LostLinkData();
             return this;
         }
         #endregion
@@ -202,7 +202,7 @@ namespace PuzzleGrid
             }
 
             // this updates the pieces visually when multiple pieces are connected
-            if (HasStartData() || HasEndData()) PermanentRepaintPieces(HasStartData() ? GetStartPlacementData().GetBaseColor() : GetEndPlacementData().GetBaseColor());
+            if (HasStartData() || HasEndData()) ForceRejoinOnPieces(HasStartData() ? startPlacementData : endPlacementData);
 
             return true;
         }
@@ -276,7 +276,7 @@ namespace PuzzleGrid
                         endTile = creatingStartLink ? null : toAddTile, 
                     }
                 ); 
-                if (HasStartData() || HasEndData()) toAdd.SetColorPermanent(HasStartData() ? GetStartPlacementData().GetBaseColor() : GetEndPlacementData().GetBaseColor());
+                if (HasStartData() || HasEndData()) toAdd.JoinLink(HasStartData() ? startPlacementData : endPlacementData);
                 return this;
             }
             Debug.Log($"Adding piece {toAdd.name} based on {basedOn.name}");
@@ -307,7 +307,7 @@ namespace PuzzleGrid
                     if (HasStartData() || HasEndData()) 
                     {
                         Debug.Log($"The link is a start or end. \n {this}");
-                        toAdd.SetColorPermanent(HasStartData() ? GetStartPlacementData().GetBaseColor() : GetEndPlacementData().GetBaseColor());
+                        toAdd.JoinLink(HasStartData() ? startPlacementData : endPlacementData);
                     }
 
                     return this;
@@ -337,9 +337,14 @@ namespace PuzzleGrid
 
         #region changing piece state
 
-        private void PermanentRepaintPieces(Color to)
+        private void ForceRejoinOnPieces(LinkPlacementData associatedData)
         {
-            foreach (var p in pieces) p.piece.SetColorPermanent(to);
+            // todo:: change method name to make more indicative of what it is actually doing
+            pieces.ForEach(item => item.piece.JoinLink(HasStartData() ? startPlacementData : endPlacementData));
+        }
+        private void LostLinkData()
+        {
+            pieces.ForEach(item => item.piece.LeaveLink());
         }
 
         #endregion
