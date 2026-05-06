@@ -14,11 +14,14 @@ namespace GamePieces
         #region anim config
         // todo:: potentially abstract these into a runtime singleton that harvests values from a scriptable object? could be easier to switch out different configs
         [Header("placement")]
-        private static float placementBetweenTileTime = 0.02f;
+        private static float placementBetweenTileTime = 0.05f;
         private static float placementScaleupTime = 0.15f;
         private static Ease placementEaseMode = Ease.OutSine;
+        private static float placementFailPunchScaleStrength = 0.07f;
+        private static float placementFailPunchScaleTime = 0.6f;
+
         [Header("pickup")]
-        private static float pickupBetweenTileTime =0.02f;
+        private static float pickupBetweenTileTime =0.05f;
         private static float pickupScaledownTime = 0.1f;
         private static Ease pickupEaseMode = Ease.InOutSine;
         [Header("hovering")]
@@ -26,8 +29,10 @@ namespace GamePieces
         private static float hoverInScaleTime = 0.75f;
         private static float hoveringScale = 0.6f;
         private static float placementScale = 1f;
+        [Header("movement")]
         private static float movementTime = 0.1f;
         private static Ease movementEase = Ease.OutSine;
+        private static float movementFailPunchStrength = 0.1f;
 
         #endregion
         #region anim state management
@@ -37,6 +42,7 @@ namespace GamePieces
         Sequence pickupSequence;
         Sequence enterHoverSequence;
         Sequence pieceMovedSequence; 
+        Sequence failedMovementSequence;
         Sequence returnToInventorySequence;
 
         #endregion
@@ -91,10 +97,23 @@ namespace GamePieces
             piece.OnLinkBroken -= LinkBroken;
         }
         #endregion
-        #region coroutine wrappers
+        #region sequence handlers / coroutine wrappers
         private void FailedGridPlace()
         {
-            pieceTiles.ForEach(it => it.ColorPulse(Color.red, 0.5f));
+            if (failedPlacementSequence == null)
+            {
+                failedPlacementSequence = DOTween.Sequence().Append(
+                    transform.DOPunchScale(Vector3.one * placementFailPunchScaleStrength, placementFailPunchScaleTime)
+                );
+                failedPlacementSequence.SetAutoKill(false);
+            }
+
+            if (enterHoverSequence != null && enterHoverSequence.active) enterHoverSequence.Complete();
+            if (pickupSequence != null && pickupSequence.active) pickupSequence.Complete();
+
+            failedPlacementSequence.Restart();
+            
+            pieceTiles.ForEach(it => it.ColorPulse(Color.red, 0.5f)); // todo:: probably the tiles should use a tween themselves
         }
         private void SucceededGridPlace()
         {
@@ -122,6 +141,7 @@ namespace GamePieces
             // todo:: kill/complete other potentially race-condition-inducing animations
             if (enterHoverSequence != null && enterHoverSequence.active) enterHoverSequence.Complete();
             if (pickupSequence != null && pickupSequence.active) pickupSequence.Complete();
+            if (failedPlacementSequence != null && failedPlacementSequence.active) failedPlacementSequence.Complete();
             
             placementSequence.Restart();
         }
@@ -146,7 +166,7 @@ namespace GamePieces
                 }  
                 enterHoverSequence.SetAutoKill(false);
             }
-            // pieceTiles.ForEach(it => { it.PickedUp(); it.Hovered(); });
+
             enterHoverSequence.Play();
         }
         private void PieceWasPickedUp()
@@ -174,17 +194,27 @@ namespace GamePieces
 
             if (enterHoverSequence != null && enterHoverSequence.active) enterHoverSequence.Complete();
             if (placementSequence != null && placementSequence.active) placementSequence.Complete();
+            if (failedPlacementSequence != null && failedPlacementSequence.active) failedPlacementSequence.Complete();
+            
             pickupSequence.Restart();
         }
         private void PieceReturnedToInventory()
         {
             
         }
+        private void PieceRotated()
+        {
+            
+        }
+        #region movement
         private void PieceMoved(Transform to)
         {
             if (pieceMovedSequence != null && pieceMovedSequence.active) pieceMovedSequence.Kill();
             pieceMovedSequence = DOTween.Sequence().Append(transform.DOMove(to.position, movementTime).SetEase(movementEase)).Play();
         }
+        #endregion
+
+        #region links
         private void LinkJoined(LinkPlacementData what)
         {
             // todo::
@@ -231,10 +261,12 @@ namespace GamePieces
             }
         }
         #endregion
+        #endregion
 
         #region coroutines
 
         #endregion
+
         #region helpers
         public List<List<PieceTile>> BuildPulseOrder(PieceTile startTile)
         {
