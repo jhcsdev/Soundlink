@@ -76,6 +76,7 @@ namespace GamePieces
             piece.OnPiecePickedUp += PieceWasPickedUp;
             piece.OnPieceReturnedToInventory += PieceReturnedToInventory;
             piece.OnHoverPieceMoved += PieceMoved;
+            // piece.OnRotateNeedsSync += PieceRotated;
 
             piece.OnLinkPulse += LinkPulse;
             piece.OnJoinedLink += LinkJoined;
@@ -90,6 +91,7 @@ namespace GamePieces
             piece.OnPiecePickedUp -= PieceWasPickedUp;
             piece.OnPieceReturnedToInventory -= PieceReturnedToInventory;
             piece.OnHoverPieceMoved -= PieceMoved;
+            // piece.OnRotateNeedsSync -= PieceRotated;
 
             piece.OnLinkPulse -= LinkPulse;
             piece.OnJoinedLink -= LinkJoined;
@@ -199,10 +201,6 @@ namespace GamePieces
             pickupSequence.Restart();
         }
         private void PieceReturnedToInventory()
-        {
-            
-        }
-        private void PieceRotated()
         {
             
         }

@@ -21,6 +21,7 @@ namespace GamePieces
         public UnityAction OnPieceReturnedToInventory;
         public UnityAction<Color, PieceTile, bool> OnLinkPulse;
         public UnityAction<LinkPlacementData> OnJoinedLink;
+        public UnityAction OnRotateNeedsSync;
         public UnityAction OnLeftLink;
         public UnityAction OnLinkBroken; // for when two conflicting links are "merged" with one another? todo:: unsure if will use
         #endregion

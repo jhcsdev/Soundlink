@@ -10,9 +10,16 @@ namespace GamePieces
         private PieceTile pieceTile;
         private SpriteRenderer spriteRenderer;
         private Color baseColor = Color.white;
+        #region animation config
+        [Header("rotation")]
+        private static float spriteRotationTime = 0.25f; 
+        private static float movementRotationTime = 0.25f;
+        private static Ease rotationEaseMode = Ease.OutBack;
+        #endregion
 
         #region active DOTweens
         Tween activePulseTween = null;
+        Sequence activeRotationSequence = null;
 
         #endregion
 
@@ -30,6 +37,7 @@ namespace GamePieces
             pieceTile.OnColorPulse += OnColorPulse;
             pieceTile.OnSetColor += OnSetColor;
             pieceTile.OnChangeSpriteRendererIndex += ChangeRendererIndex;
+            pieceTile.OnRotate += RotateTile;
         }
         void OnDisable()
         {
@@ -39,6 +47,7 @@ namespace GamePieces
             pieceTile.OnColorPulse -= OnColorPulse;
             pieceTile.OnSetColor -= OnSetColor; 
             pieceTile.OnChangeSpriteRendererIndex -= ChangeRendererIndex;
+            pieceTile.OnRotate -= RotateTile;
         }
 
         void OnPlacedHappened(GridTile gridTile)
@@ -78,6 +87,46 @@ namespace GamePieces
         void ChangeRendererIndex(int to)
         {
             spriteRenderer.sortingOrder = to;
+        }
+
+        void RotateTile(Vector2Int newLocation, Quaternion newRotation)
+        {
+            Vector3 currentPos = transform.localPosition;
+            float radius = currentPos.magnitude;
+
+            float startAngle = Mathf.Atan2(currentPos.y, currentPos.x);
+            float targetAngle = Mathf.Atan2(newLocation.y, newLocation.x);
+
+            float delta = Mathf.DeltaAngle(
+                startAngle * Mathf.Rad2Deg,
+                targetAngle * Mathf.Rad2Deg
+            ) * Mathf.Deg2Rad;
+
+            float currentAngle = startAngle;
+
+            if (activeRotationSequence != null && activeRotationSequence.active) activeRotationSequence.Kill();
+
+            activeRotationSequence = DOTween.Sequence().Join(
+                DOTween.To(
+                    () => currentAngle,
+                    angle =>
+                    {
+                        currentAngle = angle;
+                        transform.localPosition = new Vector3(
+                            Mathf.Cos(angle) * radius,
+                            Mathf.Sin(angle) * radius,
+                            currentPos.z
+                        );
+                    },
+                    startAngle + delta,
+                    movementRotationTime
+                ).SetEase(rotationEaseMode)
+            ).Join(
+                transform.DOLocalRotate(
+                    newRotation.eulerAngles,
+                    spriteRotationTime
+                ).SetEase(rotationEaseMode)
+            ).Play();
         }
     }
 }

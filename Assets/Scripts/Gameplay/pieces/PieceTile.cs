@@ -14,6 +14,7 @@ namespace GamePieces
         public UnityAction<Piece, Vector2> OnPickedUp;
         public UnityAction<Color, float> OnColorPulse;
         public UnityAction<Color, float> OnSetColor;
+        public UnityAction<Vector2Int, Quaternion> OnRotate;
         #endregion
 
         private Piece piece;
@@ -104,9 +105,10 @@ namespace GamePieces
             int x = relativeOffset.y * 1;
             int y = relativeOffset.x * -1;
             relativeOffset = new(x, y);
-            SetLocalPosition(relativeOffset);
             spriteDirection = TileManager.RotateCW90(spriteDirection);
-            transform.rotation = Quaternion.Euler(0,0,TileManager.GetSpriteRotationDegrees(spriteDirection));
+            OnRotate?.Invoke(relativeOffset, Quaternion.Euler(0,0,TileManager.GetSpriteRotationDegrees(spriteDirection)));
+            // SetLocalPosition(relativeOffset);
+            // transform.rotation = Quaternion.Euler(0,0,TileManager.GetSpriteRotationDegrees(spriteDirection));
 
             List<GlueCardinality> glueDirs = new();
             foreach(var cardinality in glue)
@@ -120,9 +122,10 @@ namespace GamePieces
             int x = relativeOffset.y * -1;
             int y = relativeOffset.x * 1;
             relativeOffset = new(x, y);
-            SetLocalPosition(relativeOffset);
             spriteDirection = TileManager.RotateCCW90(spriteDirection);
-            transform.rotation = Quaternion.Euler(0,0,TileManager.GetSpriteRotationDegrees(spriteDirection));
+            OnRotate?.Invoke(relativeOffset, Quaternion.Euler(0,0,TileManager.GetSpriteRotationDegrees(spriteDirection)));
+            // SetLocalPosition(relativeOffset);
+            // transform.rotation = Quaternion.Euler(0,0,TileManager.GetSpriteRotationDegrees(spriteDirection));
 
             List<GlueCardinality> glueDirs = new();
             foreach(var cardinality in glue)
