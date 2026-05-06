@@ -44,11 +44,11 @@ namespace GamePieces
             if (data.type == PieceTileType.PASSTHROUGH)
             {
                 sr.sprite = passthroughSprite;
-                sr.sortingOrder = (int)SPRITE_ORDER.PIECE_TILE_PASSTHROUGH_SPRITE_INDEX;
+                sr.sortingOrder = (int)SPRITE_ORDER.PIECE_TILE_PASSTHROUGH_SPRITE_INDEX_HOVER_GRID;
             } else
             {
                 sr.sprite = isSilent ? silentSpriteLookup[data.tileType] : tileSpriteLookup[data.tileType];
-                sr.sortingOrder = (int)SPRITE_ORDER.PIECE_TILE_SPRITE_INDEX;
+                sr.sortingOrder = (int)SPRITE_ORDER.PIECE_TILE_SPRITE_INDEX_HOVER_GRID;
             }
 
             tile.transform.rotation = Quaternion.Euler(0, 0, GetSpriteRotationDegrees(data.spriteDirection));

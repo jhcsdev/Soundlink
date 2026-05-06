@@ -93,6 +93,7 @@ namespace GamePieces
             else OnPieceStartedHover?.Invoke();
 
             currentState = PieceState.HOVER_GRID;
+            foreach(var pieceTile in GetPieceTiles()) pieceTile.SetRendererIndex(GetRendererIndexByTileType(pieceTile.GetTileType(), false));
 
             transform.localScale = Vector2.one * gridTileScale; 
             transform.position = focusedTile.transform.position;
@@ -105,6 +106,7 @@ namespace GamePieces
             currentState = PieceState.PLACED_GRID;
 
             OnPiecePlacedOnGrid?.Invoke();
+            foreach(var pieceTile in GetPieceTiles()) pieceTile.SetRendererIndex(GetRendererIndexByTileType(pieceTile.GetTileType(), true));
                         
             return this;
         }
@@ -135,6 +137,11 @@ namespace GamePieces
             }
         }
         public bool IsSilentPiece() => data.isSilentPiece;
+        private int GetRendererIndexByTileType(PieceTileType t, bool placedDown) => t switch
+        {
+            PieceTileType.PASSTHROUGH => (int)(placedDown ? SPRITE_ORDER.PIECE_TILE_PASSTHROUGH_SPRITE_INDEX_PLACED_GRID : SPRITE_ORDER.PIECE_TILE_PASSTHROUGH_SPRITE_INDEX_HOVER_GRID),
+            _ => (int)(placedDown ? SPRITE_ORDER.PIECE_TILE_SPRITE_INDEX_PLACED_GRID : SPRITE_ORDER.PIECE_TILE_SPRITE_INDEX_HOVER_GRID) 
+        };
         #endregion
 
         #region link stuff

@@ -29,6 +29,7 @@ namespace GamePieces
             pieceTile.OnPickedUp += OnPickup;
             pieceTile.OnColorPulse += OnColorPulse;
             pieceTile.OnSetColor += OnSetColor;
+            pieceTile.OnChangeSpriteRendererIndex += ChangeRendererIndex;
         }
         void OnDisable()
         {
@@ -36,7 +37,8 @@ namespace GamePieces
             pieceTile.OnHover -= OnHovering;
             pieceTile.OnPickedUp -= OnPickup;
             pieceTile.OnColorPulse -= OnColorPulse;
-            pieceTile.OnSetColor -= OnSetColor;
+            pieceTile.OnSetColor -= OnSetColor; 
+            pieceTile.OnChangeSpriteRendererIndex -= ChangeRendererIndex;
         }
 
         void OnPlacedHappened(GridTile gridTile)
@@ -71,6 +73,11 @@ namespace GamePieces
             spriteRenderer.color = c;
             baseColor = c;
             // spriteRenderer.DOColor(c, time);
+        }
+
+        void ChangeRendererIndex(int to)
+        {
+            spriteRenderer.sortingOrder = to;
         }
     }
 }

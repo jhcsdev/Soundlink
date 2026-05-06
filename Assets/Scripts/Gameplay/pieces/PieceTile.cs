@@ -10,6 +10,7 @@ namespace GamePieces
         #region UnityActions
         public UnityAction<GridTile> OnPlaced;
         public UnityAction OnHover;
+        public UnityAction<int> OnChangeSpriteRendererIndex;
         public UnityAction<Piece, Vector2> OnPickedUp;
         public UnityAction<Color, float> OnColorPulse;
         public UnityAction<Color, float> OnSetColor;
@@ -84,6 +85,7 @@ namespace GamePieces
         public PieceTile SetSpriteVariable(Sprite sprite) { tileSprite = sprite; return this; }
         public PieceTile SetTileDirection(TileSpriteDirection direction)  { spriteDirection = direction; return this; }
         public PieceTile SetGlueSprite(Sprite sprite) { glueSprite = sprite; return this; }
+        public PieceTile SetRendererIndex(int to) { OnChangeSpriteRendererIndex?.Invoke(to); return this; }
         #endregion
 
         #region getters
