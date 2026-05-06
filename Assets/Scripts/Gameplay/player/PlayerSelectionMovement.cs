@@ -86,7 +86,7 @@ namespace Player
             if (grid == null) return;
             if (currentGrid != null) currentGrid.UnfocusGrid();
             currentGrid = grid;
-            currentGrid.FocusGrid();
+            currentGrid.FocusGrid(referencedPiece != null);
         }
 
         /// <summary>

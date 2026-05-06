@@ -23,11 +23,12 @@ namespace PuzzleGrid
         private int totalTracksInGrid = 0;
 
         #region notifications
-        public UnityAction<GridTile> OnGridFocused;
-        public UnityAction<GridTile> OnGridUnfocused;
+        private bool pointerActive = true;
+        public UnityAction<GridTile> OnActivatePointer;
+        public UnityAction<GridTile> OnDeactivatePointer;
         public UnityAction<Vector2Int /*direction */> OnFailedLeavingGrid;
         
-        public UnityAction<Vector2Int /*direction*/, GridTile /*FocusedTile*/> OnNewFocusedTile;
+        public UnityAction<Vector2Int /*direction*/, GridTile /*FocusedTile*/, bool /*pointerActive*/> OnNewFocusedTile;
         public UnityAction<Vector2Int> OnNewHover;
         public UnityAction<GridTile> OnHoveringTile;
         public UnityAction<GridTile, GridTileType, Vector2> OnGridTileInitialize;
@@ -92,11 +93,14 @@ namespace PuzzleGrid
             Vector2Int intended = focusPosition + direction;
 
             // check x pos, y up
-            if (intended.x < 0 || intended.x >= gridData.width || intended.y < 0 || intended.y >= gridData.height) { OnFailedLeavingGrid?.Invoke(direction); return Vector2Int.zero; }
+            if (intended.x < 0 || intended.x >= gridData.width || intended.y < 0 || intended.y >= gridData.height) { 
+                if (pointerActive) { OnFailedLeavingGrid?.Invoke(direction); } 
+                return Vector2Int.zero; 
+            }
 
             // otherwise movement is ok
             focusPosition = intended;
-            OnNewFocusedTile?.Invoke(direction, tiles[focusPosition.x, focusPosition.y]);
+            OnNewFocusedTile?.Invoke(direction, tiles[focusPosition.x, focusPosition.y], pointerActive);
 
             return Vector2Int.zero;
         }
@@ -159,6 +163,8 @@ namespace PuzzleGrid
                 Debug.Log("you have not yet won the game ... but good luck :D");
             }
 
+            ActivatePointerIfDeactivated();
+
             return Vector2Int.zero;
         }
         public override Piece TakeAtFocusPosition()
@@ -191,6 +197,8 @@ namespace PuzzleGrid
             OnPieceYoinked?.Invoke(toBeRemoved);
             toBeRemoved.transform.position = GetFocusedGridTile().transform.position; // todo: should not be manually setting position
 
+            DeactivatePointerIfActivated();
+
             // return
             return toBeRemoved.LimboMode(GetFocusedGridTile());
         }
@@ -208,15 +216,29 @@ namespace PuzzleGrid
             
             p.LimboMode(GetFocusedGridTile());
         }
-        public override void FocusGrid()
+        public override void FocusGrid(bool isHoldingPiece)
         {
             base.FocusGrid();
-            OnGridFocused?.Invoke(GetFocusedGridTile());
+            if (!isHoldingPiece) ActivatePointerIfDeactivated(overrideCheck: true);
+            else DeactivatePointerIfActivated();
         }
         public override void UnfocusGrid()
         {
             base.UnfocusGrid();
-            OnGridUnfocused?.Invoke(GetFocusedGridTile());
+            DeactivatePointerIfActivated();
+        }
+
+        private void ActivatePointerIfDeactivated(bool overrideCheck = false)
+        {
+            if (!overrideCheck && pointerActive) return;
+            pointerActive = true;
+            OnActivatePointer?.Invoke(GetFocusedGridTile());
+        }
+        private void DeactivatePointerIfActivated()
+        {
+            if (!pointerActive) return;
+            pointerActive = false;
+            OnDeactivatePointer?.Invoke(GetFocusedGridTile());
         }
         
         #endregion

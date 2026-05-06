@@ -76,7 +76,6 @@ namespace GamePieces
             piece.OnPiecePickedUp += PieceWasPickedUp;
             piece.OnPieceReturnedToInventory += PieceReturnedToInventory;
             piece.OnHoverPieceMoved += PieceMoved;
-            // piece.OnRotateNeedsSync += PieceRotated;
 
             piece.OnLinkPulse += LinkPulse;
             piece.OnJoinedLink += LinkJoined;
@@ -91,7 +90,6 @@ namespace GamePieces
             piece.OnPiecePickedUp -= PieceWasPickedUp;
             piece.OnPieceReturnedToInventory -= PieceReturnedToInventory;
             piece.OnHoverPieceMoved -= PieceMoved;
-            // piece.OnRotateNeedsSync -= PieceRotated;
 
             piece.OnLinkPulse -= LinkPulse;
             piece.OnJoinedLink -= LinkJoined;
@@ -129,8 +127,8 @@ namespace GamePieces
                 );
                 for (int i = 1; i < pieceTilesFromOrigin.Count; i++)
                 {
-                    placementSequence.Insert(
-                        placementBetweenTileTime * i, 
+                    placementSequence.Join(
+                        // placementBetweenTileTime * i, 
                         pieceTilesFromOrigin[i].transform.DOScale(
                             placementScale, 
                             placementScaleupTime
