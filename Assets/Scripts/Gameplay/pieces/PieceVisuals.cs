@@ -26,6 +26,8 @@ namespace GamePieces
         private static float hoverInScaleTime = 0.75f;
         private static float hoveringScale = 0.6f;
         private static float placementScale = 1f;
+        private static float movementTime = 0.1f;
+        private static Ease movementEase = Ease.OutSine;
 
         #endregion
         #region anim state management
@@ -34,6 +36,7 @@ namespace GamePieces
         Sequence failedPlacementSequence;
         Sequence pickupSequence;
         Sequence enterHoverSequence;
+        Sequence pieceMovedSequence; 
         Sequence returnToInventorySequence;
 
         #endregion
@@ -63,9 +66,10 @@ namespace GamePieces
             }
             piece.OnPieceFailedToPlaceOnGrid += FailedGridPlace;
             piece.OnPiecePlacedOnGrid += SucceededGridPlace;
-            piece.OnPieceBeingHovered += PieceIsHovering;
+            piece.OnPieceStartedHover += PieceIsHovering;
             piece.OnPiecePickedUp += PieceWasPickedUp;
             piece.OnPieceReturnedToInventory += PieceReturnedToInventory;
+            piece.OnHoverPieceMoved += PieceMoved;
 
             piece.OnLinkPulse += LinkPulse;
             piece.OnJoinedLink += LinkJoined;
@@ -76,9 +80,10 @@ namespace GamePieces
         {
             piece.OnPieceFailedToPlaceOnGrid -= FailedGridPlace;
             piece.OnPiecePlacedOnGrid -= SucceededGridPlace;
-            piece.OnPieceBeingHovered -= PieceIsHovering;
+            piece.OnPieceStartedHover -= PieceIsHovering;
             piece.OnPiecePickedUp -= PieceWasPickedUp;
             piece.OnPieceReturnedToInventory -= PieceReturnedToInventory;
+            piece.OnHoverPieceMoved -= PieceMoved;
 
             piece.OnLinkPulse -= LinkPulse;
             piece.OnJoinedLink -= LinkJoined;
@@ -174,6 +179,11 @@ namespace GamePieces
         private void PieceReturnedToInventory()
         {
             
+        }
+        private void PieceMoved(Transform to)
+        {
+            if (pieceMovedSequence != null && pieceMovedSequence.active) pieceMovedSequence.Kill();
+            pieceMovedSequence = DOTween.Sequence().Append(transform.DOMove(to.position, movementTime).SetEase(movementEase)).Play();
         }
         private void LinkJoined(LinkPlacementData what)
         {

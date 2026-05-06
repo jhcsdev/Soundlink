@@ -41,9 +41,9 @@ namespace GamePieces
 
         void OnPlacedHappened(GridTile gridTile)
         {
-            transform.SetParent(gridTile.transform);
-            transform.localPosition = Vector2.zero;
-            transform.localScale = Vector2.one;
+            // transform.SetParent(gridTile.transform);
+            // transform.localPosition = Vector2.zero;
+            // transform.localScale = Vector2.one;
         }
         void OnHovering()
         {

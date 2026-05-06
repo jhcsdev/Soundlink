@@ -192,11 +192,21 @@ namespace PuzzleGrid
             toBeRemoved.transform.position = GetFocusedGridTile().transform.position; // todo: should not be manually setting position
 
             // return
-            return toBeRemoved.LimboMode();
+            return toBeRemoved.LimboMode(GetFocusedGridTile());
         }
         public override void Hover(Piece p)
         {
-            HoverPiecePosition(p);
+            OnNewHover?.Invoke(focusPosition);
+
+            foreach (PieceTile checkPiece in p.GetPieceTiles())
+            {
+                Vector2Int checkingPosition = focusPosition + checkPiece.GetRotatedRelativeOffset();
+                if (checkingPosition.x < 0 || checkingPosition.x >= tiles.GetLength(0) || checkingPosition.y < 0 || checkingPosition.y >= tiles.GetLength(1)) continue;
+                GridTile tileAtPosition = tiles[checkingPosition.x, checkingPosition.y];
+                if (tileAtPosition.CanSetPieceTile(checkPiece)) OnHoveringTile?.Invoke(tileAtPosition);
+            }
+            
+            p.LimboMode(GetFocusedGridTile());
         }
         public override void FocusGrid()
         {
@@ -451,22 +461,6 @@ namespace PuzzleGrid
         #endregion
     
         #region other
-        private void HoverPiecePosition(Piece p)
-        {
-            OnNewHover?.Invoke(focusPosition);
-
-            foreach (PieceTile checkPiece in p.GetPieceTiles())
-            {
-                Vector2Int checkingPosition = focusPosition + checkPiece.GetRotatedRelativeOffset();
-                if (checkingPosition.x < 0 || checkingPosition.x >= tiles.GetLength(0) || checkingPosition.y < 0 || checkingPosition.y >= tiles.GetLength(1)) continue;
-                GridTile tileAtPosition = tiles[checkingPosition.x, checkingPosition.y];
-                if (tileAtPosition.CanSetPieceTile(checkPiece)) OnHoveringTile?.Invoke(tileAtPosition);
-            }
-            
-            p.LimboMode();
-            p.transform.position = GetFocusedGridTile().transform.position;
-        }
-
         // TODO: delete the visuals and just do logging stuff 
         public void LogLinks()
         {

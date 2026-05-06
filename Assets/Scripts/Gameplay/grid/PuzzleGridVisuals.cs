@@ -301,6 +301,7 @@ namespace PuzzleGrid
         void SendPieceToInventory(Piece p)
         {
             p.gameObject.SetActive(true);
+            ResetAllHovers();
             // todo: cool visuals? maybe it flies back to inventory...who knows
         }
 

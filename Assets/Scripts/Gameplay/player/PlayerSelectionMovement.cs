@@ -102,7 +102,6 @@ namespace Player
             {
                 referencedPiece = currentGrid.TakeAtFocusPosition();
 
-                if (referencedPiece != null) referencedPiece.LimboMode();
                 SwapGrid();
 
                 if (referencedPiece != null) currentGrid.Hover(referencedPiece);

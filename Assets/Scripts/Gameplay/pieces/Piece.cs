@@ -15,8 +15,9 @@ namespace GamePieces
         #region
         public UnityAction OnPiecePlacedOnGrid;
         public UnityAction OnPieceFailedToPlaceOnGrid;
-        public UnityAction OnPieceBeingHovered;
+        public UnityAction OnPieceStartedHover;
         public UnityAction OnPiecePickedUp;
+        public UnityAction<Transform /*new focus*/> OnHoverPieceMoved;
         public UnityAction OnPieceReturnedToInventory;
         public UnityAction<Color, PieceTile, bool> OnLinkPulse;
         public UnityAction<LinkPlacementData> OnJoinedLink;
@@ -80,15 +81,21 @@ namespace GamePieces
             OnPieceReturnedToInventory?.Invoke();
             return this;
         }
-        public Piece LimboMode()
+        public Piece LimboMode(GridTile focusedTile)
         {
-            if (currentState == PieceState.HOVER_GRID) return this;
+            // already in hover mode, which suggests we had a focused tile before this one; tile has now (potentially?) been changed
+            if (currentState == PieceState.HOVER_GRID) 
+            {
+                OnHoverPieceMoved?.Invoke(focusedTile.transform);
+                return this;
+            }
             if (currentState == PieceState.PLACED_GRID) OnPiecePickedUp?.Invoke();
-            else OnPieceBeingHovered?.Invoke();
+            else OnPieceStartedHover?.Invoke();
 
             currentState = PieceState.HOVER_GRID;
 
             transform.localScale = Vector2.one * gridTileScale; 
+            transform.position = focusedTile.transform.position;
 
             return this;
         }

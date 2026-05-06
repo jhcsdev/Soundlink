@@ -1,7 +1,4 @@
-using System;
 using System.Collections.Generic;
-using GamePieces;
-using Unity.VisualScripting;
 using UnityEngine;
 
 namespace PuzzleGrid
