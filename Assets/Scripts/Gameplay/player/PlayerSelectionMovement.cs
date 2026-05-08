@@ -151,7 +151,7 @@ namespace Player
 
         private void OnEscape(InputAction.CallbackContext ctx)
         {
-            // todo:: pause
+            // todo:: pause screen
         }
 
         private void OnRotate(InputAction.CallbackContext ctx)

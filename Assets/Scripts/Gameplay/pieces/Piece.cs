@@ -11,6 +11,7 @@ namespace GamePieces
         private PieceState currentState;
         private static float tileScale = 1;
         private static float gridTileScale = 1f;
+        private Material instance;
 
         #region
         public UnityAction OnPiecePlacedOnGrid;
@@ -20,10 +21,16 @@ namespace GamePieces
         public UnityAction<Transform /*new focus*/> OnHoverPieceMoved;
         public UnityAction OnPieceReturnedToInventory;
         public UnityAction<Color, PieceTile, bool> OnLinkPulse;
-        public UnityAction<LinkPlacementData> OnJoinedLink;
+        public UnityAction<LinkPlacementData, PieceTile> OnJoinedLink;
         public UnityAction OnRotateNeedsSync;
         public UnityAction OnLeftLink;
-        public UnityAction OnLinkBroken; // for when two conflicting links are "merged" with one another? todo:: unsure if will use
+        
+        public UnityAction<Material> OnSetMaterial;
+        public UnityAction<Vector2> OnMaterialFillOriginChange;
+        public UnityAction<float> OnMaterialFillAmountChange;
+        public UnityAction<Color> OnMaterialBaseColorChange;
+        public UnityAction<Color> OnMaterialBorderColorChange;
+        public UnityAction<Color> OnMaterialFillColorChange;
         #endregion
 
         private readonly List<PieceTile> tileObjects = new();
@@ -35,26 +42,28 @@ namespace GamePieces
         public GameObject GetCanvasPiece() => canvasPiece;
 
         #region initialization
-        void Awake()
-        {
-            if (data == null) return;
+        // void Awake()
+        // {
+        //     if (data == null) return;
 
-            initialized = true;
-            CreateTiles();
-        }
+        //     initialized = true;
+        // }
         public void Initialize(PieceData pd)
         {
             if (initialized == true) { Debug.Log("Duplicate intiialization on piece: " + name); return; }
 
             initialized = true;
             data = pd;
-            CreateTiles();
 
+            CreateTiles();
             gameObject.AddComponent<PieceVisuals>();
+
+            EmitMaterialUpdate(materialSet: instance, fillAmount: -0.2f, fillOrigin: new(0,0), fillColor: Color.black, borderColor: Color.black, baseColor: Color.white);
         }
         private void CreateTiles()
         {
             canvasPiece = new GameObject("CanvasPiece", typeof(RectTransform));
+            instance = new(TileManager.Instance.GetPieceMaterial());
 
             foreach (PieceTileData ptd in data.tiles)
             {
@@ -62,7 +71,8 @@ namespace GamePieces
                     .Initialize(ptd, this)
                     .SetParent(transform)
                     .SetLocalPositionAndScaleByTileSize(tileScale)
-                    .CreateGlueSprites();
+                    .CreateGlueSprites()
+                    .SetRendererMaterialData(instance);
                 tileObjects.Add(t);
                 
                 canvasVisual.transform.SetParent(canvasPiece.transform, false);
@@ -71,6 +81,16 @@ namespace GamePieces
                 float tileSize = rt.sizeDelta.x; 
                 rt.anchoredPosition = new Vector2(ptd.relativeOffset.x * tileSize, ptd.relativeOffset.y * tileSize);
             }
+        }
+        private void EmitMaterialUpdate(Material materialSet = null, float? fillAmount = null, Vector2? fillOrigin = null, Color? fillColor = null, Color? borderColor = null, Color? baseColor = null)
+        {
+            if (materialSet != null) OnSetMaterial?.Invoke(materialSet);
+
+            if (fillAmount != null) OnMaterialFillAmountChange?.Invoke(fillAmount.Value);
+            if (fillOrigin != null) OnMaterialFillOriginChange?.Invoke(fillOrigin.Value);
+            if (fillColor != null) OnMaterialFillColorChange?.Invoke(fillColor.Value);
+            if (borderColor != null) OnMaterialBorderColorChange?.Invoke(borderColor.Value);
+            if (baseColor != null) OnMaterialBaseColorChange?.Invoke(baseColor.Value);
         }
         #endregion 
 
@@ -146,18 +166,14 @@ namespace GamePieces
         #endregion
 
         #region link stuff
-        public void JoinLink(LinkPlacementData link)
+        public void JoinLink(LinkPlacementData link, PieceTile joinTile)
         {
             Debug.Log("Joined link!");
-            OnJoinedLink?.Invoke(link);
+            OnJoinedLink?.Invoke(link, joinTile);
         }
         public void LeaveLink()
         {
             OnLeftLink?.Invoke();
-        }
-        public void BreakLink()
-        {
-            OnLinkBroken?.Invoke();
         }
         public void LinkPulse(Color c, PieceTile startTile, bool isFirstInLink)
         {

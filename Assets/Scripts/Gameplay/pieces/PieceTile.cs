@@ -8,8 +8,6 @@ namespace GamePieces
     public class PieceTile : MonoBehaviour
     {
         #region UnityActions
-        public UnityAction<GridTile> OnPlaced;
-        public UnityAction OnHover;
         public UnityAction<int> OnChangeSpriteRendererIndex;
         public UnityAction<Piece, Vector2> OnPickedUp;
         public UnityAction<Color, float> OnColorPulse;
@@ -87,6 +85,13 @@ namespace GamePieces
         public PieceTile SetTileDirection(TileSpriteDirection direction)  { spriteDirection = direction; return this; }
         public PieceTile SetGlueSprite(Sprite sprite) { glueSprite = sprite; return this; }
         public PieceTile SetRendererIndex(int to) { OnChangeSpriteRendererIndex?.Invoke(to); return this; }
+        public PieceTile SetRendererMaterialData(Material to)
+        {
+            if (!TryGetComponent(out SpriteRenderer render)) Debug.LogWarning("PieceTile missing sprite renderer");
+            render.sharedMaterial = to;
+
+            return this;
+        }
         #endregion
 
         #region getters
@@ -155,11 +160,7 @@ namespace GamePieces
         #region setters
         public void Placed(GridTile tile)
         {
-            OnPlaced?.Invoke(tile);
-        }
-        public void Hovered()
-        {
-            OnHover?.Invoke();
+            // OnPlaced?.Invoke(tile);
         }
         public void PickedUp()
         {

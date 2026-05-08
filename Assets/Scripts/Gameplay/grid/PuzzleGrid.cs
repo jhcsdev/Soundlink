@@ -259,7 +259,6 @@ namespace PuzzleGrid
             {
                 if (linksForBasePiece.Count > 0)
                 {
-                    // todo:: does not account for switches
                     UpdateLink(linksForBasePiece[0], neighborPiece, neighborPieceTile, p, pieceTile);
                     connectedTracks++;
                 }
@@ -351,7 +350,7 @@ namespace PuzzleGrid
         public GridLink CreateStartLink(Piece piece, PieceTile startTile, GridTile gridTile)
         {
             GridLink newLink = new(); 
-            return newLink.AddPiece(piece, startTile, null, null, true).SetStartPlacementData(gridTile.GetLinkPlacementData());
+            return newLink.SetStartPlacementData(gridTile.GetLinkPlacementData()).AddPiece(piece, startTile, null, null, true);
         }
         /// <summary>
         /// Creates an "End Link" -- a link with just one piece and EndPlacementData.
@@ -363,7 +362,7 @@ namespace PuzzleGrid
         public GridLink CreateEndLink(Piece piece, PieceTile endTile, GridTile gridTile)
         {
             GridLink newLink = new(); 
-            return newLink.AddPiece(piece, endTile, null, null, false).SetEndPlacementData(gridTile.GetLinkPlacementData());
+            return newLink.SetEndPlacementData(gridTile.GetLinkPlacementData()).AddPiece(piece, endTile, null, null, false);
         }
 
         public void AddLinkToKnownLinks(GridLink what)
@@ -486,11 +485,11 @@ namespace PuzzleGrid
         // TODO: delete the visuals and just do logging stuff 
         public void LogLinks()
         {
-            Debug.Log($"{gridLinks.Count} links exist");
+            // Debug.Log($"{gridLinks.Count} links exist");
 
             for (int i = 0; i < gridLinks.Count; i++)
             {
-                Debug.Log($"Link {i} has {gridLinks[i].GetPieces().Count} pieces");
+                // Debug.Log($"Link {i} has {gridLinks[i].GetPieces().Count} pieces");
 
                 foreach (var pd in gridLinks[i].GetPieces())
                 {

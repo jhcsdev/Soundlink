@@ -31,8 +31,6 @@ namespace GamePieces
 
         void OnEnable()
         {
-            pieceTile.OnPlaced += OnPlacedHappened;
-            pieceTile.OnHover += OnHovering;
             pieceTile.OnPickedUp += OnPickup;
             pieceTile.OnColorPulse += OnColorPulse;
             pieceTile.OnSetColor += OnSetColor;
@@ -41,25 +39,11 @@ namespace GamePieces
         }
         void OnDisable()
         {
-            pieceTile.OnPlaced -= OnPlacedHappened;
-            pieceTile.OnHover -= OnHovering;
             pieceTile.OnPickedUp -= OnPickup;
             pieceTile.OnColorPulse -= OnColorPulse;
             pieceTile.OnSetColor -= OnSetColor; 
             pieceTile.OnChangeSpriteRendererIndex -= ChangeRendererIndex;
             pieceTile.OnRotate -= RotateTile;
-        }
-
-        void OnPlacedHappened(GridTile gridTile)
-        {
-            // transform.SetParent(gridTile.transform);
-            // transform.localPosition = Vector2.zero;
-            // transform.localScale = Vector2.one;
-        }
-        void OnHovering()
-        {
-            spriteRenderer.color = new(1,1,1,0.4f); // todo:: hardset color...?
-            transform.localScale = new(0.5f,0.5f,0.5f);
         }
         void OnPickup(Piece owningPiece, Vector2 localOffset)
         {
@@ -69,7 +53,7 @@ namespace GamePieces
 
         void OnColorPulse(Color c, float overTime)
         {
-            Debug.Log($"Pulsing to {c} from {baseColor} over {overTime}");
+            // Debug.Log($"Pulsing to {c} from {baseColor} over {overTime}");
             if (activePulseTween != null) activePulseTween.Kill();
             spriteRenderer.color = c;
             activePulseTween = spriteRenderer.DOColor(baseColor, overTime);

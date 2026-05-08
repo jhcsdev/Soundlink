@@ -53,11 +53,11 @@ namespace PuzzleGrid
         #region setters
         public GridLink SetEndPlacementData(LinkPlacementData data)
         {
+            Debug.Log("setting end");
             if (data == null) { ResetEndPlacementData(); return this; }
 
             endPlacementData = data;
             hasEndLinkRef = true;
-            // todo:: need linking visuals of some sort; if end does not match start, should break the link visually
             ForceRejoinOnPieces(endPlacementData);
             return this;
         }
@@ -71,11 +71,11 @@ namespace PuzzleGrid
 
         public GridLink SetStartPlacementData(LinkPlacementData data)
         {
+            Debug.Log("setting start");
             if (data == null) { ResetStartPlacementData(); return this; }
 
             startPlacementData = data;
             hasStartLinkRef = true;
-            // todo:: same as above, breaking visuals
             ForceRejoinOnPieces(startPlacementData);
             return this; 
         }
@@ -266,6 +266,7 @@ namespace PuzzleGrid
         /// <returns>this if basedOn is null or successfully added piece; null if could not find basedOn</returns>
         public GridLink AddPiece(Piece toAdd, PieceTile toAddTile, Piece basedOn, PieceTile basedOnTile, bool creatingStartLink = false)
         {
+            Debug.Log("adding piece");
             if (basedOn == null) { 
                 Debug.Log($"Adding piece to {this} without basedOn. Ensure order!");
                 pieces.Add(
@@ -276,7 +277,7 @@ namespace PuzzleGrid
                         endTile = creatingStartLink ? null : toAddTile, 
                     }
                 ); 
-                if (HasStartData() || HasEndData()) toAdd.JoinLink(HasStartData() ? startPlacementData : endPlacementData);
+                if (HasStartData() || HasEndData()) toAdd.JoinLink(HasStartData() ? startPlacementData : endPlacementData, toAddTile);
                 return this;
             }
             Debug.Log($"Adding piece {toAdd.name} based on {basedOn.name}");
@@ -307,7 +308,7 @@ namespace PuzzleGrid
                     if (HasStartData() || HasEndData()) 
                     {
                         Debug.Log($"The link is a start or end. \n {this}");
-                        toAdd.JoinLink(HasStartData() ? startPlacementData : endPlacementData);
+                        toAdd.JoinLink(HasStartData() ? startPlacementData : endPlacementData, toAddTile);
                     }
 
                     return this;
@@ -339,7 +340,8 @@ namespace PuzzleGrid
 
         private void ForceRejoinOnPieces(LinkPlacementData associatedData)
         {
-            pieces.ForEach(item => item.piece.JoinLink(HasStartData() ? startPlacementData : endPlacementData));
+            Debug.Log("would be rejoining...");
+            // pieces.ForEach(item => item.piece.JoinLink(HasStartData() ? startPlacementData : endPlacementData));
         }
         private void LostLinkData()
         {

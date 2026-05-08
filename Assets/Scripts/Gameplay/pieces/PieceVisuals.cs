@@ -33,6 +33,21 @@ namespace GamePieces
         private static float movementTime = 0.1f;
         private static Ease movementEase = Ease.OutSine;
         private static float movementFailPunchStrength = 0.1f;
+        [Header("materials")]
+        static readonly int FillOriginID = Shader.PropertyToID("_FillOrigin");
+        static readonly int FillAmountID = Shader.PropertyToID("_FillDistance");
+        static readonly int FillColorID = Shader.PropertyToID("_FillColor");
+        static readonly int BorderColorID = Shader.PropertyToID("_BorderColor");
+        static readonly int BaseColorID = Shader.PropertyToID("_BaseColor");
+        static readonly int BorderThickness = Shader.PropertyToID("_FillBorderThickness");
+        private Material pieceMaterial;
+        [Header("links")]
+        private static float fillTime = 2f;
+        private static Ease fillEase = Ease.OutSine;
+        private static float fillColorTransitionTime = 0.5f;
+        private float _maxFillDistance;
+        private Ease pulseEase = Ease.OutQuart;
+        private float pulseOneUnitTime = 0.1f;
 
         #endregion
         #region anim state management
@@ -42,9 +57,9 @@ namespace GamePieces
         Sequence pickupSequence;
         Sequence enterHoverSequence;
         Sequence pieceMovedSequence; 
+        Sequence pieceJoinLinkColorSequence;
+        Sequence pieceLeaveLinkColorSequence;
         Sequence failedMovementSequence;
-        Sequence returnToInventorySequence;
-
         #endregion
         #region other
         private Piece piece;
@@ -52,6 +67,7 @@ namespace GamePieces
         private List<PieceTile> pieceTilesFromOrigin; // same list of tiles as above, but organized such that relative 0,0 is index 0, 0,1 is index 1, and so on
         private List<List<PieceTile>> pulseWaves;
         private int pulseProgress = -1;
+        private int maximumPulseDistance = -1;
         #endregion
         #endregion
         #region initialization
@@ -76,11 +92,17 @@ namespace GamePieces
             piece.OnPiecePickedUp += PieceWasPickedUp;
             piece.OnPieceReturnedToInventory += PieceReturnedToInventory;
             piece.OnHoverPieceMoved += PieceMoved;
+            
+            piece.OnSetMaterial += MaterialSet;
+            piece.OnMaterialFillOriginChange += ChangeMaterialFillOrigin;
+            piece.OnMaterialFillAmountChange += ChangeMaterialFillAmount;
+            piece.OnMaterialBaseColorChange += ChangeMaterialBaseColor;
+            piece.OnMaterialBorderColorChange += ChangeMaterialBorderColor;
+            piece.OnMaterialFillColorChange += ChangeMaterialFillColor;
 
             piece.OnLinkPulse += LinkPulse;
             piece.OnJoinedLink += LinkJoined;
             piece.OnLeftLink += LinkLeft;
-            piece.OnLinkBroken += LinkBroken;
         }
         void OnDisable()
         {
@@ -94,7 +116,37 @@ namespace GamePieces
             piece.OnLinkPulse -= LinkPulse;
             piece.OnJoinedLink -= LinkJoined;
             piece.OnLeftLink -= LinkLeft;
-            piece.OnLinkBroken -= LinkBroken;
+        }
+        #endregion
+
+        #region specifically dealing with materials
+        private void MaterialSet(Material to)
+        {
+            pieceMaterial = to;
+        }
+        private void ChangeMaterialFillOrigin(Vector2 to)
+        {
+            pieceMaterial.SetVector(FillOriginID, to);
+        }
+        private void ChangeMaterialFillAmount(float to)
+        {
+            pieceMaterial.SetFloat(FillAmountID, to);
+        }
+        private void ChangeMaterialBaseColor(Color to)
+        {
+            pieceMaterial.SetColor(BaseColorID, to);
+        }
+        private void ChangeMaterialFillColor(Color to)
+        {
+            pieceMaterial.SetColor(FillColorID, to);
+        }
+        private void ChangeMaterialBorderColor(Color to)
+        {
+            pieceMaterial.SetColor(BorderColorID, to);
+        }
+        private void ChangeMaterialBorderThickness(float to)
+        {
+            pieceMaterial.SetFloat(BorderThickness, to);
         }
         #endregion
         #region sequence handlers / coroutine wrappers
@@ -113,7 +165,7 @@ namespace GamePieces
 
             failedPlacementSequence.Restart();
             
-            pieceTiles.ForEach(it => it.ColorPulse(Color.red, 0.5f)); // todo:: probably the tiles should use a tween themselves
+            pieceTiles.ForEach(it => it.ColorPulse(Color.red, 0.5f));
         }
         private void SucceededGridPlace()
         {
@@ -138,7 +190,6 @@ namespace GamePieces
                 placementSequence.SetAutoKill(false);
             }
 
-            // todo:: kill/complete other potentially race-condition-inducing animations
             if (enterHoverSequence != null && enterHoverSequence.active) enterHoverSequence.Complete();
             if (pickupSequence != null && pickupSequence.active) pickupSequence.Complete();
             if (failedPlacementSequence != null && failedPlacementSequence.active) failedPlacementSequence.Complete();
@@ -210,26 +261,34 @@ namespace GamePieces
         }
         #endregion
 
+        #region
+
+        #endregion
+
         #region links
-        private void LinkJoined(LinkPlacementData what)
+        private void LinkJoined(LinkPlacementData what, PieceTile where)
         {
-            // todo::
-            Debug.Log("Linked joined!");
-            foreach(PieceTile pt in pieceTiles) {
-                pt.SetColorPermanent(what.GetBaseColor(), 0.2f);
+            maximumPulseDistance = (int)Mathf.Ceil(CalculateFurthestDistance(where)) + 1;
+
+            ChangeMaterialBorderColor(what.GetPulseColor()); // todo:: separate border color?
+            ChangeMaterialFillColor(what.GetBaseColor() + 0.1f * what.GetPulseColor());
+            ChangeMaterialFillOrigin(where.transform.position);
+
+            if (pieceJoinLinkColorSequence != null && pieceJoinLinkColorSequence.active)
+            {
+                Debug.LogWarning("Joinlink duplicate sequence!");
             }
+            pieceJoinLinkColorSequence = DOTween.Sequence().Append(
+                    pieceMaterial.DOFloat(maximumPulseDistance * 2, FillAmountID, fillTime * 2).SetEase(fillEase)
+                ).AppendCallback(
+                    () => ChangeMaterialBaseColor(what.GetBaseColor())
+                ).Play();
         }
         private void LinkLeft()
         {
-            Debug.Log("Link left!");
-            foreach(PieceTile pt in pieceTiles)
-            {
-                pt.SetColorPermanent(Color.white);
-            }
-        }
-        private void LinkBroken()
-        {
-            //todo:: decide if use or not
+            if (pieceJoinLinkColorSequence != null && pieceJoinLinkColorSequence.active) pieceJoinLinkColorSequence.Kill();
+
+            // todo:: if there is an ongoing pulse sequence or join link sequence, need to make considerations on what will happen to that link
         }
 
         /// <summary>
@@ -264,7 +323,17 @@ namespace GamePieces
         #endregion
 
         #region helpers
-        public List<List<PieceTile>> BuildPulseOrder(PieceTile startTile)
+        private float CalculateFurthestDistance(PieceTile startTile)
+        {
+            float dist = 0;
+            foreach (var tile in pieceTiles)
+            {
+                float temp = (startTile.GetRotatedRelativeOffset() - tile.GetRotatedRelativeOffset()).magnitude;
+                dist = temp > dist ? temp : dist; 
+            }
+            return dist;
+        }
+        private List<List<PieceTile>> BuildPulseOrder(PieceTile startTile)
         {
             if (startTile == null) Debug.LogWarning("BUILD PULSE ORDER START TILE NULL");
 
