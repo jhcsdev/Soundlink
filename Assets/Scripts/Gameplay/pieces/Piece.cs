@@ -42,12 +42,6 @@ namespace GamePieces
         public GameObject GetCanvasPiece() => canvasPiece;
 
         #region initialization
-        // void Awake()
-        // {
-        //     if (data == null) return;
-
-        //     initialized = true;
-        // }
         public void Initialize(PieceData pd)
         {
             if (initialized == true) { Debug.Log("Duplicate intiialization on piece: " + name); return; }

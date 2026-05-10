@@ -63,6 +63,7 @@ namespace PuzzleGrid
         }
         public GridLink ResetEndPlacementData()
         {
+            if (!hasEndLinkRef && endPlacementData == null) return this;
             hasEndLinkRef = false;
             endPlacementData = null; 
             if (!HasStartData()) LostLinkData();
@@ -81,6 +82,7 @@ namespace PuzzleGrid
         }
         public GridLink ResetStartPlacementData()
         {
+            if (!hasStartLinkRef && startPlacementData == null) return this;
             hasStartLinkRef = false;
             startPlacementData = null;
             if (!HasEndData()) LostLinkData();

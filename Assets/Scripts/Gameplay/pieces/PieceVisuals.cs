@@ -42,16 +42,18 @@ namespace GamePieces
         static readonly int BorderThickness = Shader.PropertyToID("_FillBorderThickness");
         private Material pieceMaterial;
         [Header("links")]
-        private static float fillTime = 2f;
+        private static float fillJoinTime = 0.5f;
         private static Ease fillEase = Ease.OutSine;
-        private static float fillColorTransitionTime = 0.5f;
-        private float _maxFillDistance;
+        private static float zoomBackToZeroFillOnRejoinTime = 0.5f;
+        private static Ease zoomBackToZeroFillOnRejoinEase = Ease.InOutSine;
+        private static float fillLeaveTime = 0.4f;
+        private static float zoomBackToZeroFillOnLeaveTime = 0.3f;
+        private static float fillColorFadeTransitionTime = 0.1f;
         private Ease pulseEase = Ease.OutQuart;
         private float pulseOneUnitTime = 0.1f;
 
         #endregion
         #region anim state management
-        
         Sequence placementSequence;
         Sequence failedPlacementSequence;
         Sequence pickupSequence;
@@ -268,27 +270,110 @@ namespace GamePieces
         #region links
         private void LinkJoined(LinkPlacementData what, PieceTile where)
         {
+            Debug.Log("link join");
             maximumPulseDistance = (int)Mathf.Ceil(CalculateFurthestDistance(where)) + 1;
 
-            ChangeMaterialBorderColor(what.GetPulseColor()); // todo:: separate border color?
-            ChangeMaterialFillColor(what.GetBaseColor() + 0.1f * what.GetPulseColor());
-            ChangeMaterialFillOrigin(where.transform.position);
+            // depending on the existing state, we need to do a different animation.
+            // if we have an ongoing leaveLinkSequence -- zoom back to 0, then change the fill color, then pulse to max, then fade fill color to base color, then set base color & pulse=0
+            // if we have an ongoing joinLinkSequence -- error; this should not happen ever
+            // if we have an ongoing pulseLinkSequence -- TODO::
+            // if we have no sequence, then pulse to max, fade fill color to base, set base & pulse = 0
 
-            if (pieceJoinLinkColorSequence != null && pieceJoinLinkColorSequence.active)
+            if (pieceLeaveLinkColorSequence != null && pieceLeaveLinkColorSequence.active)
             {
-                Debug.LogWarning("Joinlink duplicate sequence!");
+                pieceLeaveLinkColorSequence.Kill();
+                pieceLeaveLinkColorSequence = null;
+                pieceJoinLinkColorSequence = DOTween.Sequence()
+                    .Append(
+                        pieceMaterial.DOFloat(0, FillAmountID, zoomBackToZeroFillOnRejoinTime).SetEase(zoomBackToZeroFillOnRejoinEase)
+                    ).AppendCallback(() =>
+                        {
+                            ChangeMaterialBorderColor(what.GetBorderColor());
+                            ChangeMaterialFillColor(what.GetBaseColor() + 0.1f * what.GetPulseColor());
+                            ChangeMaterialFillOrigin(where.transform.position);
+                        }
+                    ).Append(
+                        pieceMaterial.DOFloat(maximumPulseDistance, FillAmountID, fillJoinTime).SetEase(fillEase)
+                    ).Append(
+                        pieceMaterial.DOColor(what.GetBaseColor(), FillColorID, fillColorFadeTransitionTime)
+                    ).AppendCallback(() => 
+                        {
+                            ChangeMaterialBaseColor(what.GetBaseColor());
+                            ChangeMaterialFillAmount(0);
+                        }
+                    );
             }
-            pieceJoinLinkColorSequence = DOTween.Sequence().Append(
-                    pieceMaterial.DOFloat(maximumPulseDistance * 2, FillAmountID, fillTime * 2).SetEase(fillEase)
-                ).AppendCallback(
-                    () => ChangeMaterialBaseColor(what.GetBaseColor())
-                ).Play();
+            else if (pieceJoinLinkColorSequence != null && pieceJoinLinkColorSequence.active)
+            {
+                Debug.LogError("Join link is already active in a different join link!");
+            }
+            else
+            {
+                ChangeMaterialBorderColor(what.GetBorderColor());
+                ChangeMaterialFillColor(what.GetBaseColor() + 0.1f * what.GetPulseColor());
+                ChangeMaterialFillOrigin(where.transform.position);
+
+                pieceJoinLinkColorSequence = DOTween.Sequence()
+                    .Append(
+                        pieceMaterial.DOFloat(maximumPulseDistance, FillAmountID, fillJoinTime).SetEase(fillEase)
+                    ).Append(
+                        pieceMaterial.DOColor(what.GetBaseColor(), FillColorID, fillColorFadeTransitionTime)
+                    ).AppendCallback(() => 
+                        {
+                            ChangeMaterialBaseColor(what.GetBaseColor());
+                            ChangeMaterialFillAmount(0);
+                        }
+                    );
+            }
         }
         private void LinkLeft()
         {
-            if (pieceJoinLinkColorSequence != null && pieceJoinLinkColorSequence.active) pieceJoinLinkColorSequence.Kill();
+            Debug.Log("link leave");
+            // depending on existing sequences, need to make considerations about what is happening
+            // if ongoing join sequence -- revert it (todo:: may need to introduce some sort of state parameter that sets true in case of extended join sequence which reverts leaving)
+            // if ongoing leave sequence -- error, this should never happen
+            // if ongoing pulse sequence -- TODO, not sure what should happen
+            // otherwise, just pulse to maximum distance, set baseColor white and pulse 0 afterwards
+            if (pieceJoinLinkColorSequence != null && pieceJoinLinkColorSequence.active)
+            {
+                pieceJoinLinkColorSequence.Kill();
+                pieceJoinLinkColorSequence = null;
+                pieceLeaveLinkColorSequence = DOTween.Sequence()
+                    .Append(
+                        pieceMaterial.DOFloat(0, FillAmountID, zoomBackToZeroFillOnLeaveTime).SetEase(zoomBackToZeroFillOnRejoinEase)
+                    ).AppendCallback(() =>
+                        {
+                            ChangeMaterialBorderColor(Color.white);
+                            ChangeMaterialFillColor(Color.white);
+                        }
+                    ).Append(
+                        pieceMaterial.DOFloat(maximumPulseDistance, FillAmountID, fillLeaveTime).SetEase(fillEase)
+                    ).AppendCallback(() => 
+                        {
+                            ChangeMaterialBaseColor(Color.white);
+                            ChangeMaterialFillAmount(0);
+                        }
+                    );
+            }
+            else if (pieceLeaveLinkColorSequence != null && pieceLeaveLinkColorSequence.active)
+            {
+                Debug.LogError("Leaving a link, but the leave link animation is already active!");
+            }
+            else
+            {
+                ChangeMaterialBorderColor(Color.white);
+                ChangeMaterialFillColor(Color.white);
 
-            // todo:: if there is an ongoing pulse sequence or join link sequence, need to make considerations on what will happen to that link
+                pieceLeaveLinkColorSequence = DOTween.Sequence()
+                    .Append(
+                        pieceMaterial.DOFloat(maximumPulseDistance, FillAmountID, fillLeaveTime).SetEase(fillEase)
+                    ).AppendCallback(() => 
+                        {
+                            ChangeMaterialBaseColor(Color.white);
+                            ChangeMaterialFillAmount(0);
+                        }
+                    );
+            }
         }
 
         /// <summary>
@@ -299,6 +384,7 @@ namespace GamePieces
         /// <param name="isFirst">If true, rebuilds the pulse order from startTile</param>
         public void LinkPulse(Color color, PieceTile startTile, bool isFirst)
         {
+            return;
             if (isFirst || pulseWaves == null)
             {
                 pulseWaves = ExpandWavesWithGapBeats(BuildPulseOrder(startTile));
