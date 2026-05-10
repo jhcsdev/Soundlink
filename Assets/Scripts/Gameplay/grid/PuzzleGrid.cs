@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using GamePieces;
-using GridLinks;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -112,19 +111,21 @@ namespace PuzzleGrid
                 return null; 
             }
 
-            // place the tiles down
+            List<GridLink> stagedLinks = new();
+
             foreach(PieceTile pt in p.GetPieceTiles())
             {
                 Vector2Int checkingPosition = focusPosition + pt.GetRotatedRelativeOffset();
                 GridTile tileAtPosition = tiles[checkingPosition.x, checkingPosition.y];
 
-                if (tileAtPosition.IsStartTile()) AddLinkToKnownLinks(CreateStartLink(p, pt, tileAtPosition));
-                else if (tileAtPosition.IsEndTile()) AddLinkToKnownLinks(CreateEndLink(p, pt, tileAtPosition));
+                if (tileAtPosition.IsStartTile()) stagedLinks.Add(CreateStartLink(p, pt, tileAtPosition));
+                else if (tileAtPosition.IsEndTile()) stagedLinks.Add(CreateEndLink(p, pt, tileAtPosition));
 
                 if (!tileAtPosition.TrySetPieceTile(pt)) return null;
             }
 
-            // update links
+            foreach (GridLink staged in stagedLinks) AddLinkToKnownLinks(staged);
+
             int connectedTracks = 0;
 
             foreach (PieceTile checkPiece in p.GetPieceTiles())
@@ -283,7 +284,7 @@ namespace PuzzleGrid
                 if (linksForBasePiece.Count > 0)
                 {
                     Debug.Log("\t Merging links");
-                    MergeLinks(linksForBasePiece[0], existingLink, neighborPiece, p);
+                    MergeLinks(linksForBasePiece[0], existingLink, neighborPiece, neighborPieceTile, p, pieceTile);
                 }
                 else
                 {
@@ -383,9 +384,9 @@ namespace PuzzleGrid
             what.AddPiece(with, withTile, neighborPiece, neighborTile);
             if (what.HasStartData()) OnAStartLinkUpdated?.Invoke(what);
         }
-        public void MergeLinks(GridLink baseLink, GridLink mergeTo, Piece mergePivot, Piece basePivot)
+        public void MergeLinks(GridLink baseLink, GridLink mergeTo, Piece mergePivot, PieceTile mergePivotTile, Piece basePivot, PieceTile basePivotTile)
         {
-            if (baseLink.MergeLink(mergeTo, mergePivot, basePivot))
+            if (baseLink.MergeLink(mergeTo, mergePivot, mergePivotTile, basePivot, basePivotTile))
             {
                 Debug.Log("Merge success.");
                 gridLinks.Remove(mergeTo);

@@ -134,12 +134,12 @@ namespace PuzzleGrid
         /// Merge another link with this one, re-ordering pieces and resetting start/end link data when necessary.
         /// </summary>
         /// <param name="other">The link to merge with.</param>
-        /// <param name="otherPivot">The "piece" in other to base the merge on. </param>
-        /// <param name="thisPivot">The "piece" in this to base the merge on. </param>
-        /// <returns>True on success, false on failure. See IsOtherCompatible() for definition of compatibility.
-        /// </returns>
-        // todo:: does not account for tile connection points
-        public bool MergeLink(GridLink other, Piece otherPivot, Piece thisPivot)
+        /// <param name="otherPivot">The "piece" in other to base the merge on.</param>
+        /// <param name="otherPivotTile">The PieceTile of otherPivot that connects to thisPivot.</param>
+        /// <param name="thisPivot">The "piece" in this to base the merge on.</param>
+        /// <param name="thisPivotTile">The PieceTile of thisPivot that connects to otherPivot.</param>
+        /// <returns>True on success, false on failure. See IsOtherCompatible() for definition of compatibility</returns>
+        public bool MergeLink(GridLink other, Piece otherPivot, PieceTile otherPivotTile, Piece thisPivot, PieceTile thisPivotTile)
         {
             // these checks remove situations where: the "other" is complete, "this" is complete, "other" & "this" both are start / end, or "other" & "this" have different soundIds 
             if (this.IsLinkComplete())
@@ -156,7 +156,7 @@ namespace PuzzleGrid
             List<LinkData> otherPieces = other.GetPieces();
 
             // re-orient otherPieces so that "pivot" is always at the start of the otherPieces list. 
-            // todo:: (thought)  we can allow connecting to the middle of an existing piece by splitting "other"; however, this adds some other edge cases that we'd need to think through logically...
+            // todo:: (thought) we can allow connecting to the middle of an existing piece by splitting "other"; however, this adds some other edge cases that we'd need to think through logically...
             int otherPivotIndex = -1;
             for (int i = 0; i < otherPieces.Count; i++)
             {
@@ -172,18 +172,34 @@ namespace PuzzleGrid
                 return false;
             }
 
-            // in this case, "other" should go after "this"
+            // in this case, "other" should go after "this"  (this = Start, other = End)
             if (other.HasEndData() || this.HasStartData())
             {
                 Debug.Log("Other has end data, or this has start data!");
+
+                LinkData thisPivotLD = pieces.FirstOrDefault(ld => ld.piece == thisPivot);
+                if (thisPivotLD != null) thisPivotLD.endTile = thisPivotTile;
+                else Debug.LogWarning("MergeLink (branch 1): could not find thisPivot LinkData to set endTile.");
+
+                otherPieces[0].startTile = otherPivotTile;
+
                 pieces.AddRange(otherPieces);
                 if (other.HasEndData()) SetEndPlacementData(other.GetEndPlacementData());
             }
-            // in this case, "this" should go after "other"
+            // in this case, "this" should go after "other"  (other = Start, this = End)
             else if (other.HasStartData() || this.HasEndData())
             {
                 Debug.Log("Other has start data, and this has end data!");
+
                 otherPieces.Reverse();
+                otherPieces[otherPieces.Count - 1].endTile = otherPivotTile;
+
+                LinkData thisPivotLD = pieces.FirstOrDefault(ld => ld.piece == thisPivot);
+                if (thisPivotLD != null)
+                    thisPivotLD.startTile = thisPivotTile;
+                else
+                    Debug.LogWarning("MergeLink (branch 2): could not find thisPivot LinkData to set startTile.");
+
                 otherPieces.AddRange(pieces);
                 pieces = otherPieces;
                 if (other.HasStartData()) SetStartPlacementData(other.GetStartPlacementData());
