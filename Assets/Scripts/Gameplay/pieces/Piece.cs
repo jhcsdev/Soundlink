@@ -20,7 +20,7 @@ namespace GamePieces
         public UnityAction OnPiecePickedUp;
         public UnityAction<Transform /*new focus*/> OnHoverPieceMoved;
         public UnityAction OnPieceReturnedToInventory;
-        public UnityAction<Color, PieceTile, bool> OnLinkPulse;
+        public UnityAction<Color, PieceTile, bool, float> OnLinkPulse;
         public UnityAction<LinkPlacementData, PieceTile> OnJoinedLink;
         public UnityAction OnRotateNeedsSync;
         public UnityAction OnLeftLink;
@@ -185,9 +185,9 @@ namespace GamePieces
         {
             OnLeftLink?.Invoke();
         }
-        public void LinkPulse(Color c, PieceTile startTile, bool isFirstInLink)
+        public void LinkPulse(Color c, PieceTile startTile, bool isFirstInLink, float secondsPerBeat)
         {
-            OnLinkPulse?.Invoke(c, startTile, isFirstInLink);
+            OnLinkPulse?.Invoke(c, startTile, isFirstInLink, secondsPerBeat);
         }
         #endregion 
     }

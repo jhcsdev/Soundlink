@@ -163,6 +163,7 @@ namespace GridLinks
                     knownLinks[key].link.IndexPlaySound(
                         currentLinkBeat.indexInLink, 
                         currentLinkBeat.firstInPiece,
+                        secondsPerBeat,
                         currentLinkBeat.silent
                     );
 

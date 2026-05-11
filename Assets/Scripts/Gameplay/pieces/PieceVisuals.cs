@@ -50,8 +50,8 @@ namespace GamePieces
         private static Ease zoomBackToZeroFillOnRejoinEase = Ease.InOutSine;
         private static float fillLeaveTime = 1f;
         private static float zoomBackToZeroFillOnLeaveTime = 0.3f;
-        private Ease pulseEase = Ease.OutQuart;
-        private float pulseOneUnitTime = 0.1f;
+        private Ease pulseEase = Ease.OutQuint;
+        private float pulseOneUnitTime = 2f;
 
         #endregion
         #region anim state management
@@ -62,6 +62,7 @@ namespace GamePieces
         Sequence pieceMovedSequence; 
         Sequence pieceJoinLinkColorSequence;
         Sequence pieceLeaveLinkColorSequence;
+        Sequence pulseSequence;
         Sequence failedMovementSequence;
         #endregion
         #region other
@@ -299,13 +300,21 @@ namespace GamePieces
             // depending on the existing state, we need to do a different animation.
             // if we have an ongoing leaveLinkSequence -- zoom back to 0, then change the fill fade & fill base color, then pulse to max + fillFadeDistance, then set base color & pulse=0
             // if we have an ongoing joinLinkSequence -- error; this should not happen ever
-            // if we have an ongoing pulseLinkSequence -- TODO::
+            // if we have an ongoing pulseLinkSequence -- kill the pulse sequence and zoom back to 0
             // if we have no sequence, then pulse to max, fade fill color to base, set base & pulse = 0
 
-            if (pieceLeaveLinkColorSequence != null && pieceLeaveLinkColorSequence.active)
+            if ((pieceLeaveLinkColorSequence != null && pieceLeaveLinkColorSequence.active) || (pulseSequence != null && pulseSequence.active))
             {
-                pieceLeaveLinkColorSequence.Kill();
-                pieceLeaveLinkColorSequence = null;
+                if (pieceLeaveLinkColorSequence != null && pieceLeaveLinkColorSequence.active)
+                {
+                    pieceLeaveLinkColorSequence.Kill();
+                    pieceLeaveLinkColorSequence = null;
+                }
+                if (pulseSequence != null && pulseSequence.active)
+                {
+                    pulseSequence.Kill();
+                    pulseSequence = null;
+                }
                 pieceJoinLinkColorSequence = DOTween.Sequence()
                     .Append(
                         pieceMaterial.DOFloat(0, FillAmountID, zoomBackToZeroFillOnRejoinTime).SetEase(zoomBackToZeroFillOnRejoinEase)
@@ -355,10 +364,18 @@ namespace GamePieces
             // if ongoing leave sequence -- error, this should never happen
             // if ongoing pulse sequence -- TODO, not sure what should happen
             // otherwise, just pulse to maximum distance, set baseColor white and pulse 0 afterwards
-            if (pieceJoinLinkColorSequence != null && pieceJoinLinkColorSequence.active)
+            if ((pieceJoinLinkColorSequence != null && pieceJoinLinkColorSequence.active) || (pulseSequence != null && pulseSequence.active))
             {
-                pieceJoinLinkColorSequence.Kill();
-                pieceJoinLinkColorSequence = null;
+                if (pieceJoinLinkColorSequence != null && pieceJoinLinkColorSequence.active)
+                {
+                    pieceJoinLinkColorSequence.Kill();
+                    pieceJoinLinkColorSequence = null;
+                }
+                if (pulseSequence != null && pulseSequence.active)
+                {
+                    pulseSequence.Kill();
+                    pulseSequence = null;
+                }
                 pieceLeaveLinkColorSequence = DOTween.Sequence()
                     .Append(
                         pieceMaterial.DOFloat(0, FillAmountID, zoomBackToZeroFillOnLeaveTime).SetEase(zoomBackToZeroFillOnRejoinEase)
@@ -405,24 +422,43 @@ namespace GamePieces
         /// <param name="color">The pulse color</param>
         /// <param name="startTile">The tile to begin pulsing from</param>
         /// <param name="isFirst">If true, rebuilds the pulse order from startTile</param>
-        public void LinkPulse(Color color, PieceTile startTile, bool isFirst)
+        public void LinkPulse(Color color, PieceTile startTile, bool isFirst, float secondsPerBeat)
         {
-            return;
-            if (isFirst || pulseWaves == null)
+            if (isFirst)
             {
-                pulseWaves = ExpandWavesWithGapBeats(BuildPulseOrder(startTile));
-                pulseProgress = 0;
+                // pulseWaves = ExpandWavesWithGapBeats(BuildPulseOrder(startTile));
+                pulseProgress = 1;
+                ChangeMaterialFillAmount(0);
             } else pulseProgress += 1;
+            
+            float progressThrough = (pulseProgress / (float) pieceTiles.Count) * maximumPulseDistance;
 
-            if (pulseProgress >= pulseWaves.Count) Debug.LogWarning("Pulse progress exceeds pulseWaves.Count.");
-            else
-            {
-                if (pulseWaves[pulseProgress] == null) return;
-                foreach (PieceTile pt in pulseWaves[pulseProgress])
-                {
-                    pt.ColorPulse(color, 2);
-                }
+            if (pulseSequence != null && pulseSequence.active) pulseSequence.Kill();
+            pulseSequence = DOTween.Sequence().Append(
+                pieceMaterial.DOFloat(progressThrough, FillAmountID, secondsPerBeat).SetEase(pulseEase)
+            ).Pause();
+
+            if(pulseProgress == pieceTiles.Count) {
+                Debug.Log("adding !");
+                pulseSequence.Append(
+                    pieceMaterial.DOFloat(maximumPulseDistance+materialFillFadeDistance+1, FillAmountID, pulseOneUnitTime)
+                );
             }
+
+            if (pieceJoinLinkColorSequence != null && pieceJoinLinkColorSequence.active)
+            {
+                pieceJoinLinkColorSequence.OnComplete(() => pulseSequence?.Play());
+            } else pulseSequence.Play();
+
+            // if (pulseProgress >= pulseWaves.Count) Debug.LogWarning("Pulse progress exceeds pulseWaves.Count.");
+            // else
+            // {
+            //     if (pulseWaves[pulseProgress] == null) return;
+            //     foreach (PieceTile pt in pulseWaves[pulseProgress])
+            //     {
+            //         pt.ColorPulse(color, 2);
+            //     }
+            // }
         }
         #endregion
         #endregion

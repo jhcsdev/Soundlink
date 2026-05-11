@@ -342,13 +342,13 @@ namespace PuzzleGrid
             return pieces.Count;
         }
 
-        public void IndexPlaySound(int index, bool isFirstInPiece, bool silent = false)
+        public void IndexPlaySound(int index, bool isFirstInPiece, float secondsPerBeat, bool silent = false)
         {
             if (index < 0 || index > pieces.Count) { Debug.LogWarning($"Link passed index {index}, which is out of bounds for piece count {pieces.Count}"); return; }
 
             if (!silent && isFirstInPiece) GetStartPlacementData().GetTrackSound().PlaySound();
 
-            pieces[index].piece.LinkPulse(startPlacementData.GetPulseColor(), pieces[index].startTile, isFirstInPiece);
+            pieces[index].piece.LinkPulse(startPlacementData.GetPulseColor(), pieces[index].startTile, isFirstInPiece, secondsPerBeat);
         }
 
         #endregion
