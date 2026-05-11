@@ -86,7 +86,7 @@ namespace Player
             if (grid == null) return;
             if (currentGrid != null) currentGrid.UnfocusGrid();
             currentGrid = grid;
-            currentGrid.FocusGrid();
+            currentGrid.FocusGrid(referencedPiece != null);
         }
 
         /// <summary>
@@ -102,7 +102,6 @@ namespace Player
             {
                 referencedPiece = currentGrid.TakeAtFocusPosition();
 
-                if (referencedPiece != null) referencedPiece.LimboMode();
                 SwapGrid();
 
                 if (referencedPiece != null) currentGrid.Hover(referencedPiece);
@@ -152,7 +151,7 @@ namespace Player
 
         private void OnEscape(InputAction.CallbackContext ctx)
         {
-            // todo:: pause
+            // todo:: pause screen
         }
 
         private void OnRotate(InputAction.CallbackContext ctx)

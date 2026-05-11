@@ -17,6 +17,7 @@ namespace GamePieces
         [SerializeField] private List<TileSpriteTypeToSprite> silentTileSprites;
         [SerializeField] private Sprite verticalSingleGlueSprite; // todo:: this means that we can have up to 4 spriteRenders for what realistically shoudl just be one; needs to be changed
         [SerializeField] private Sprite passthroughSprite; // todo:: multiple variants of passthrough?
+        [SerializeField] private Material pieceMaterial;
         private Dictionary<PieceTileSpriteType, Sprite> tileSpriteLookup = new();
         private Dictionary<PieceTileSpriteType, Sprite> silentSpriteLookup = new();
 
@@ -44,11 +45,11 @@ namespace GamePieces
             if (data.type == PieceTileType.PASSTHROUGH)
             {
                 sr.sprite = passthroughSprite;
-                sr.sortingOrder = (int)SPRITE_ORDER.PIECE_TILE_PASSTHROUGH_SPRITE_INDEX;
+                sr.sortingOrder = (int)SPRITE_ORDER.PIECE_TILE_PASSTHROUGH_SPRITE_INDEX_HOVER_GRID;
             } else
             {
                 sr.sprite = isSilent ? silentSpriteLookup[data.tileType] : tileSpriteLookup[data.tileType];
-                sr.sortingOrder = (int)SPRITE_ORDER.PIECE_TILE_SPRITE_INDEX;
+                sr.sortingOrder = (int)SPRITE_ORDER.PIECE_TILE_SPRITE_INDEX_HOVER_GRID;
             }
 
             tile.transform.rotation = Quaternion.Euler(0, 0, GetSpriteRotationDegrees(data.spriteDirection));
@@ -107,6 +108,8 @@ namespace GamePieces
             GlueCardinality.WEST => 90,
             _ => 0
         };
+
+        public Material GetPieceMaterial() { return pieceMaterial; }
 
         public static TileSpriteDirection RotateCW90(TileSpriteDirection dir) => dir switch
         {

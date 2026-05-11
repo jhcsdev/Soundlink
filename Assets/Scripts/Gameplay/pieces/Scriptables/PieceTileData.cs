@@ -9,7 +9,7 @@ namespace GamePieces
     {
         public Vector2Int relativeOffset;
         public bool isOrigin;
-        public PieceTileType type; // todo:: make it clearer what the difference between "type" and "tileType" is here.
+        public PieceTileType type;
         public List<GlueCardinality> glue;
         public PieceTileSpriteType tileType;
         public TileSpriteDirection spriteDirection;

@@ -15,8 +15,6 @@ namespace TrackSounds
 
             if (myChuck == null) Debug.Log("There is no Chuck!");
 
-            Debug.Log("Play snare!");
-
             myChuck.RunCode( string.Format( @"
             global float BPM;
 

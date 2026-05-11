@@ -158,11 +158,12 @@ namespace GridLinks
                 {
                     if (knownLinks[key].scheduledBeats.Count < curBeat) continue; // only play when there is actually links to play
                     var currentLinkBeat = knownLinks[key].scheduledBeats[curBeat - 1];
-                    Debug.Log($"{currentLinkBeat.indexInLink}, {currentLinkBeat.firstInPiece}, ");
+                    // Debug.Log($"{currentLinkBeat.indexInLink}, {currentLinkBeat.firstInPiece}, {curBeat}");
 
                     knownLinks[key].link.IndexPlaySound(
                         currentLinkBeat.indexInLink, 
                         currentLinkBeat.firstInPiece,
+                        secondsPerBeat,
                         currentLinkBeat.silent
                     );
 
@@ -194,7 +195,7 @@ namespace GridLinks
         {
             foreach (int key in knownLinks.Keys)
             {
-                Debug.Log($"examining key {key}; there are {knownLinks[key].scheduledBeats.Count} beats scheduled!");
+                // Debug.Log($"examining key {key}; there are {knownLinks[key].scheduledBeats.Count} beats scheduled!");
                 if (knownLinks[key].scheduledBeats.Count > 0) return true;
             }
             return false;
@@ -233,11 +234,11 @@ namespace GridLinks
             int indexInLink = 0;
             foreach (Piece p in which.GetPieces().Select(ld => ld.piece))
             {
-                Debug.Log("Scheduling piece");
+                // Debug.Log("Scheduling piece");
                 // need to schedule even if silent, but must indicate whether to play sound or not
                 for (int i = 0; i < p.GetPieceTiles().Count; i++)
                 {
-                    Debug.Log($"\tScheduling {i}.");
+                    // Debug.Log($"\tScheduling {i}.");
                     knownLinks[soundId].scheduledBeats.Add(
                         new() 
                         {

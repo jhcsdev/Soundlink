@@ -30,8 +30,8 @@ namespace PuzzleGrid
         Sequence pointerSuccessMoveSequence;
         Sequence pointerFailureMoveSequence;
 
-        Sequence focusSequence;
-        Sequence unfocusSequence;
+        Sequence activatePointerSequence;
+        Sequence deactivatePointerSequence;
 
         Dictionary<GridTile, Sequence> hoverSequences;
 
@@ -78,8 +78,8 @@ namespace PuzzleGrid
         {
             grid.OnFailedLeavingGrid += FocusPositionFailedChange;
             grid.OnNewFocusedTile += FocusPositionSuccessfullyChanged;
-            grid.OnGridFocused += GridFocused;
-            grid.OnGridUnfocused += GridUnfocused;
+            grid.OnActivatePointer += PointerActivate;
+            grid.OnDeactivatePointer += PointerDeactivate;
 
             grid.OnNewHover += HoverPositionChanged;
             grid.OnHoveringTile += HoverTile;
@@ -95,8 +95,8 @@ namespace PuzzleGrid
         {
             grid.OnFailedLeavingGrid -= FocusPositionFailedChange;
             grid.OnNewFocusedTile -= FocusPositionSuccessfullyChanged;
-            grid.OnGridFocused -= GridFocused;
-            grid.OnGridUnfocused -= GridUnfocused;
+            grid.OnActivatePointer -= PointerActivate;
+            grid.OnDeactivatePointer -= PointerDeactivate;
 
             grid.OnNewHover -= HoverPositionChanged;
             grid.OnHoveringTile -= HoverTile;
@@ -136,33 +136,34 @@ namespace PuzzleGrid
         #region actual visual implementations
         
         #region focusing grid / pointer
-        void GridFocused(GridTile focusedTile)
+        void PointerActivate(GridTile focusedTile)
         {
-            unfocusSequence?.Pause();
+            deactivatePointerSequence?.Pause();
 
             gridPointer.position = focusedTile.transform.position;
 
-            if (focusSequence == null)
+            if (activatePointerSequence == null)
             {
-                focusSequence = DOTween.Sequence()
+                activatePointerSequence = DOTween.Sequence()
                     .Append(
                         gridPointer.DOScale(Vector3.one * pointerNormalSize, pointerScaleInOutTime)
                             .ChangeStartValue(Vector3.zero)
                             .SetEase(Ease.OutCubic)
                     ).SetAutoKill(false);
-                focusSequence.Play();
-            } else focusSequence.Restart();
+                activatePointerSequence.Play();
+            } else activatePointerSequence.Restart();
         }
 
-        void GridUnfocused(GridTile focusedTile)
+        void PointerDeactivate(GridTile focusedTile)
         {
-            focusSequence.Pause();
+            ResetAllHovers();
+            activatePointerSequence.Pause();
 
             gridPointer.position = focusedTile.transform.position;
 
-            if (unfocusSequence == null)
+            if (deactivatePointerSequence == null)
             {
-                unfocusSequence = DOTween.Sequence()
+                deactivatePointerSequence = DOTween.Sequence()
                     .Append(
                         gridPointer.DOScale(Vector3.zero, pointerScaleInOutTime)
                             .ChangeStartValue(Vector3.one * pointerNormalSize)
@@ -170,24 +171,27 @@ namespace PuzzleGrid
                     ).SetAutoKill(false).Pause();
             } 
 
-            unfocusSequence.Restart();
+            deactivatePointerSequence.Restart();
         }
 
-        void FocusPositionSuccessfullyChanged(Vector2Int direction, GridTile toTile)
+        void FocusPositionSuccessfullyChanged(Vector2Int direction, GridTile toTile, bool isPointerActive)
         {
-            // complete an existing move tween (this will create some jitter instantly, but i believe that to be okay?)
-            if (pointerSuccessMoveSequence != null) pointerSuccessMoveSequence.Complete();
+            // complete an existing move tween (this will create some jitter instantly, but i believe that to be okay?
+            if (isPointerActive)
+            {
+                if (pointerSuccessMoveSequence != null) pointerSuccessMoveSequence.Complete();
 
-            gridPointer.localScale = Vector3.one * pointerNormalSize;
+                gridPointer.localScale = Vector3.one * pointerNormalSize;
 
-            pointerSuccessMoveSequence = DOTween.Sequence()
-                .Append(
-                    gridPointer.DOMove(toTile.transform.position, pointerMoveTime)
-                ).Join(
-                    gridPointer.DOPunchScale(new(-pointerSquishTo * Mathf.Abs(direction.y), -pointerSquishTo * Mathf.Abs(direction.x), 1), pointerMoveTime)
-                ).Append(
-                    gridPointer.DOScale(Vector3.one * pointerNormalSize, 0)
-                ).Play();
+                pointerSuccessMoveSequence = DOTween.Sequence()
+                    .Append(
+                        gridPointer.DOMove(toTile.transform.position, pointerMoveTime)
+                    ).Join(
+                        gridPointer.DOPunchScale(new(-pointerSquishTo * Mathf.Abs(direction.y), -pointerSquishTo * Mathf.Abs(direction.x), 1), pointerMoveTime)
+                    ).Append(
+                        gridPointer.DOScale(Vector3.one * pointerNormalSize, 0)
+                    ).Play();
+            }
 
             Vector2 gridTileCount = maximumKnownTilePosition + Vector2.one;
 
@@ -301,12 +305,13 @@ namespace PuzzleGrid
         void SendPieceToInventory(Piece p)
         {
             p.gameObject.SetActive(true);
+            ResetAllHovers();
             // todo: cool visuals? maybe it flies back to inventory...who knows
         }
 
         void PlacePieceFailure(Piece p)
         {
-            p.FailedPlace();
+            p.FailedGridPlace();
         }
         void PlacePieceSuccess(Piece p)
         {

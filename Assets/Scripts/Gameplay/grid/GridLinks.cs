@@ -53,37 +53,39 @@ namespace PuzzleGrid
         #region setters
         public GridLink SetEndPlacementData(LinkPlacementData data)
         {
+            Debug.Log("setting end");
             if (data == null) { ResetEndPlacementData(); return this; }
 
             endPlacementData = data;
             hasEndLinkRef = true;
-            // todo:: need linking visuals of some sort; if end does not match start, should break the link visually
-            PermanentRepaintPieces(endPlacementData.GetBaseColor());
+            ForceRejoinOnPieces(endPlacementData);
             return this;
         }
         public GridLink ResetEndPlacementData()
         {
+            if (!hasEndLinkRef && endPlacementData == null) return this;
             hasEndLinkRef = false;
             endPlacementData = null; 
-            if (!HasStartData()) PermanentRepaintPieces(Color.white);
+            if (!HasStartData()) LostLinkData();
             return this;
         }
 
         public GridLink SetStartPlacementData(LinkPlacementData data)
         {
+            Debug.Log("setting start");
             if (data == null) { ResetStartPlacementData(); return this; }
 
             startPlacementData = data;
             hasStartLinkRef = true;
-            // todo:: same as above, breaking visuals
-            PermanentRepaintPieces(startPlacementData.GetBaseColor());
+            ForceRejoinOnPieces(startPlacementData);
             return this; 
         }
         public GridLink ResetStartPlacementData()
         {
+            if (!hasStartLinkRef && startPlacementData == null) return this;
             hasStartLinkRef = false;
             startPlacementData = null;
-            if (!HasEndData()) PermanentRepaintPieces(Color.white);
+            if (!HasEndData()) LostLinkData();
             return this;
         }
         #endregion
@@ -134,12 +136,12 @@ namespace PuzzleGrid
         /// Merge another link with this one, re-ordering pieces and resetting start/end link data when necessary.
         /// </summary>
         /// <param name="other">The link to merge with.</param>
-        /// <param name="otherPivot">The "piece" in other to base the merge on. </param>
-        /// <param name="thisPivot">The "piece" in this to base the merge on. </param>
-        /// <returns>True on success, false on failure. See IsOtherCompatible() for definition of compatibility.
-        /// </returns>
-        // todo:: does not account for tile connection points
-        public bool MergeLink(GridLink other, Piece otherPivot, Piece thisPivot)
+        /// <param name="otherPivot">The "piece" in other to base the merge on.</param>
+        /// <param name="otherPivotTile">The PieceTile of otherPivot that connects to thisPivot.</param>
+        /// <param name="thisPivot">The "piece" in this to base the merge on.</param>
+        /// <param name="thisPivotTile">The PieceTile of thisPivot that connects to otherPivot.</param>
+        /// <returns>True on success, false on failure. See IsOtherCompatible() for definition of compatibility</returns>
+        public bool MergeLink(GridLink other, Piece otherPivot, PieceTile otherPivotTile, Piece thisPivot, PieceTile thisPivotTile)
         {
             // these checks remove situations where: the "other" is complete, "this" is complete, "other" & "this" both are start / end, or "other" & "this" have different soundIds 
             if (this.IsLinkComplete())
@@ -156,7 +158,7 @@ namespace PuzzleGrid
             List<LinkData> otherPieces = other.GetPieces();
 
             // re-orient otherPieces so that "pivot" is always at the start of the otherPieces list. 
-            // todo:: (thought)  we can allow connecting to the middle of an existing piece by splitting "other"; however, this adds some other edge cases that we'd need to think through logically...
+            // todo:: (thought) we can allow connecting to the middle of an existing piece by splitting "other"; however, this adds some other edge cases that we'd need to think through logically...
             int otherPivotIndex = -1;
             for (int i = 0; i < otherPieces.Count; i++)
             {
@@ -172,18 +174,34 @@ namespace PuzzleGrid
                 return false;
             }
 
-            // in this case, "other" should go after "this"
+            // in this case, "other" should go after "this"  (this = Start, other = End)
             if (other.HasEndData() || this.HasStartData())
             {
                 Debug.Log("Other has end data, or this has start data!");
+
+                LinkData thisPivotLD = pieces.FirstOrDefault(ld => ld.piece == thisPivot);
+                if (thisPivotLD != null) thisPivotLD.endTile = thisPivotTile;
+                else Debug.LogWarning("MergeLink (branch 1): could not find thisPivot LinkData to set endTile.");
+
+                otherPieces[0].startTile = otherPivotTile;
+
                 pieces.AddRange(otherPieces);
                 if (other.HasEndData()) SetEndPlacementData(other.GetEndPlacementData());
             }
-            // in this case, "this" should go after "other"
+            // in this case, "this" should go after "other"  (other = Start, this = End)
             else if (other.HasStartData() || this.HasEndData())
             {
                 Debug.Log("Other has start data, and this has end data!");
+
                 otherPieces.Reverse();
+                otherPieces[otherPieces.Count - 1].endTile = otherPivotTile;
+
+                LinkData thisPivotLD = pieces.FirstOrDefault(ld => ld.piece == thisPivot);
+                if (thisPivotLD != null)
+                    thisPivotLD.startTile = thisPivotTile;
+                else
+                    Debug.LogWarning("MergeLink (branch 2): could not find thisPivot LinkData to set startTile.");
+
                 otherPieces.AddRange(pieces);
                 pieces = otherPieces;
                 if (other.HasStartData()) SetStartPlacementData(other.GetStartPlacementData());
@@ -202,7 +220,7 @@ namespace PuzzleGrid
             }
 
             // this updates the pieces visually when multiple pieces are connected
-            if (HasStartData() || HasEndData()) PermanentRepaintPieces(HasStartData() ? GetStartPlacementData().GetBaseColor() : GetEndPlacementData().GetBaseColor());
+            if (HasStartData() || HasEndData()) ForceRejoinOnPieces(HasStartData() ? startPlacementData : endPlacementData);
 
             return true;
         }
@@ -276,10 +294,10 @@ namespace PuzzleGrid
                         endTile = creatingStartLink ? null : toAddTile, 
                     }
                 ); 
-                if (HasStartData() || HasEndData()) toAdd.SetColorPermanent(HasStartData() ? GetStartPlacementData().GetBaseColor() : GetEndPlacementData().GetBaseColor());
+                if (HasStartData() || HasEndData()) toAdd.JoinLink(HasStartData() ? startPlacementData : endPlacementData, toAddTile);
                 return this;
             }
-            Debug.Log($"Adding piece {toAdd.name} based on {basedOn.name}");
+            // Debug.Log($"Adding piece {toAdd.name} based on {basedOn.name}");
 
             // add according to basedOn
             for (int i = 0; i < pieces.Count; i++)
@@ -307,7 +325,7 @@ namespace PuzzleGrid
                     if (HasStartData() || HasEndData()) 
                     {
                         Debug.Log($"The link is a start or end. \n {this}");
-                        toAdd.SetColorPermanent(HasStartData() ? GetStartPlacementData().GetBaseColor() : GetEndPlacementData().GetBaseColor());
+                        toAdd.JoinLink(HasStartData() ? startPlacementData : endPlacementData, toAddTile);
                     }
 
                     return this;
@@ -324,22 +342,27 @@ namespace PuzzleGrid
             return pieces.Count;
         }
 
-        public void IndexPlaySound(int index, bool isFirstInPiece, bool silent = false)
+        public void IndexPlaySound(int index, bool isFirstInPiece, float secondsPerBeat, bool silent = false)
         {
             if (index < 0 || index > pieces.Count) { Debug.LogWarning($"Link passed index {index}, which is out of bounds for piece count {pieces.Count}"); return; }
 
             if (!silent && isFirstInPiece) GetStartPlacementData().GetTrackSound().PlaySound();
 
-            pieces[index].piece.LinkPulse(startPlacementData.GetPulseColor(), pieces[index].startTile, pieces[index].endTile, isFirstInPiece);
+            pieces[index].piece.LinkPulse(startPlacementData.GetPulseColor(), pieces[index].startTile, isFirstInPiece, secondsPerBeat);
         }
 
         #endregion
 
         #region changing piece state
 
-        private void PermanentRepaintPieces(Color to)
+        private void ForceRejoinOnPieces(LinkPlacementData associatedData)
         {
-            foreach (var p in pieces) p.piece.SetColorPermanent(to);
+            Debug.Log("would be rejoining...");
+            // pieces.ForEach(item => item.piece.JoinLink(HasStartData() ? startPlacementData : endPlacementData));
+        }
+        private void LostLinkData()
+        {
+            pieces.ForEach(item => item.piece.LeaveLink());
         }
 
         #endregion

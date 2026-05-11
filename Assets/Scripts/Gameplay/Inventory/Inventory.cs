@@ -125,16 +125,14 @@ namespace Inventory
             return Vector2Int.zero;
         }
 
-        public override void FocusGrid()
+        public override void FocusGrid(bool isHoldingPiece=false)
         {
             base.FocusGrid();
-            Debug.Log("Inventory focused");
             OnInventoryFocused?.Invoke(focusPosition);
         }
         public override void UnfocusGrid()
         {
             base.UnfocusGrid();
-            Debug.Log("inventory unfocused");
             OnInventoryUnfocused?.Invoke();
         }
 

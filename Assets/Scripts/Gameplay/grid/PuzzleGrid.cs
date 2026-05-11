@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using GamePieces;
-using GridLinks;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -23,11 +22,12 @@ namespace PuzzleGrid
         private int totalTracksInGrid = 0;
 
         #region notifications
-        public UnityAction<GridTile> OnGridFocused;
-        public UnityAction<GridTile> OnGridUnfocused;
+        private bool pointerActive = true;
+        public UnityAction<GridTile> OnActivatePointer;
+        public UnityAction<GridTile> OnDeactivatePointer;
         public UnityAction<Vector2Int /*direction */> OnFailedLeavingGrid;
         
-        public UnityAction<Vector2Int /*direction*/, GridTile /*FocusedTile*/> OnNewFocusedTile;
+        public UnityAction<Vector2Int /*direction*/, GridTile /*FocusedTile*/, bool /*pointerActive*/> OnNewFocusedTile;
         public UnityAction<Vector2Int> OnNewHover;
         public UnityAction<GridTile> OnHoveringTile;
         public UnityAction<GridTile, GridTileType, Vector2> OnGridTileInitialize;
@@ -92,11 +92,14 @@ namespace PuzzleGrid
             Vector2Int intended = focusPosition + direction;
 
             // check x pos, y up
-            if (intended.x < 0 || intended.x >= gridData.width || intended.y < 0 || intended.y >= gridData.height) { OnFailedLeavingGrid?.Invoke(direction); return Vector2Int.zero; }
+            if (intended.x < 0 || intended.x >= gridData.width || intended.y < 0 || intended.y >= gridData.height) { 
+                if (pointerActive) { OnFailedLeavingGrid?.Invoke(direction); } 
+                return Vector2Int.zero; 
+            }
 
             // otherwise movement is ok
             focusPosition = intended;
-            OnNewFocusedTile?.Invoke(direction, tiles[focusPosition.x, focusPosition.y]);
+            OnNewFocusedTile?.Invoke(direction, tiles[focusPosition.x, focusPosition.y], pointerActive);
 
             return Vector2Int.zero;
         }
@@ -108,19 +111,21 @@ namespace PuzzleGrid
                 return null; 
             }
 
-            // place the tiles down
+            List<GridLink> stagedLinks = new();
+
             foreach(PieceTile pt in p.GetPieceTiles())
             {
                 Vector2Int checkingPosition = focusPosition + pt.GetRotatedRelativeOffset();
                 GridTile tileAtPosition = tiles[checkingPosition.x, checkingPosition.y];
 
-                if (tileAtPosition.IsStartTile()) AddLinkToKnownLinks(CreateStartLink(p, pt, tileAtPosition));
-                else if (tileAtPosition.IsEndTile()) AddLinkToKnownLinks(CreateEndLink(p, pt, tileAtPosition));
+                if (tileAtPosition.IsStartTile()) stagedLinks.Add(CreateStartLink(p, pt, tileAtPosition));
+                else if (tileAtPosition.IsEndTile()) stagedLinks.Add(CreateEndLink(p, pt, tileAtPosition));
 
                 if (!tileAtPosition.TrySetPieceTile(pt)) return null;
             }
 
-            // update links
+            foreach (GridLink staged in stagedLinks) AddLinkToKnownLinks(staged);
+
             int connectedTracks = 0;
 
             foreach (PieceTile checkPiece in p.GetPieceTiles())
@@ -145,7 +150,7 @@ namespace PuzzleGrid
                 }
             }  
 
-            p.GridMode();
+            p.PlacedGrid();
             p.transform.parent = transform;
             OnPiecePlacementSuccess?.Invoke(p);
             LogLinks();
@@ -158,6 +163,8 @@ namespace PuzzleGrid
             {
                 Debug.Log("you have not yet won the game ... but good luck :D");
             }
+
+            ActivatePointerIfDeactivated();
 
             return Vector2Int.zero;
         }
@@ -191,22 +198,48 @@ namespace PuzzleGrid
             OnPieceYoinked?.Invoke(toBeRemoved);
             toBeRemoved.transform.position = GetFocusedGridTile().transform.position; // todo: should not be manually setting position
 
+            DeactivatePointerIfActivated();
+
             // return
-            return toBeRemoved.LimboMode();
+            return toBeRemoved.LimboMode(GetFocusedGridTile());
         }
         public override void Hover(Piece p)
         {
-            HoverPiecePosition(p);
+            OnNewHover?.Invoke(focusPosition);
+
+            foreach (PieceTile checkPiece in p.GetPieceTiles())
+            {
+                Vector2Int checkingPosition = focusPosition + checkPiece.GetRotatedRelativeOffset();
+                if (checkingPosition.x < 0 || checkingPosition.x >= tiles.GetLength(0) || checkingPosition.y < 0 || checkingPosition.y >= tiles.GetLength(1)) continue;
+                GridTile tileAtPosition = tiles[checkingPosition.x, checkingPosition.y];
+                if (tileAtPosition.CanSetPieceTile(checkPiece)) OnHoveringTile?.Invoke(tileAtPosition);
+            }
+            
+            p.LimboMode(GetFocusedGridTile());
         }
-        public override void FocusGrid()
+        public override void FocusGrid(bool isHoldingPiece)
         {
             base.FocusGrid();
-            OnGridFocused?.Invoke(GetFocusedGridTile());
+            if (!isHoldingPiece) ActivatePointerIfDeactivated(overrideCheck: true);
+            else DeactivatePointerIfActivated();
         }
         public override void UnfocusGrid()
         {
             base.UnfocusGrid();
-            OnGridUnfocused?.Invoke(GetFocusedGridTile());
+            DeactivatePointerIfActivated();
+        }
+
+        private void ActivatePointerIfDeactivated(bool overrideCheck = false)
+        {
+            if (!overrideCheck && pointerActive) return;
+            pointerActive = true;
+            OnActivatePointer?.Invoke(GetFocusedGridTile());
+        }
+        private void DeactivatePointerIfActivated()
+        {
+            if (!pointerActive) return;
+            pointerActive = false;
+            OnDeactivatePointer?.Invoke(GetFocusedGridTile());
         }
         
         #endregion
@@ -227,7 +260,6 @@ namespace PuzzleGrid
             {
                 if (linksForBasePiece.Count > 0)
                 {
-                    // todo:: does not account for switches
                     UpdateLink(linksForBasePiece[0], neighborPiece, neighborPieceTile, p, pieceTile);
                     connectedTracks++;
                 }
@@ -252,7 +284,7 @@ namespace PuzzleGrid
                 if (linksForBasePiece.Count > 0)
                 {
                     Debug.Log("\t Merging links");
-                    MergeLinks(linksForBasePiece[0], existingLink, neighborPiece, p);
+                    MergeLinks(linksForBasePiece[0], existingLink, neighborPiece, neighborPieceTile, p, pieceTile);
                 }
                 else
                 {
@@ -319,7 +351,7 @@ namespace PuzzleGrid
         public GridLink CreateStartLink(Piece piece, PieceTile startTile, GridTile gridTile)
         {
             GridLink newLink = new(); 
-            return newLink.AddPiece(piece, startTile, null, null, true).SetStartPlacementData(gridTile.GetLinkPlacementData());
+            return newLink.SetStartPlacementData(gridTile.GetLinkPlacementData()).AddPiece(piece, startTile, null, null, true);
         }
         /// <summary>
         /// Creates an "End Link" -- a link with just one piece and EndPlacementData.
@@ -331,7 +363,7 @@ namespace PuzzleGrid
         public GridLink CreateEndLink(Piece piece, PieceTile endTile, GridTile gridTile)
         {
             GridLink newLink = new(); 
-            return newLink.AddPiece(piece, endTile, null, null, false).SetEndPlacementData(gridTile.GetLinkPlacementData());
+            return newLink.SetEndPlacementData(gridTile.GetLinkPlacementData()).AddPiece(piece, endTile, null, null, false);
         }
 
         public void AddLinkToKnownLinks(GridLink what)
@@ -352,9 +384,9 @@ namespace PuzzleGrid
             what.AddPiece(with, withTile, neighborPiece, neighborTile);
             if (what.HasStartData()) OnAStartLinkUpdated?.Invoke(what);
         }
-        public void MergeLinks(GridLink baseLink, GridLink mergeTo, Piece mergePivot, Piece basePivot)
+        public void MergeLinks(GridLink baseLink, GridLink mergeTo, Piece mergePivot, PieceTile mergePivotTile, Piece basePivot, PieceTile basePivotTile)
         {
-            if (baseLink.MergeLink(mergeTo, mergePivot, basePivot))
+            if (baseLink.MergeLink(mergeTo, mergePivot, mergePivotTile, basePivot, basePivotTile))
             {
                 Debug.Log("Merge success.");
                 gridLinks.Remove(mergeTo);
@@ -451,30 +483,14 @@ namespace PuzzleGrid
         #endregion
     
         #region other
-        private void HoverPiecePosition(Piece p)
-        {
-            OnNewHover?.Invoke(focusPosition);
-
-            foreach (PieceTile checkPiece in p.GetPieceTiles())
-            {
-                Vector2Int checkingPosition = focusPosition + checkPiece.GetRotatedRelativeOffset();
-                if (checkingPosition.x < 0 || checkingPosition.x >= tiles.GetLength(0) || checkingPosition.y < 0 || checkingPosition.y >= tiles.GetLength(1)) continue;
-                GridTile tileAtPosition = tiles[checkingPosition.x, checkingPosition.y];
-                if (tileAtPosition.CanSetPieceTile(checkPiece)) OnHoveringTile?.Invoke(tileAtPosition);
-            }
-            
-            p.LimboMode();
-            p.transform.position = GetFocusedGridTile().transform.position;
-        }
-
         // TODO: delete the visuals and just do logging stuff 
         public void LogLinks()
         {
-            Debug.Log($"{gridLinks.Count} links exist");
+            // Debug.Log($"{gridLinks.Count} links exist");
 
             for (int i = 0; i < gridLinks.Count; i++)
             {
-                Debug.Log($"Link {i} has {gridLinks[i].GetPieces().Count} pieces");
+                // Debug.Log($"Link {i} has {gridLinks[i].GetPieces().Count} pieces");
 
                 foreach (var pd in gridLinks[i].GetPieces())
                 {

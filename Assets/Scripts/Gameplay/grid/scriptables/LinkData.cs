@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using GamePieces;
 using TrackSounds;
 using UnityEngine;
 
@@ -17,6 +15,7 @@ namespace PuzzleGrid
 
         [SerializeField] private Color baseColor;
         [SerializeField, ColorUsage(true, true)] private Color pulseColor;
+        [SerializeField, ColorUsage(true, true)] private Color borderColor;
 
         public Vector2 GetStartPos()
         {
@@ -39,5 +38,6 @@ namespace PuzzleGrid
 
         public Color GetBaseColor() => baseColor;
         public Color GetPulseColor() => pulseColor;
+        public Color GetBorderColor() => borderColor;
     }
 }
