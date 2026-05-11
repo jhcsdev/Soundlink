@@ -15,7 +15,6 @@ namespace PuzzleGrid
 
         [SerializeField] private Color baseColor;
         [SerializeField, ColorUsage(true, true)] private Color pulseColor;
-        [SerializeField] private bool useSeparateBorderColor;
         [SerializeField, ColorUsage(true, true)] private Color borderColor;
 
         public Vector2 GetStartPos()
@@ -39,6 +38,6 @@ namespace PuzzleGrid
 
         public Color GetBaseColor() => baseColor;
         public Color GetPulseColor() => pulseColor;
-        public Color GetBorderColor() => useSeparateBorderColor ? borderColor : pulseColor;
+        public Color GetBorderColor() => borderColor;
     }
 }

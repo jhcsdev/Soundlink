@@ -21,10 +21,14 @@ MonoBehaviour:
     soundID: 0
     baseColor: {r: 0.7515006, g: 0.43734425, b: 0.7924528, a: 1}
     pulseColor: {r: 1.304119, g: 0.65821093, b: 1.264166, a: 1}
+    useSeparateBorderColor: 0
+    borderColor: {r: 1.6399586, g: 0.9968658, b: 2.6082377, a: 0}
   - startPos: {x: 3, y: 0}
     endPos: {x: 6, y: 5}
     playsSound: {fileID: 11400000, guid: e460ad7bde21649b1928b973ece08954, type: 2}
     soundID: 1
     baseColor: {r: 0.24830623, g: 0.6037736, b: 0.24777503, a: 1}
     pulseColor: {r: 0.7106363, g: 1.304119, b: 0.6828169, a: 1}
+    useSeparateBorderColor: 0
+    borderColor: {r: 1.0901656, g: 2.8580337, b: 1.0380594, a: 0}
   currentSoundID: 0

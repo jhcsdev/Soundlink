@@ -30,7 +30,10 @@ namespace GamePieces
         public UnityAction<float> OnMaterialFillAmountChange;
         public UnityAction<Color> OnMaterialBaseColorChange;
         public UnityAction<Color> OnMaterialBorderColorChange;
-        public UnityAction<Color> OnMaterialFillColorChange;
+        public UnityAction<Color> OnMaterialFillFadeColorChange;
+        public UnityAction<Color> OnMaterialFillBaseColorChange;
+        public UnityAction<float> OnMaterialFillFadeDistanceChange;
+        public UnityAction<float> OnMaterialBorderThicknessChange;
         #endregion
 
         private readonly List<PieceTile> tileObjects = new();
@@ -52,7 +55,17 @@ namespace GamePieces
             CreateTiles();
             gameObject.AddComponent<PieceVisuals>();
 
-            EmitMaterialUpdate(materialSet: instance, fillAmount: -0.2f, fillOrigin: new(0,0), fillColor: Color.black, borderColor: Color.black, baseColor: Color.white);
+            EmitMaterialUpdate(
+                materialSet: instance, 
+                fillAmount: -0.2f, 
+                fillOrigin: new(0,0), 
+                fillFadeColor: Color.white, 
+                fillBaseColor: Color.black, 
+                borderColor: Color.black, 
+                baseColor: Color.white,
+                borderThickness: 0.15f,
+                fillFadeDistance: 5f
+            );
         }
         private void CreateTiles()
         {
@@ -76,15 +89,19 @@ namespace GamePieces
                 rt.anchoredPosition = new Vector2(ptd.relativeOffset.x * tileSize, ptd.relativeOffset.y * tileSize);
             }
         }
-        private void EmitMaterialUpdate(Material materialSet = null, float? fillAmount = null, Vector2? fillOrigin = null, Color? fillColor = null, Color? borderColor = null, Color? baseColor = null)
+        private void EmitMaterialUpdate(Material materialSet = null, float? fillAmount = null, Vector2? fillOrigin = null, 
+            Color? fillFadeColor = null, Color? borderColor = null, Color? baseColor = null, Color? fillBaseColor = null, 
+            float? borderThickness = null, float? fillFadeDistance = null)
         {
             if (materialSet != null) OnSetMaterial?.Invoke(materialSet);
-
             if (fillAmount != null) OnMaterialFillAmountChange?.Invoke(fillAmount.Value);
             if (fillOrigin != null) OnMaterialFillOriginChange?.Invoke(fillOrigin.Value);
-            if (fillColor != null) OnMaterialFillColorChange?.Invoke(fillColor.Value);
+            if (fillFadeColor != null) OnMaterialFillFadeColorChange?.Invoke(fillFadeColor.Value);
             if (borderColor != null) OnMaterialBorderColorChange?.Invoke(borderColor.Value);
             if (baseColor != null) OnMaterialBaseColorChange?.Invoke(baseColor.Value);
+            if (fillBaseColor != null) OnMaterialFillBaseColorChange?.Invoke(fillBaseColor.Value);
+            if (borderThickness != null) OnMaterialBorderThicknessChange?.Invoke(borderThickness.Value);
+            if (fillFadeDistance != null) OnMaterialFillFadeDistanceChange?.Invoke(fillFadeDistance.Value);
         }
         #endregion 
 
@@ -162,7 +179,6 @@ namespace GamePieces
         #region link stuff
         public void JoinLink(LinkPlacementData link, PieceTile joinTile)
         {
-            Debug.Log("Joined link!");
             OnJoinedLink?.Invoke(link, joinTile);
         }
         public void LeaveLink()

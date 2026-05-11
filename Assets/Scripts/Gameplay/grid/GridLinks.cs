@@ -284,7 +284,6 @@ namespace PuzzleGrid
         /// <returns>this if basedOn is null or successfully added piece; null if could not find basedOn</returns>
         public GridLink AddPiece(Piece toAdd, PieceTile toAddTile, Piece basedOn, PieceTile basedOnTile, bool creatingStartLink = false)
         {
-            Debug.Log("adding piece");
             if (basedOn == null) { 
                 Debug.Log($"Adding piece to {this} without basedOn. Ensure order!");
                 pieces.Add(
@@ -298,7 +297,7 @@ namespace PuzzleGrid
                 if (HasStartData() || HasEndData()) toAdd.JoinLink(HasStartData() ? startPlacementData : endPlacementData, toAddTile);
                 return this;
             }
-            Debug.Log($"Adding piece {toAdd.name} based on {basedOn.name}");
+            // Debug.Log($"Adding piece {toAdd.name} based on {basedOn.name}");
 
             // add according to basedOn
             for (int i = 0; i < pieces.Count; i++)

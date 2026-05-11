@@ -36,19 +36,20 @@ namespace GamePieces
         [Header("materials")]
         static readonly int FillOriginID = Shader.PropertyToID("_FillOrigin");
         static readonly int FillAmountID = Shader.PropertyToID("_FillDistance");
-        static readonly int FillColorID = Shader.PropertyToID("_FillColor");
+        static readonly int FillFadeColorID = Shader.PropertyToID("_FillFadeColor");
+        static readonly int FillBaseColorID = Shader.PropertyToID("_FillBaseColor");
+        static readonly int FillFadeDistanceID = Shader.PropertyToID("_FillFadeToBaseDistance");
         static readonly int BorderColorID = Shader.PropertyToID("_BorderColor");
         static readonly int BaseColorID = Shader.PropertyToID("_BaseColor");
         static readonly int BorderThickness = Shader.PropertyToID("_FillBorderThickness");
         private Material pieceMaterial;
         [Header("links")]
-        private static float fillJoinTime = 0.5f;
+        private static float fillJoinTime = 0.8f;
         private static Ease fillEase = Ease.OutSine;
         private static float zoomBackToZeroFillOnRejoinTime = 0.5f;
         private static Ease zoomBackToZeroFillOnRejoinEase = Ease.InOutSine;
-        private static float fillLeaveTime = 0.4f;
+        private static float fillLeaveTime = 1f;
         private static float zoomBackToZeroFillOnLeaveTime = 0.3f;
-        private static float fillColorFadeTransitionTime = 0.1f;
         private Ease pulseEase = Ease.OutQuart;
         private float pulseOneUnitTime = 0.1f;
 
@@ -70,6 +71,7 @@ namespace GamePieces
         private List<List<PieceTile>> pulseWaves;
         private int pulseProgress = -1;
         private int maximumPulseDistance = -1;
+        private float materialFillFadeDistance = 5;
         #endregion
         #endregion
         #region initialization
@@ -100,7 +102,10 @@ namespace GamePieces
             piece.OnMaterialFillAmountChange += ChangeMaterialFillAmount;
             piece.OnMaterialBaseColorChange += ChangeMaterialBaseColor;
             piece.OnMaterialBorderColorChange += ChangeMaterialBorderColor;
-            piece.OnMaterialFillColorChange += ChangeMaterialFillColor;
+            piece.OnMaterialFillFadeColorChange += ChangeMaterialFillFadeColor;
+            piece.OnMaterialFillBaseColorChange += ChangeMaterialFillBaseColor;
+            piece.OnMaterialFillFadeDistanceChange += ChangeMaterialFillFadeDistance;
+            piece.OnMaterialBorderThicknessChange += ChangeMaterialBorderThickness;
 
             piece.OnLinkPulse += LinkPulse;
             piece.OnJoinedLink += LinkJoined;
@@ -114,6 +119,16 @@ namespace GamePieces
             piece.OnPiecePickedUp -= PieceWasPickedUp;
             piece.OnPieceReturnedToInventory -= PieceReturnedToInventory;
             piece.OnHoverPieceMoved -= PieceMoved;
+
+            piece.OnSetMaterial -= MaterialSet;
+            piece.OnMaterialFillOriginChange -= ChangeMaterialFillOrigin;
+            piece.OnMaterialFillAmountChange -= ChangeMaterialFillAmount;
+            piece.OnMaterialBaseColorChange -= ChangeMaterialBaseColor;
+            piece.OnMaterialBorderColorChange -= ChangeMaterialBorderColor;
+            piece.OnMaterialFillFadeColorChange -= ChangeMaterialFillFadeColor;
+            piece.OnMaterialFillBaseColorChange -= ChangeMaterialFillBaseColor;
+            piece.OnMaterialFillFadeDistanceChange -= ChangeMaterialFillFadeDistance;
+            piece.OnMaterialBorderThicknessChange -= ChangeMaterialBorderThickness;
 
             piece.OnLinkPulse -= LinkPulse;
             piece.OnJoinedLink -= LinkJoined;
@@ -138,9 +153,13 @@ namespace GamePieces
         {
             pieceMaterial.SetColor(BaseColorID, to);
         }
-        private void ChangeMaterialFillColor(Color to)
+        private void ChangeMaterialFillFadeColor(Color to)
         {
-            pieceMaterial.SetColor(FillColorID, to);
+            pieceMaterial.SetColor(FillFadeColorID, to);
+        }
+        private void ChangeMaterialFillBaseColor(Color to)
+        {
+            pieceMaterial.SetColor(FillBaseColorID, to);
         }
         private void ChangeMaterialBorderColor(Color to)
         {
@@ -149,6 +168,11 @@ namespace GamePieces
         private void ChangeMaterialBorderThickness(float to)
         {
             pieceMaterial.SetFloat(BorderThickness, to);
+        }
+        private void ChangeMaterialFillFadeDistance(float to)
+        {
+            pieceMaterial.SetFloat(FillFadeDistanceID, to);
+            materialFillFadeDistance = to;
         }
         #endregion
         #region sequence handlers / coroutine wrappers
@@ -253,7 +277,7 @@ namespace GamePieces
         }
         private void PieceReturnedToInventory()
         {
-            
+            Debug.Log("piece returned to inventory");
         }
         #region movement
         private void PieceMoved(Transform to)
@@ -270,11 +294,10 @@ namespace GamePieces
         #region links
         private void LinkJoined(LinkPlacementData what, PieceTile where)
         {
-            Debug.Log("link join");
-            maximumPulseDistance = (int)Mathf.Ceil(CalculateFurthestDistance(where)) + 1;
+            maximumPulseDistance = (int)Mathf.Ceil(CalculateFurthestDistance(where));
 
             // depending on the existing state, we need to do a different animation.
-            // if we have an ongoing leaveLinkSequence -- zoom back to 0, then change the fill color, then pulse to max, then fade fill color to base color, then set base color & pulse=0
+            // if we have an ongoing leaveLinkSequence -- zoom back to 0, then change the fill fade & fill base color, then pulse to max + fillFadeDistance, then set base color & pulse=0
             // if we have an ongoing joinLinkSequence -- error; this should not happen ever
             // if we have an ongoing pulseLinkSequence -- TODO::
             // if we have no sequence, then pulse to max, fade fill color to base, set base & pulse = 0
@@ -289,13 +312,12 @@ namespace GamePieces
                     ).AppendCallback(() =>
                         {
                             ChangeMaterialBorderColor(what.GetBorderColor());
-                            ChangeMaterialFillColor(what.GetBaseColor() + 0.1f * what.GetPulseColor());
+                            ChangeMaterialFillFadeColor(what.GetPulseColor());
+                            ChangeMaterialFillBaseColor(what.GetBaseColor());
                             ChangeMaterialFillOrigin(where.transform.position);
                         }
                     ).Append(
-                        pieceMaterial.DOFloat(maximumPulseDistance, FillAmountID, fillJoinTime).SetEase(fillEase)
-                    ).Append(
-                        pieceMaterial.DOColor(what.GetBaseColor(), FillColorID, fillColorFadeTransitionTime)
+                        pieceMaterial.DOFloat(maximumPulseDistance+materialFillFadeDistance+1, FillAmountID, fillJoinTime).SetEase(fillEase)
                     ).AppendCallback(() => 
                         {
                             ChangeMaterialBaseColor(what.GetBaseColor());
@@ -310,14 +332,13 @@ namespace GamePieces
             else
             {
                 ChangeMaterialBorderColor(what.GetBorderColor());
-                ChangeMaterialFillColor(what.GetBaseColor() + 0.1f * what.GetPulseColor());
+                ChangeMaterialFillFadeColor(what.GetPulseColor());
+                ChangeMaterialFillBaseColor(what.GetBaseColor());
                 ChangeMaterialFillOrigin(where.transform.position);
 
                 pieceJoinLinkColorSequence = DOTween.Sequence()
                     .Append(
-                        pieceMaterial.DOFloat(maximumPulseDistance, FillAmountID, fillJoinTime).SetEase(fillEase)
-                    ).Append(
-                        pieceMaterial.DOColor(what.GetBaseColor(), FillColorID, fillColorFadeTransitionTime)
+                        pieceMaterial.DOFloat(maximumPulseDistance+materialFillFadeDistance+1, FillAmountID, fillJoinTime).SetEase(fillEase)
                     ).AppendCallback(() => 
                         {
                             ChangeMaterialBaseColor(what.GetBaseColor());
@@ -344,10 +365,11 @@ namespace GamePieces
                     ).AppendCallback(() =>
                         {
                             ChangeMaterialBorderColor(Color.white);
-                            ChangeMaterialFillColor(Color.white);
+                            ChangeMaterialFillFadeColor(Color.white);
+                            ChangeMaterialFillBaseColor(Color.white);
                         }
                     ).Append(
-                        pieceMaterial.DOFloat(maximumPulseDistance, FillAmountID, fillLeaveTime).SetEase(fillEase)
+                        pieceMaterial.DOFloat(maximumPulseDistance+1, FillAmountID, fillLeaveTime).SetEase(fillEase)
                     ).AppendCallback(() => 
                         {
                             ChangeMaterialBaseColor(Color.white);
@@ -362,11 +384,12 @@ namespace GamePieces
             else
             {
                 ChangeMaterialBorderColor(Color.white);
-                ChangeMaterialFillColor(Color.white);
+                ChangeMaterialFillFadeColor(Color.white);
+                ChangeMaterialFillBaseColor(Color.white);
 
                 pieceLeaveLinkColorSequence = DOTween.Sequence()
                     .Append(
-                        pieceMaterial.DOFloat(maximumPulseDistance, FillAmountID, fillLeaveTime).SetEase(fillEase)
+                        pieceMaterial.DOFloat(maximumPulseDistance+1, FillAmountID, fillLeaveTime).SetEase(fillEase)
                     ).AppendCallback(() => 
                         {
                             ChangeMaterialBaseColor(Color.white);
