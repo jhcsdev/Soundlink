@@ -29,6 +29,8 @@ namespace GamePieces
         private static float hoverInScaleTime = 0.75f;
         private static float hoveringScale = 0.6f;
         private static float placementScale = 1f;
+        private static float hoverOutScaleTime = 0.4f;
+        private static Ease hoverOutEaseMode = Ease.OutQuart;
         [Header("movement")]
         private static float movementTime = 0.1f;
         private static Ease movementEase = Ease.OutSine;
@@ -64,6 +66,7 @@ namespace GamePieces
         Sequence pieceLeaveLinkColorSequence;
         Sequence pulseSequence;
         Sequence failedMovementSequence;
+        Sequence backToInventoryShrinkSequence; // inverse of enterHoverSequence
         #endregion
         #region other
         private Piece piece;
@@ -207,7 +210,6 @@ namespace GamePieces
                 for (int i = 1; i < pieceTilesFromOrigin.Count; i++)
                 {
                     placementSequence.Join(
-                        // placementBetweenTileTime * i, 
                         pieceTilesFromOrigin[i].transform.DOScale(
                             placementScale, 
                             placementScaleupTime
@@ -220,6 +222,7 @@ namespace GamePieces
             if (enterHoverSequence != null && enterHoverSequence.active) enterHoverSequence.Complete();
             if (pickupSequence != null && pickupSequence.active) pickupSequence.Complete();
             if (failedPlacementSequence != null && failedPlacementSequence.active) failedPlacementSequence.Complete();
+            if (backToInventoryShrinkSequence != null && backToInventoryShrinkSequence.active) { backToInventoryShrinkSequence.Kill(); backToInventoryShrinkSequence = null; }
             
             placementSequence.Restart();
         }
@@ -244,6 +247,8 @@ namespace GamePieces
                 }  
                 enterHoverSequence.SetAutoKill(false);
             }
+
+            if (backToInventoryShrinkSequence != null && backToInventoryShrinkSequence.active) { backToInventoryShrinkSequence.Kill(); backToInventoryShrinkSequence = null; }
 
             enterHoverSequence.Play();
         }
@@ -273,12 +278,37 @@ namespace GamePieces
             if (enterHoverSequence != null && enterHoverSequence.active) enterHoverSequence.Complete();
             if (placementSequence != null && placementSequence.active) placementSequence.Complete();
             if (failedPlacementSequence != null && failedPlacementSequence.active) failedPlacementSequence.Complete();
+            if (backToInventoryShrinkSequence != null && backToInventoryShrinkSequence.active) { backToInventoryShrinkSequence.Kill(); backToInventoryShrinkSequence = null; }
             
             pickupSequence.Restart();
         }
         private void PieceReturnedToInventory()
         {
-            Debug.Log("piece returned to inventory");
+            if (backToInventoryShrinkSequence == null || !backToInventoryShrinkSequence.active)
+            {
+                backToInventoryShrinkSequence = DOTween.Sequence().Append(
+                    pieceTilesFromOrigin[0].transform.DOScale(
+                        0, 
+                        hoverOutScaleTime
+                    ).SetEase(hoverOutEaseMode)
+                );
+                for (int i = 1; i < pieceTilesFromOrigin.Count; i++)
+                {
+                    backToInventoryShrinkSequence.Join(
+                        pieceTilesFromOrigin[i].transform.DOScale(
+                            0, 
+                            hoverOutScaleTime
+                        ).SetEase(hoverOutEaseMode)
+                    );
+                }  
+            }
+
+            if (enterHoverSequence != null && enterHoverSequence.active) { enterHoverSequence.Kill(); enterHoverSequence =null; }
+            if (placementSequence != null && placementSequence.active) { placementSequence.Kill(); placementSequence = null; }
+            if (failedPlacementSequence != null && failedPlacementSequence.active) { failedPlacementSequence.Complete(); }
+            if (pickupSequence != null && pickupSequence.active) { pickupSequence.Kill(); pickupSequence = null; }
+
+            backToInventoryShrinkSequence.Restart();
         }
         #region movement
         private void PieceMoved(Transform to)

@@ -38,7 +38,7 @@ namespace Inventory
                 Piece pieceObjComp = pieceObj.AddComponent<Piece>();
 
                 pieceObjComp.Initialize(pieceData);
-                pieceObjComp.InventoryMode();
+                pieceObjComp.transform.position = Vector3.one * 150;
                 pieceObjComp.transform.parent = transform;
 
                 putPiece(pieceObjComp);
@@ -100,6 +100,7 @@ namespace Inventory
             piecesLookup[emptyLocation] = piece;
 
             OnPiecePutIntoInventory?.Invoke(piece, emptyLocation);
+            piece.InventoryMode();
 
             return emptyLocation;
         }
