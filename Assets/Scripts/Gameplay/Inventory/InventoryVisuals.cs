@@ -76,6 +76,7 @@ namespace Inventory
         Sequence activeFocusObjectMovementSequence;
         Sequence activeFailedMovement;
         Sequence takingPieceOut;
+        Sequence puttingPieceIn;
         Sequence activeScrollSequence;
         #endregion
 
@@ -148,10 +149,8 @@ namespace Inventory
                     ).SetAutoKill(false).Pause();
             }
 
-            if (takingPieceOut != null && takingPieceOut.IsActive())
-                takingPieceOut.OnComplete(() => unfocusSequence.Restart());
-            else
-                unfocusSequence.Restart();
+            if (takingPieceOut != null && takingPieceOut.IsActive()) takingPieceOut.OnComplete(() => unfocusSequence.Restart());
+            else unfocusSequence.Restart();
         }
 
         void FocusLocationChanged(Vector2Int direction, Vector2Int newFocus)
@@ -257,7 +256,7 @@ namespace Inventory
 
             RectTransform canvasPieceTransform = (RectTransform)piece.GetCanvasPiece().transform;
             canvasPieceTransform.SetParent(_rowObjects[spot.y], false);
-            canvasPieceTransform.localScale = Vector2.one * pieceScalingMultiplier;
+            canvasPieceTransform.localScale = Vector2.zero;
 
             float pieceAnchorX = (spot.x + 0.5f) / columnsDisplayedAtOnce;
             canvasPieceTransform.anchorMin = canvasPieceTransform.anchorMax = new(pieceAnchorX, 0.5f);
@@ -270,6 +269,10 @@ namespace Inventory
                 pointerObject.transform.position = _slotAnchors[Vector2Int.zero].transform.position;
                 firstFocus = false;
             }
+            
+            puttingPieceIn = DOTween.Sequence().Append(
+                canvasPieceTransform.DOScale(Vector2.one * pieceScalingMultiplier, pointerScaleDownTime)
+            ).Play();
         }
 
         void PieceTakenOut(Piece piece)
@@ -286,10 +289,8 @@ namespace Inventory
                 break;
             }
 
-            if (found)
-                _pieceAtPosition.Remove(removedKey);
-            else
-                Debug.LogWarning($"PieceTakenOut: canvas piece for '{piece.name}' not found in _pieceAtPosition");
+            if (found) _pieceAtPosition.Remove(removedKey);
+            else Debug.LogWarning($"PieceTakenOut: canvas piece for '{piece.name}' not found in _pieceAtPosition");
 
             if (takingPieceOut != null) takingPieceOut.Complete();
 
