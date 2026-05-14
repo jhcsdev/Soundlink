@@ -31,7 +31,7 @@ namespace Inventory
         [SerializeField] private float focusUnfocusAnimationTime = 0.2f;
         [Header("Focus pointer animation")]
         [SerializeField] private float pointerMoveTime = 0.1f;
-        [SerializeField] private float pointerSquishTo = 0.8f;
+        [SerializeField] private float pointerSquishTo = 0.5f;
         [SerializeField] private float pointerNormalSize = 1f;
         [SerializeField] private float pointerVanishTime = 0.3f;
         [SerializeField] private float pointerReappearTime = 0.3f;
@@ -162,8 +162,8 @@ namespace Inventory
                 return;
             }
 
-            if (activeFocusObjectMovementSequence != null)
-                activeFocusObjectMovementSequence.Complete();
+            if (activeFocusObjectMovementSequence != null && activeFocusObjectMovementSequence.active) activeFocusObjectMovementSequence.Complete();
+            if (activeFailedMovement != null && activeFailedMovement.active) activeFailedMovement.Complete();
 
             pointerObject.localScale = Vector3.one * pointerNormalSize;
 
@@ -202,7 +202,8 @@ namespace Inventory
 
         void FocusLocationFailedChange(Vector2Int directionFailed)
         {
-            if (activeFailedMovement != null) activeFailedMovement.Complete();
+            if (activeFocusObjectMovementSequence != null && activeFocusObjectMovementSequence.active) activeFocusObjectMovementSequence.Complete();
+            if (activeFailedMovement != null && activeFailedMovement.active) activeFailedMovement.Complete();
 
             pointerObject.localScale = Vector3.one * pointerNormalSize;
 
