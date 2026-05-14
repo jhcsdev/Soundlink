@@ -2,6 +2,7 @@ using GamePieces;
 using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.Events;
+using SceneTransition;
 
 namespace Inventory
 {
