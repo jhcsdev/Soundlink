@@ -148,7 +148,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 589c6ca68d087498ea483203f2f4cfce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LevelLoader
-  activeLevel: {fileID: 11400000, guid: fb23fc0a4de5f425bae10f91b819b886, type: 2}
+  activeLevel: {fileID: 11400000, guid: b3f59f3bb44fe4ef895932e0fcb7d3f0, type: 2}
 --- !u!4 &51757165
 Transform:
   m_ObjectHideFlags: 0
@@ -1916,7 +1916,7 @@ MonoBehaviour:
       m_Flags: 0
     m_Flags: 0
   GRID:
-    m_Name: 
+    m_Name: GRID
     m_Type: 0
     m_ExpectedControlType: 
     m_Id: c6399bb7-9d02-484a-9737-62a0c11cd72f
@@ -1960,7 +1960,7 @@ MonoBehaviour:
       m_Flags: 0
     m_Flags: 0
   ESCAPE:
-    m_Name: 
+    m_Name: ESCAPE
     m_Type: 0
     m_ExpectedControlType: 
     m_Id: 0ddca119-386e-45c9-bb81-fc5d387ea047
@@ -2219,8 +2219,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GridLinks.LinkPlaybackManager
   bpm: 90
-  beatsInLoop: 16
-  referenceSound: {fileID: 11400000, guid: d16c574643abe4451b64fc54c14ff424, type: 2}
+  beatsInLoop: 8
+  referenceSound: {fileID: 11400000, guid: 9b078c2356b6f40dabf531fb5530c80c, type: 2}
   soundPlaybackEnabled: 1
 --- !u!1 &1877936224
 GameObject:
