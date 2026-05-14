@@ -10,19 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8ff008db6973d4e3aa386dd6cc299a27, type: 3}
-  m_Name: LevelTwoPieceTwo
+  m_Name: LevelThreePieceTwo
   m_EditorClassIdentifier: Assembly-CSharp::GamePieces.PieceData
   tiles:
   - relativeOffset: {x: 0, y: 0}
     isOrigin: 1
     type: 0
-    glue: 03000000
-    tileType: 14
-    spriteDirection: 3
-  - relativeOffset: {x: 1, y: 0}
-    isOrigin: 0
-    type: 0
-    glue: 
-    tileType: 14
-    spriteDirection: 1
+    glue: 0000000001000000
+    tileType: 13
+    spriteDirection: 0
   isSilentPiece: 0
