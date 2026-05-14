@@ -18,11 +18,9 @@ namespace TrackSounds
 
             myChuck.RunCode( string.Format( @"
             // level one: kick, kick
-            global Event beatStart;
-            global Event beatDone;
+            global Event playReference;
+            global Event pauseReference;
             global float BPM;
-
-            beatStart.signal();
 
             SinOsc kick => ADSR envKick => Gain kickGain => dac;
 
@@ -32,6 +30,7 @@ namespace TrackSounds
             1.0 => float KICK_GAIN;
 
             (60.0 / BPM)::second => dur beat_dur;
+            beat_dur / 4.0 => dur sixteenth;
 
             fun void playKick(float beat_note) {{  
                 // calculate hold and release times
@@ -47,11 +46,32 @@ namespace TrackSounds
                 release_time => now;
             }}
 
-            1.0 => kick.gain;
+            fun void kickPattern() {{
+                playKick(0.5);
+                playKick(0.5);  
+            }}
 
-            playKick(1.0);
-            playKick(1.0);
-            beatDone.signal();
+            fun void beatLoop() {{
+                beat_dur - (now % beat_dur) => now;  // snap to grid
+                while (true) {{
+                    spork ~ kickPattern();
+                    2.0 * sixteenth => now;  
+                }}
+            }}
+
+            while (true) {{
+                playReference => now;
+                spork ~ beatLoop() @=> Shred @ myShred;
+                pauseReference => now;
+                myShred.exit();
+            }}
+
+            while (true) {{
+                playReference => now;
+                spork ~ beatLoop() @=> Shred @ myShred;
+                pauseReference => now;
+                myShred.exit();
+            }}
             "));
         }
     }
