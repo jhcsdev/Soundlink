@@ -34,7 +34,7 @@ namespace TrackSounds
 
             fun void playKick(float beat_note) {{  
                 // calculate hold and release times
-                beat_note * beat_dur => dur total_time;
+                beat_note * sixteenth => dur total_time;
                 envKick.releaseTime() => dur release_time;
                 total_time - release_time => dur hold_time;
                 
@@ -47,8 +47,8 @@ namespace TrackSounds
             }}
 
             fun void kickPattern() {{
-                playKick(0.5);
-                playKick(0.5);  
+                playKick(2.0);
+                playKick(2.0);  
             }}
 
             fun void beatLoop() {{

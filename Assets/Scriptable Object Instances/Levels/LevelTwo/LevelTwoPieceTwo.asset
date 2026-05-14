@@ -13,16 +13,28 @@ MonoBehaviour:
   m_Name: LevelTwoPieceTwo
   m_EditorClassIdentifier: Assembly-CSharp::GamePieces.PieceData
   tiles:
-  - relativeOffset: {x: 0, y: 0}
-    isOrigin: 1
-    type: 0
-    glue: 03000000
-    tileType: 14
-    spriteDirection: 3
-  - relativeOffset: {x: 1, y: 0}
+  - relativeOffset: {x: -1, y: -1}
     isOrigin: 0
     type: 0
     glue: 
     tileType: 14
+    spriteDirection: 3
+  - relativeOffset: {x: 0, y: -1}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 12
     spriteDirection: 1
+  - relativeOffset: {x: 0, y: 0}
+    isOrigin: 1
+    type: 0
+    glue: 
+    tileType: 10
+    spriteDirection: 1
+  - relativeOffset: {x: 0, y: 1}
+    isOrigin: 0
+    type: 0
+    glue: 
+    tileType: 14
+    spriteDirection: 0
   isSilentPiece: 0
