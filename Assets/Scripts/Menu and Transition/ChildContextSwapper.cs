@@ -2,8 +2,6 @@ using UnityEngine;
 
 public class ChildContextSwapper : MonoBehaviour
 {
-    
-
     // sets all children of this object to disabled, except for the one specified as "to"
     public void SwapChild(string to)
     {
