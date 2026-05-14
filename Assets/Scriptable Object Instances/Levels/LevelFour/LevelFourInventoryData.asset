@@ -10,12 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: eb026276bc4034a47ae225ab4b0f2f6d, type: 3}
-  m_Name: LevelThreeInventoryData
+  m_Name: LevelFourInventoryData
   m_EditorClassIdentifier: Assembly-CSharp::Inventory.InventoryData
-  pieces:
-  - {fileID: 11400000, guid: bf5c84d2076db443a9bc4d01458b5ced, type: 2}
-  - {fileID: 11400000, guid: ad97d731f8f9c4e6baa5cd99022292bf, type: 2}
-  - {fileID: 11400000, guid: 41f4eb047269947668d10891b7994d26, type: 2}
-  - {fileID: 11400000, guid: 14d3f1fe15f3640758f9f93bd8f04240, type: 2}
-  - {fileID: 11400000, guid: 51f6742a2700740cbaf9d55d1b2b634a, type: 2}
-  rowSize: 2
+  pieces: []
+  rowSize: 6
