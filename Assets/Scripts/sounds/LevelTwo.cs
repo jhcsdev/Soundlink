@@ -5,8 +5,8 @@ using UnityEngine;
 
 namespace TrackSounds
 {
-    [CreateAssetMenu(fileName = "LevelOne", menuName = "Sounds/LevelOne")]
-    public class LevelOne : TrackSound
+    [CreateAssetMenu(fileName = "LevelTwo", menuName = "Sounds/LevelTwo")]
+    public class LevelTwo : TrackSound
     {
         private static ChuckSubInstance myChuck;
 
@@ -17,7 +17,7 @@ namespace TrackSounds
             if (myChuck == null) Debug.Log("There is no Chuck!");
 
             myChuck.RunCode( string.Format( @"
-            // level one: kick, kick
+            // level two: pause, kick
             global Event playReference;
             global Event pauseReference;
             global float BPM;
@@ -46,9 +46,15 @@ namespace TrackSounds
                 release_time => now;
             }}
 
-            fun void kickPattern() {{
-                playKick(0.5);
-                playKick(0.5);  
+            fun void Rest(float beat_note) {{
+                0 => kick.gain;
+                beat_note * beat_dur => now;
+                1.0 => kick.gain;
+            }}
+
+            fun void kickPattern() {{ 
+                Rest(0.5);
+                playKick(0.5); 
             }}
 
             fun void beatLoop() {{
