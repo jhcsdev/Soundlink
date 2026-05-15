@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using GamePieces;
+using SceneTransition;
+using StreamEvents;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -12,6 +14,7 @@ namespace PuzzleGrid
     public class PuzzleGrid : PlayerInteractableGrid
     {
         [SerializeField] private Vector2 gridBottomLeftPosition = Vector2.zero;
+        [SerializeField] private FloatEventStream WonGameStream;
         [SerializeField] private float tileRealsize = 1f;
 
         private GridData gridData; 
@@ -155,13 +158,9 @@ namespace PuzzleGrid
             OnPiecePlacementSuccess?.Invoke(p);
             LogLinks();
 
-            // TODO: add game winning scene!
-            if (CheckIfGameWon()) {
-                Debug.Log("YOU HAVE WON THE GAME!");
-            }
-            else
+            if (CheckIfGameWon()) 
             {
-                Debug.Log("you have not yet won the game ... but good luck :D");
+                WonGameStream.Invoke(LevelLoader.instance.GetLevel());
             }
 
             ActivatePointerIfDeactivated();

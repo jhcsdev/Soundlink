@@ -31,7 +31,7 @@ namespace Inventory
         [SerializeField] private float focusUnfocusAnimationTime = 0.2f;
         [Header("Focus pointer animation")]
         [SerializeField] private float pointerMoveTime = 0.1f;
-        [SerializeField] private float pointerSquishTo = 0.8f;
+        [SerializeField] private float pointerSquishTo = 0.5f;
         [SerializeField] private float pointerNormalSize = 1f;
         [SerializeField] private float pointerVanishTime = 0.3f;
         [SerializeField] private float pointerReappearTime = 0.3f;
@@ -76,6 +76,7 @@ namespace Inventory
         Sequence activeFocusObjectMovementSequence;
         Sequence activeFailedMovement;
         Sequence takingPieceOut;
+        Sequence puttingPieceIn;
         Sequence activeScrollSequence;
         #endregion
 
@@ -148,10 +149,8 @@ namespace Inventory
                     ).SetAutoKill(false).Pause();
             }
 
-            if (takingPieceOut != null && takingPieceOut.IsActive())
-                takingPieceOut.OnComplete(() => unfocusSequence.Restart());
-            else
-                unfocusSequence.Restart();
+            if (takingPieceOut != null && takingPieceOut.IsActive()) takingPieceOut.OnComplete(() => unfocusSequence.Restart());
+            else unfocusSequence.Restart();
         }
 
         void FocusLocationChanged(Vector2Int direction, Vector2Int newFocus)
@@ -163,8 +162,8 @@ namespace Inventory
                 return;
             }
 
-            if (activeFocusObjectMovementSequence != null)
-                activeFocusObjectMovementSequence.Complete();
+            if (activeFocusObjectMovementSequence != null && activeFocusObjectMovementSequence.active) activeFocusObjectMovementSequence.Complete();
+            if (activeFailedMovement != null && activeFailedMovement.active) activeFailedMovement.Complete();
 
             pointerObject.localScale = Vector3.one * pointerNormalSize;
 
@@ -203,7 +202,8 @@ namespace Inventory
 
         void FocusLocationFailedChange(Vector2Int directionFailed)
         {
-            if (activeFailedMovement != null) activeFailedMovement.Complete();
+            if (activeFocusObjectMovementSequence != null && activeFocusObjectMovementSequence.active) activeFocusObjectMovementSequence.Complete();
+            if (activeFailedMovement != null && activeFailedMovement.active) activeFailedMovement.Complete();
 
             pointerObject.localScale = Vector3.one * pointerNormalSize;
 
@@ -257,7 +257,7 @@ namespace Inventory
 
             RectTransform canvasPieceTransform = (RectTransform)piece.GetCanvasPiece().transform;
             canvasPieceTransform.SetParent(_rowObjects[spot.y], false);
-            canvasPieceTransform.localScale = Vector2.one * pieceScalingMultiplier;
+            canvasPieceTransform.localScale = Vector2.zero;
 
             float pieceAnchorX = (spot.x + 0.5f) / columnsDisplayedAtOnce;
             canvasPieceTransform.anchorMin = canvasPieceTransform.anchorMax = new(pieceAnchorX, 0.5f);
@@ -270,6 +270,10 @@ namespace Inventory
                 pointerObject.transform.position = _slotAnchors[Vector2Int.zero].transform.position;
                 firstFocus = false;
             }
+            
+            puttingPieceIn = DOTween.Sequence().Append(
+                canvasPieceTransform.DOScale(Vector2.one * pieceScalingMultiplier, pointerScaleDownTime)
+            ).Play();
         }
 
         void PieceTakenOut(Piece piece)
@@ -286,10 +290,8 @@ namespace Inventory
                 break;
             }
 
-            if (found)
-                _pieceAtPosition.Remove(removedKey);
-            else
-                Debug.LogWarning($"PieceTakenOut: canvas piece for '{piece.name}' not found in _pieceAtPosition");
+            if (found) _pieceAtPosition.Remove(removedKey);
+            else Debug.LogWarning($"PieceTakenOut: canvas piece for '{piece.name}' not found in _pieceAtPosition");
 
             if (takingPieceOut != null) takingPieceOut.Complete();
 
