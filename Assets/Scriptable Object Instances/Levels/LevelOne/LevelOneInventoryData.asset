@@ -15,4 +15,4 @@ MonoBehaviour:
   pieces:
   - {fileID: 11400000, guid: fbbbf8a5b8a644a50830a71c223a66f6, type: 2}
   - {fileID: 11400000, guid: f41976c835f7a4900a47a5212dbdb253, type: 2}
-  rowSize: 6
+  rowSize: 2

@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using DG.Tweening;
 using GamePieces;
+using SceneTransition;
 using UnityEngine;
 
 namespace PuzzleGrid
@@ -124,11 +125,29 @@ namespace PuzzleGrid
 
         void InitializeGrid()
         {
-            Vector3 halfway = minimumKnownPosition + (maximumKnownPosition - minimumKnownPosition) / 2;
-            cam.transform.position = new(halfway.x + camOffset.x, halfway.y + camOffset.y, cam.transform.position.z); 
+            Vector4 screenFit = LevelLoader.instance.GetGridFitShape();
+            
+            Vector3 gridCenter = minimumKnownPosition + (maximumKnownPosition - minimumKnownPosition) / 2f;
+            Vector2 gridSize = maximumKnownPosition - minimumKnownPosition;
+            Vector2 fitSize = new(screenFit.y - screenFit.x, screenFit.w - screenFit.z);
 
-            float distance = maximumKnownPosition.y - minimumKnownPosition.y;
-            cam.orthographicSize = distance * (camZoomRatioMult + (distance > 10 ? 0 : 1/distance)) / cam.aspect;
+            float heightSize = gridSize.y / (2f * fitSize.y);
+            float widthSize  = gridSize.x  / (2f * fitSize.x * cam.aspect);
+
+            cam.orthographicSize = Mathf.Max(heightSize, widthSize);
+
+            // center of where grid should be in screen coords
+            float vcx = (screenFit.x + screenFit.y) / 2f; 
+            float vcy = (screenFit.z + screenFit.w) / 2f;
+
+            // orthographic size is half the height "size" of the camera in world coords
+            float worldHalfW = cam.orthographicSize * cam.aspect;
+            float worldHalfH = cam.orthographicSize;
+
+            float camX = gridCenter.x - (vcx - 0.5f) * 2f * worldHalfW;
+            float camY = gridCenter.y - (vcy - 0.5f) * 2f * worldHalfH;
+
+            cam.transform.position = new Vector3(camX, camY, cam.transform.position.z);
         }
 
         #endregion
@@ -192,43 +211,6 @@ namespace PuzzleGrid
                         gridPointer.DOScale(Vector3.one * pointerNormalSize, 0)
                     ).Play();
             }
-
-            Vector2 gridTileCount = maximumKnownTilePosition + Vector2.one;
-
-            Vector2 tileSize = new(
-                gridTileCount.x > 1 ? (maximumKnownPosition.x - minimumKnownPosition.x) / (gridTileCount.x - 1) : 1f,
-                gridTileCount.y > 1 ? (maximumKnownPosition.y - minimumKnownPosition.y) / (gridTileCount.y - 1) : 1f
-            );
-
-            Vector2 focusWorldPos = toTile.transform.position;
-            Vector2 gridCenter = (minimumKnownPosition + maximumKnownPosition) * 0.5f;
-
-            float targetX, targetY;
-
-            if (gridTileCount.x <= displayGridTilesX)
-                targetX = gridCenter.x;
-            else
-            {
-                float halfDisplayX = (displayGridTilesX * 0.5f) * tileSize.x;
-                targetX = Mathf.Clamp(focusWorldPos.x, minimumKnownPosition.x + halfDisplayX, maximumKnownPosition.x - halfDisplayX);
-            }
-
-            if (gridTileCount.y <= displayGridTilesY)
-                targetY = gridCenter.y;
-            else
-            {
-                float halfDisplayY = (displayGridTilesY * 0.5f) * tileSize.y;
-                targetY = Mathf.Clamp(focusWorldPos.y, minimumKnownPosition.y + halfDisplayY, maximumKnownPosition.y - halfDisplayY);
-            }
-
-            Vector3 targetPos = new(targetX + camOffset.x, targetY + camOffset.y, cam.transform.position.z);
-
-            camMoveSequence?.Kill();
-            camMoveSequence = DOTween.Sequence()
-                .Append(
-                    cam.transform.DOMove(targetPos, camMoveTime)
-                        .SetEase(Ease.OutQuad)
-                ).Play();
         }
 
         void FocusPositionFailedChange(Vector2Int direction)

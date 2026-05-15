@@ -7,6 +7,7 @@ using PuzzleGrid;
 using UnityEngine;
 using TrackSounds;
 using ChuckChuckChuck;
+using SceneTransition;
 
 namespace GridLinks
 {
@@ -37,7 +38,6 @@ namespace GridLinks
             else Destroy(gameObject);
 
             puzzleGrid = GetComponent<PuzzleGrid.PuzzleGrid>();
-            if (beatsInLoop == 0) Debug.LogWarning("loop beats 0 in link playback");
             secondsPerBeat = 60f / bpm / 4f;
         }
 
@@ -104,6 +104,7 @@ namespace GridLinks
 
             // initiate chuck subsinstance
             myChuck = ChuckManager.Instance.chuckSubInstance;
+            beatsInLoop = LevelLoader.instance.GetBeatsInLoop();
 
             // must declare Chuck events before creating listeners
             // this is to coordinate reference beat playback
@@ -263,7 +264,5 @@ namespace GridLinks
 
         // NOTE: if wanted to reset link playback, just move curBeat to global and set equal to one.
         public void EnableSoundPlayback() => soundPlaybackEnabled = true;
-
-        public int GetLoopSize() => beatsInLoop;
     }
 }
