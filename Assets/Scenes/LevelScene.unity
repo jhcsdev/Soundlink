@@ -2219,7 +2219,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GridLinks.LinkPlaybackManager
   bpm: 80
-  beatsInLoop: 16
+  beatsInLoop: 8
   referenceSound: {fileID: 11400000, guid: 0246c2badd3cb4fc9a4ec782c1f011de, type: 2}
   soundPlaybackEnabled: 1
 --- !u!1 &1877936224
