@@ -285,6 +285,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 589c6ca68d087498ea483203f2f4cfce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LevelLoader
+  OnLevelCompleted: {fileID: 11400000, guid: 4ae1725c93056447e855df663a235b1f, type: 2}
   activeLevel: {fileID: 11400000, guid: 13ef4f53ccccd40d1b5c0837f69ee124, type: 2}
 --- !u!4 &51757165
 Transform:
