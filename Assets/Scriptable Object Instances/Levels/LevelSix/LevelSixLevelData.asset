@@ -1,0 +1,16 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c6efc56cd2cec479c932faaddc3721ed, type: 3}
+  m_Name: LevelSixLevelData
+  m_EditorClassIdentifier: Assembly-CSharp::LevelData
+  grid: {fileID: 11400000, guid: 944446d4791194b92857faeb35ad71dc, type: 2}
+  inventory: {fileID: 11400000, guid: 6dad5cfa5e9034311b4e4334baea07c4, type: 2}
