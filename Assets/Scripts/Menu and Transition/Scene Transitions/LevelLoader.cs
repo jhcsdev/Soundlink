@@ -32,6 +32,16 @@ namespace SceneTransition
             activeLevel = null;
             AsyncSceneLoader.Instance.LoadMainScene();
         }
+        public Vector4 GetGridFitShape()
+        {
+            if (activeLevel == null) { Debug.LogError("Level Loader needs an active level."); return Vector4.negativeInfinity; } 
+            return activeLevel.fitGridBetween;
+        }
+        public int GetBeatsInLoop()
+        {
+            if (activeLevel == null) { Debug.LogError("Level Loader needs an active level."); return 0; } 
+            return activeLevel.numBeatsInLoop;
+        }
 
         public GridData GetGridData()
         {
