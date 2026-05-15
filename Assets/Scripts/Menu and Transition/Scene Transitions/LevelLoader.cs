@@ -1,16 +1,18 @@
 using Inventory;
 using PuzzleGrid;
+using StreamEvents;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace SceneTransition
 {
     public class LevelLoader : MonoBehaviour
     {
         public static LevelLoader instance;
+        [SerializeField] private FloatEventStream OnLevelCompleted;
 
         [SerializeField, Tooltip("The level that will be loaded during OnEnable(). Note that, from the menu scene, this gets set at runtime, and the object carries over between scenes. For testing in LevelScene, you should set the value here.")]
         private LevelData activeLevel;
+        private int furthestCompletedLevel = 0;
 
         void Awake()
         {
@@ -21,6 +23,22 @@ namespace SceneTransition
             }
             else Destroy(gameObject);
         }
+
+        void OnEnable()
+        {
+            OnLevelCompleted.Sub(LevelComplete);
+        }
+        void OnDisable()
+        {
+            OnLevelCompleted.Unsub(LevelComplete);
+        }
+
+        private void LevelComplete(float what)
+        {
+            if (what > furthestCompletedLevel) furthestCompletedLevel = (int)what;
+            else return;
+        }
+        public int GetFurthestCompleteLevel() => furthestCompletedLevel;
 
         public void LoadLevel(LevelData what)
         {
