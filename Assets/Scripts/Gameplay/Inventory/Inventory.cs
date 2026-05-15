@@ -21,6 +21,7 @@ namespace Inventory
 
         private InventoryData inventoryData;
         private Dictionary<Vector2Int, Piece> piecesLookup;
+        private int maxY;
 
         void OnEnable()
         {
@@ -99,6 +100,8 @@ namespace Inventory
 
             Vector2Int emptyLocation = FindOpenPosition();
             piecesLookup[emptyLocation] = piece;
+            if (emptyLocation.y >= maxY) maxY = emptyLocation.y;
+            else focusPosition = emptyLocation;
 
             OnPiecePutIntoInventory?.Invoke(piece, emptyLocation);
             piece.InventoryMode();
@@ -110,9 +113,6 @@ namespace Inventory
         {
             if (direction == Vector2.zero) return Vector2Int.zero;
             direction.y *= -1;
-
-            int maxY = 0;
-            foreach (var key in piecesLookup.Keys) if (key.y > maxY) maxY = key.y;
 
             Vector2Int candidate = focusPosition + direction;
 
