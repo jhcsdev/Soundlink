@@ -34,7 +34,7 @@ namespace SceneTransition
         }
         public Vector4 GetGridFitShape()
         {
-            if (activeLevel == null) { Debug.LogError("Level Loader needs an active level."); return Vector4.negativeInfinity; } 
+            if (activeLevel == null) { Debug.LogError("Level Loader needs an active level."); return Vector4.one; } 
             return activeLevel.fitGridBetween;
         }
         public int GetBeatsInLoop()

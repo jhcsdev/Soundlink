@@ -127,32 +127,20 @@ namespace PuzzleGrid
         {
             Vector4 screenFit = LevelLoader.instance.GetGridFitShape();
             
-            // Grid dimensions and center in world space
             Vector3 gridCenter = minimumKnownPosition + (maximumKnownPosition - minimumKnownPosition) / 2f;
-            float gridWidth  = maximumKnownPosition.x - minimumKnownPosition.x;
-            float gridHeight = maximumKnownPosition.y - minimumKnownPosition.y;
+            Vector2 gridSize = maximumKnownPosition - minimumKnownPosition;
+            Vector2 fitSize = new(screenFit.y - screenFit.x, screenFit.w - screenFit.z);
 
-            // screenFit = (xmin, xmax, ymin, ymax) in viewport space [0, 1]
-            float fitW = screenFit.y - screenFit.x;  // fraction of screen width  available
-            float fitH = screenFit.w - screenFit.z;  // fraction of screen height available
+            float heightSize = gridSize.y / (2f * fitSize.y);
+            float widthSize  = gridSize.x  / (2f * fitSize.x * cam.aspect);
 
-            // Orthographic size needed to fit the grid on each axis within the fit region.
-            // Full screen height (world) = 2 * orthographicSize
-            // Full screen width  (world) = 2 * orthographicSize * aspect
-            float sizeForHeight = gridHeight / (2f * fitH);
-            float sizeForWidth  = gridWidth  / (2f * fitW * cam.aspect);
+            cam.orthographicSize = Mathf.Max(heightSize, widthSize);
 
-            // Use the larger value so the grid is fully visible (letter/pillarbox the other axis)
-            cam.orthographicSize = Mathf.Max(sizeForHeight, sizeForWidth);
-
-            // Center of the screenFit rectangle in viewport space
-            float vcx = (screenFit.x + screenFit.y) / 2f;  // 0.5 = screen center
+            // center of where grid should be in screen coords
+            float vcx = (screenFit.x + screenFit.y) / 2f; 
             float vcy = (screenFit.z + screenFit.w) / 2f;
 
-            // A viewport point (vcx, vcy) is offset from screen center (0.5, 0.5) by:
-            //   dx = (vcx - 0.5) * fullScreenWorldWidth
-            //   dy = (vcy - 0.5) * fullScreenWorldHeight
-            // The camera must sit opposite that offset so gridCenter lands on (vcx, vcy).
+            // orthographic size is half the height "size" of the camera in world coords
             float worldHalfW = cam.orthographicSize * cam.aspect;
             float worldHalfH = cam.orthographicSize;
 

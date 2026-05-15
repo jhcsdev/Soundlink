@@ -14,3 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LevelData
   grid: {fileID: 11400000, guid: 15b83c504f6e84ecfb06e8dcd4db8318, type: 2}
   inventory: {fileID: 11400000, guid: 10cd1546c061842b882c07220511bc8a, type: 2}
+  level: 4
+  numBeatsInLoop: 8
+  fitGridBetween: {x: 0.13, y: 0.57, z: 0.2, w: 0.8}
