@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb026276bc4034a47ae225ab4b0f2f6d, type: 3}
+  m_Name: LevelFourInventoryData
+  m_EditorClassIdentifier: Assembly-CSharp::Inventory.InventoryData
+  pieces:
+  - {fileID: 11400000, guid: de1eda36e10524714839410e294e83f0, type: 2}
+  - {fileID: 11400000, guid: bb710c25804424e2ab752b81d5caa3ac, type: 2}
+  - {fileID: 11400000, guid: f0927b29dae9546d68244ab821108b34, type: 2}
+  - {fileID: 11400000, guid: e8e7bef1530cd41b587368def500e0e0, type: 2}
+  - {fileID: 11400000, guid: 44db9c94d0c554871a1873904c9752bd, type: 2}
+  rowSize: 2
