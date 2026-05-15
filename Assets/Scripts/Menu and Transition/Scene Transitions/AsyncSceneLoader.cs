@@ -23,15 +23,23 @@ namespace SceneTransition
         private Sequence fadeToBlackSequence;
         #endregion
 
+        public void LoadMainScene()
+        {
+            StartCoroutine(AsyncLoad("MainScene"));
+        }
+        public void LoadLevelScene()
+        {
+            StartCoroutine(AsyncLoad("LevelScene"));
+        }
 
         void Awake()
         {
             if (Instance == null) { 
                 Instance = this; 
-                DontDestroyOnLoad(this); 
+                // DontDestroyOnLoad(this); 
                 DontDestroyOnLoad(transitionScreenBackdrop.transform.root.gameObject); // the root of the transition canvas
             }
-            else Destroy(gameObject);
+            else Destroy(transform.root.gameObject);
         }
 
         void OnEnable()

@@ -16,6 +16,7 @@ namespace Player
         [Header("grids")]
         [SerializeField] private PlayerInteractableGrid inventoryGrid;
         [SerializeField] private PlayerInteractableGrid puzzleGrid;
+        [SerializeField] private FloatEventStream OnGameWonStream;
         private PlayerInteractableGrid currentGrid;
 
         private bool IsCurrentGridInventory() => currentGrid == inventoryGrid;
@@ -35,6 +36,7 @@ namespace Player
         private Piece referencedPiece = null;
 
         private bool actionsAllowed = true;
+        private bool pauseAllowed = true;
 
         private void Awake()
         {
@@ -44,7 +46,9 @@ namespace Player
         void OnEnable()
         {
             OnGamePaused.Sub(PauseUpdated);
+            OnGameWonStream.Sub(GameWon);
         }
+        void GameWon(float _) => pauseAllowed = false;
 
         void OnDisable()
         {
@@ -174,11 +178,11 @@ namespace Player
 
         private void OnEscape(InputAction.CallbackContext ctx)
         {
+            if (!pauseAllowed) return;
             OnMenuPauseStream?.Invoke();
         }
         private void PauseUpdated(float to)
         {
-            Debug.Log("Pause updated!" + to);
             if (to == 0) actionsAllowed = true;
             else actionsAllowed = false;
         }

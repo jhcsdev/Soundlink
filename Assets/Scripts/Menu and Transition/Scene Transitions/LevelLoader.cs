@@ -25,12 +25,12 @@ namespace SceneTransition
         public void LoadLevel(LevelData what)
         {
             activeLevel = what;
-            StartCoroutine(AsyncSceneLoader.Instance.AsyncLoad("LevelScene"));
+            AsyncSceneLoader.Instance.LoadLevelScene();
         }
         public void CloseLevel()
         {
             activeLevel = null;
-            StartCoroutine(AsyncSceneLoader.Instance.AsyncLoad("MainScene"));
+            AsyncSceneLoader.Instance.LoadMainScene();
         }
 
         public GridData GetGridData()
@@ -47,6 +47,11 @@ namespace SceneTransition
             if (activeLevel.inventory == null) { Debug.LogError("Level loader has level, but is missing the inventory data"); return null; }
 
             return activeLevel.inventory;
+        }
+        public float GetLevel()
+        {
+            if (activeLevel == null) { Debug.LogError("Level Loader needs an active level."); return -1; } 
+            return activeLevel.level;
         }
     }
 }
