@@ -11,4 +11,8 @@ public class LevelData : ScriptableObject
 {
     public GridData grid;
     public InventoryData inventory;
+    public int level;
+    public int numBeatsInLoop;
+    [Tooltip("Xmin, Xmax, Ymin, Ymax -- in SCREEN SPACE")]
+    public Vector4 fitGridBetween;
 }

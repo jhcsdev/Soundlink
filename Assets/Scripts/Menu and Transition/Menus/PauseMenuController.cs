@@ -51,7 +51,7 @@ namespace Menus
 
         public void ToMainMenuPressed()
         {
-            StartCoroutine(AsyncSceneLoader.Instance.AsyncLoad("MainScene"));
+            AsyncSceneLoader.Instance.LoadMainScene();
         }
     }
 
