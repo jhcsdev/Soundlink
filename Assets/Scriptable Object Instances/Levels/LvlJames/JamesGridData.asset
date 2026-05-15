@@ -20,17 +20,20 @@ MonoBehaviour:
     playsSound: {fileID: 11400000, guid: 7d7f630fb01264a42bc4e7a9229cd792, type: 2}
     soundID: 0
     baseColor: {r: 0.7529412, g: 0.4392157, b: 0.7921569, a: 1}
-    pulseColor: {r: 1, g: 0.61960787, b: 0.9764706, a: 1}
+    pulseColor: {r: 1.304119, g: 0.80804235, b: 1.2734337, a: 1}
+    borderColor: {r: 1.2070307, g: 0, b: 1.4980392, a: 1}
   - startPos: {x: 5, y: 3}
     endPos: {x: 3, y: 2}
     playsSound: {fileID: 11400000, guid: e289adf0955214fb78d177916d62e51e, type: 2}
     soundID: 1
     baseColor: {r: 0.24705882, g: 0.6039216, b: 0.24705882, a: 1}
-    pulseColor: {r: 0.49803922, g: 1, b: 0.4745098, a: 1}
+    pulseColor: {r: 0.6495024, g: 1.304119, b: 0.6188173, a: 1}
+    borderColor: {r: 0, g: 1.6055588, b: 0.30533722, a: 1}
   - startPos: {x: 2, y: 0}
     endPos: {x: 2, y: 4}
     playsSound: {fileID: 11400000, guid: 708bdced4d376455e88133cd869d777f, type: 2}
     soundID: 2
     baseColor: {r: 0.8207547, g: 0.44206822, b: 0.17421682, a: 1}
     pulseColor: {r: 1, g: 0.5361921, b: 0.2028302, a: 1}
+    borderColor: {r: 1.7411011, g: 0.75802785, b: 0.17246756, a: 1}
   currentSoundID: 0

@@ -1,6 +1,7 @@
 
 using System;
 using GamePieces;
+using StreamEvents;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -9,6 +10,9 @@ namespace Player
     [RequireComponent(typeof(PlayerInputWrapper))]
     public class PlayerSelectionMovement : MonoBehaviour
     {
+        [Header("events")]
+        [SerializeField] private BasicEventStream OnMenuPauseStream;
+        [SerializeField] private FloatEventStream OnGamePaused;
         [Header("grids")]
         [SerializeField] private PlayerInteractableGrid inventoryGrid;
         [SerializeField] private PlayerInteractableGrid puzzleGrid;
@@ -30,9 +34,21 @@ namespace Player
 
         private Piece referencedPiece = null;
 
+        private bool actionsAllowed = true;
+
         private void Awake()
         {
             playerInputWrapper = GetComponent<PlayerInputWrapper>();
+        }
+
+        void OnEnable()
+        {
+            OnGamePaused.Sub(PauseUpdated);
+        }
+
+        void OnDisable()
+        {
+            OnGamePaused.Unsub(PauseUpdated);
         }
 
         void Start()
@@ -45,9 +61,10 @@ namespace Player
             SetCurrentGrid(inventoryGrid);
         }
 
+
         private void Update()
         {
-            if (currentGrid == null) return;
+            if (currentGrid == null || !actionsAllowed) return;
 
             Vector2 inputDirectionFloat = playerInputWrapper.MOVE.ReadValue<Vector2>();
             // rn the below just omits diagonal direction
@@ -98,6 +115,8 @@ namespace Player
         /// <param name="ctx"></param>
         private void OnSelect(InputAction.CallbackContext ctx)
         {   
+            if (!actionsAllowed) return;
+
             if (IsCurrentGridInventory()) // grabbing piece from inventory
             {
                 referencedPiece = currentGrid.TakeAtFocusPosition();
@@ -131,6 +150,8 @@ namespace Player
         /// <param name="ctx"></param>
         private void OnInventoryButton(InputAction.CallbackContext ctx)
         {   
+            if (!actionsAllowed) return;
+
             if (!IsCurrentGridPuzzleGrid()) return;
 
             if (referencedPiece != null) 
@@ -144,6 +165,8 @@ namespace Player
 
         private void OnGrid(InputAction.CallbackContext ctx)
         {
+            if (!actionsAllowed) return;
+
             if (!IsCurrentGridInventory()) return;
 
             SwapGrid(); 
@@ -151,11 +174,19 @@ namespace Player
 
         private void OnEscape(InputAction.CallbackContext ctx)
         {
-            // todo:: pause screen
+            OnMenuPauseStream?.Invoke();
+        }
+        private void PauseUpdated(float to)
+        {
+            Debug.Log("Pause updated!" + to);
+            if (to == 0) actionsAllowed = true;
+            else actionsAllowed = false;
         }
 
         private void OnRotate(InputAction.CallbackContext ctx)
         {
+            if (!actionsAllowed) return;
+
             if (referencedPiece == null) return;
 
             referencedPiece.RotatePieceClockwise();
