@@ -454,6 +454,7 @@ namespace GamePieces
         /// <param name="isFirst">If true, rebuilds the pulse order from startTile</param>
         public void LinkPulse(Color color, PieceTile startTile, bool isFirst, float secondsPerBeat)
         {
+            ChangeMaterialFillOrigin(startTile.transform.position);
             if (isFirst)
             {
                 // pulseWaves = ExpandWavesWithGapBeats(BuildPulseOrder(startTile));
@@ -464,31 +465,24 @@ namespace GamePieces
             float progressThrough = (pulseProgress / (float) pieceTiles.Count) * maximumPulseDistance;
 
             if (pulseSequence != null && pulseSequence.active) pulseSequence.Kill();
-            pulseSequence = DOTween.Sequence().Append(
-                pieceMaterial.DOFloat(progressThrough, FillAmountID, secondsPerBeat).SetEase(pulseEase)
-            ).Pause();
+            pulseSequence = DOTween.Sequence();
 
             if(pulseProgress == pieceTiles.Count) {
-                Debug.Log("adding !");
+                Debug.Log("LAST");
                 pulseSequence.Append(
                     pieceMaterial.DOFloat(maximumPulseDistance+materialFillFadeDistance+1, FillAmountID, pulseOneUnitTime)
-                );
+                ).Pause();
+            } else
+            {
+                pulseSequence.Append(
+                    pieceMaterial.DOFloat(progressThrough, FillAmountID, secondsPerBeat).SetEase(pulseEase)
+                ).Pause();
             }
 
             if (pieceJoinLinkColorSequence != null && pieceJoinLinkColorSequence.active)
             {
-                pieceJoinLinkColorSequence.OnComplete(() => pulseSequence?.Play());
+                // pieceJoinLinkColorSequence.OnComplete(() => pulseSequence?.Play());
             } else pulseSequence.Play();
-
-            // if (pulseProgress >= pulseWaves.Count) Debug.LogWarning("Pulse progress exceeds pulseWaves.Count.");
-            // else
-            // {
-            //     if (pulseWaves[pulseProgress] == null) return;
-            //     foreach (PieceTile pt in pulseWaves[pulseProgress])
-            //     {
-            //         pt.ColorPulse(color, 2);
-            //     }
-            // }
         }
         #endregion
         #endregion

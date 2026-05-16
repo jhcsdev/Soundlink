@@ -361,6 +361,7 @@ namespace PuzzleGrid
         /// <returns>Newly-created link</returns>
         public GridLink CreateEndLink(Piece piece, PieceTile endTile, GridTile gridTile)
         {
+            Debug.Log("END LINK");
             GridLink newLink = new(); 
             return newLink.SetEndPlacementData(gridTile.GetLinkPlacementData()).AddPiece(piece, endTile, null, null, false);
         }
@@ -459,7 +460,6 @@ namespace PuzzleGrid
                 numCompletedTracks += link.IsLinkComplete() ? 1 : 0;
             }
 
-            Debug.Log($"-- checking game state! -- \n\t completed tracks: {numCompletedTracks} \n\t total in grid: {totalTracksInGrid}");
             return numCompletedTracks == totalTracksInGrid;
         }
         private bool CanPieceBePlaced(Piece p)

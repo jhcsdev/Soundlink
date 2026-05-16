@@ -158,7 +158,6 @@ namespace PuzzleGrid
             List<LinkData> otherPieces = other.GetPieces();
 
             // re-orient otherPieces so that "pivot" is always at the start of the otherPieces list. 
-            // todo:: (thought) we can allow connecting to the middle of an existing piece by splitting "other"; however, this adds some other edge cases that we'd need to think through logically...
             int otherPivotIndex = -1;
             for (int i = 0; i < otherPieces.Count; i++)
             {
@@ -191,16 +190,18 @@ namespace PuzzleGrid
             // in this case, "this" should go after "other"  (other = Start, this = End)
             else if (other.HasStartData() || this.HasEndData())
             {
-                Debug.Log("Other has start data, and this has end data!");
+                Debug.Log("Other has start data or this has end data!");
 
                 otherPieces.Reverse();
                 otherPieces[otherPieces.Count - 1].endTile = otherPivotTile;
 
                 LinkData thisPivotLD = pieces.FirstOrDefault(ld => ld.piece == thisPivot);
-                if (thisPivotLD != null)
+
+                if (thisPivotLD != null) 
+                {
                     thisPivotLD.startTile = thisPivotTile;
-                else
-                    Debug.LogWarning("MergeLink (branch 2): could not find thisPivot LinkData to set startTile.");
+                }
+                else Debug.LogWarning("MergeLink (branch 2): could not find thisPivot LinkData to set startTile.");
 
                 otherPieces.AddRange(pieces);
                 pieces = otherPieces;
@@ -243,7 +244,6 @@ namespace PuzzleGrid
             {
                 if (pieces[i].piece != at) continue;
 
-
                 if (i == 0 || i == pieces.Count - 1) 
                 {
                     Debug.Log($"Split link - edge case (index {i}, {pieces.Count} pieces). Removing piece.");
@@ -284,6 +284,12 @@ namespace PuzzleGrid
         /// <returns>this if basedOn is null or successfully added piece; null if could not find basedOn</returns>
         public GridLink AddPiece(Piece toAdd, PieceTile toAddTile, Piece basedOn, PieceTile basedOnTile, bool creatingStartLink = false)
         {
+            if (IsLinkComplete())
+            {
+                Debug.Log("cant add piece cause link is complete already");
+                return this;
+            }
+
             if (basedOn == null) { 
                 Debug.Log($"Adding piece to {this} without basedOn. Ensure order!");
                 pieces.Add(
@@ -357,7 +363,7 @@ namespace PuzzleGrid
 
         private void ForceRejoinOnPieces(LinkPlacementData associatedData)
         {
-            Debug.Log("would be rejoining...");
+            // Debug.Log("would be rejoining...");
             // pieces.ForEach(item => item.piece.JoinLink(HasStartData() ? startPlacementData : endPlacementData));
         }
         private void LostLinkData()
