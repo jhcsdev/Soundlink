@@ -19,6 +19,8 @@ namespace TrackSounds
             global float BPM;
             global Event playMetronome;
             global Event pauseMetronome;
+            global Event metronomeDownbeat;
+            global Event playMetronomeSingleSound;
 
             // metronome
             SinOsc click => ADSR envClick => Gain clickGain => dac;
@@ -64,6 +66,7 @@ namespace TrackSounds
 
             // play whole meausre
             fun void playMeasure() {{
+                metronomeDownbeat.broadcast();
                 playClick(1);
                 playClick(0);
                 playClick(0);
@@ -79,6 +82,15 @@ namespace TrackSounds
                     4.0 * beat_dur => now;  
                 }}
             }}
+
+            fun void singleSoundLoop() {{
+                while (true) {{
+                    playMetronomeSingleSound => now;
+                    spork ~ playClick(0);
+                }}
+            }}
+
+            spork ~ singleSoundLoop();
 
             while (true) {{
                 playMetronome => now;

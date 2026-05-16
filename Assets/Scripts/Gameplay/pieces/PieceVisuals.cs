@@ -469,7 +469,7 @@ namespace GamePieces
             ).Pause();
 
             if(pulseProgress == pieceTiles.Count) {
-                Debug.Log("adding !");
+                // Debug.Log("adding !");
                 pulseSequence.Append(
                     pieceMaterial.DOFloat(maximumPulseDistance+materialFillFadeDistance+1, FillAmountID, pulseOneUnitTime)
                 );

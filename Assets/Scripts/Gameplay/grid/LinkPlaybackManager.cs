@@ -8,6 +8,7 @@ using UnityEngine;
 using TrackSounds;
 using ChuckChuckChuck;
 using SceneTransition;
+using UnityEditor.XR;
 
 namespace GridLinks
 {
@@ -30,6 +31,7 @@ namespace GridLinks
         private ChuckSubInstance myChuck;
         private int curBeat = 1;
         private float metronomeStartTime = -1f;
+        private bool isMetronomePlaying = false;
 
         #region unity functions
         void Awake()
@@ -111,7 +113,13 @@ namespace GridLinks
             myChuck.RunCode( string.Format( @"
                 global Event playReference;
                 global Event pauseReference;
+                global Event playMetronome;
+                global Event pauseMetronome;
             "));
+
+            // listen to metronome events to keep track of metronome state
+            myChuck.StartListeningForChuckEvent("playMetronome", OnPlayMetronome);
+            myChuck.StartListeningForChuckEvent("pauseMetronome", OnPauseMetronome);
 
             // intialize those events 
             referenceSound?.PlaySound();
@@ -125,10 +133,21 @@ namespace GridLinks
         }
         #endregion
 
+        private void OnPlayMetronome() {
+            isMetronomePlaying = true;
+        }
+
+        private void OnPauseMetronome() {
+            isMetronomePlaying = false;
+        }
+
+        // TODO: what happens if the metronome stops and the reference starts up?
+
         private IEnumerator PlaybackLoop()
         {
             float nextBeatTime = Time.time;
             WaitUntil untilSchedulerHasSounds = new(DoesSchedulerHaveAnyScheduledBeat);
+            bool didLastHaveBeat = false;
 
             while (true)
             {
@@ -143,49 +162,43 @@ namespace GridLinks
 
                 yield return wait;
 
-                if (!DoesSchedulerHaveAnyScheduledBeat()) {
-                    Debug.Log("No sounds in scheduler!");
-                    yield return untilSchedulerHasSounds;
-                    curBeat = 1;
+                // broadcast at the kick level, but that's going to need logic
+                if ((curBeat % 2) - 1 == 0)
+                {
+                    Debug.Log("playMetronomeSound!");
+                    Debug.Log($"CurBEAT: {curBeat}");
+                    myChuck.BroadcastEvent("playMetronomeSingleSound");   
                 }
 
                 nextBeatTime = Time.time + secondsPerBeat;
+                // curBeat += 1;
 
                 if (curBeat > beatsInLoop) { 
                     curBeat = 1; 
                 }
 
-                foreach (var key in knownLinks.Keys)
-                {
-                    if (knownLinks[key].scheduledBeats.Count < curBeat) continue; // only play when there is actually links to play
-                    var currentLinkBeat = knownLinks[key].scheduledBeats[curBeat - 1];
-                    // Debug.Log($"{currentLinkBeat.indexInLink}, {currentLinkBeat.firstInPiece}, {curBeat}");
+                if (DoesSchedulerHaveAnyScheduledBeat()) {
+                    // Debug.Log("No sounds in scheduler!");
+                    // yield return untilSchedulerHasSounds;
+                    if (!didLastHaveBeat)
+                    {
+                        didLastHaveBeat = true;
+                        curBeat = 1;
+                    }
+                    // didLastHaveBeat = false;
+                    foreach (var key in knownLinks.Keys)
+                    {
+                        if (knownLinks[key].scheduledBeats.Count < curBeat) continue; // only play when there is actually links to play
+                        var currentLinkBeat = knownLinks[key].scheduledBeats[curBeat - 1];
 
-                    knownLinks[key].link.IndexPlaySound(
-                        currentLinkBeat.indexInLink, 
-                        currentLinkBeat.firstInPiece,
-                        secondsPerBeat,
-                        currentLinkBeat.silent
-                    );
-
-                    // while(scheduleIndexTracker[key] < knownLinks[key].scheduledBeats.Count && knownLinks[key].scheduledBeats[scheduleIndexTracker[key]].beat <= curBeat)
-                    // {
-                    //     if (knownLinks[key].scheduledBeats[scheduleIndexTracker[key]].beat == curBeat)
-                    //     {
-                    //         Debug.Log($"Playing sound type: {knownLinks[key].link.GetType().Name}");
-                    //         knownLinks[key].link.IndexPlaySound(
-                    //             scheduleIndexTracker[key], 
-                    //             knownLinks[key].scheduledBeats[scheduleIndexTracker[key]].silent
-                    //         );
-                    //     }
-
-                    //     scheduleIndexTracker[key] += 1;
-                    //     if(!knownLinks[key].link.HasStartData()) { 
-                    //         Debug.LogWarning("beware: there is a grid link that made it to the scheduler without having a start link!"); 
-                    //         break; 
-                    //     } 
-                    // }
-                }
+                        knownLinks[key].link.IndexPlaySound(
+                            currentLinkBeat.indexInLink, 
+                            currentLinkBeat.firstInPiece,
+                            secondsPerBeat,
+                            currentLinkBeat.silent
+                        );
+                    }
+                } else didLastHaveBeat = false;
 
                 curBeat += 1;
                 // NO yield return waitBeat here — WaitUntil at the top handles timing
