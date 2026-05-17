@@ -144,7 +144,6 @@ namespace GridLinks
                 yield return wait;
 
                 if (!DoesSchedulerHaveAnyScheduledBeat()) {
-                    Debug.Log("No sounds in scheduler!");
                     yield return untilSchedulerHasSounds;
                     curBeat = 1;
                 }
@@ -210,7 +209,7 @@ namespace GridLinks
         private void ScheduleSingleLink(GridLink which)
         {
             int soundId = which.GetStartSoundIDIfExists();
-            Debug.Log($"Schedule Single Link for ID: {soundId}");
+            // Debug.Log($"Schedule Single Link for ID: {soundId}");
             if (soundId == -1) { 
                 Debug.LogError($"Scheduled a link that is not connected to any start sound: IsStartLink {which.HasStartData()}, IsEndLink {which.HasEndData()}"); 
                 return;

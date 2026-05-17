@@ -53,12 +53,11 @@ namespace PuzzleGrid
         #region setters
         public GridLink SetEndPlacementData(LinkPlacementData data)
         {
-            Debug.Log("setting end");
             if (data == null) { ResetEndPlacementData(); return this; }
 
             endPlacementData = data;
             hasEndLinkRef = true;
-            ForceRejoinOnPieces(endPlacementData);
+            if (pieces != null && pieces.Count > 0) FullChainRejoin(pieces[^1].endTile, data);
             return this;
         }
         public GridLink ResetEndPlacementData()
@@ -66,18 +65,17 @@ namespace PuzzleGrid
             if (!hasEndLinkRef && endPlacementData == null) return this;
             hasEndLinkRef = false;
             endPlacementData = null; 
-            if (!HasStartData()) LostLinkData();
+            if (!HasStartData()) LostLinkData(null);
             return this;
         }
 
         public GridLink SetStartPlacementData(LinkPlacementData data)
         {
-            Debug.Log("setting start");
             if (data == null) { ResetStartPlacementData(); return this; }
 
             startPlacementData = data;
             hasStartLinkRef = true;
-            ForceRejoinOnPieces(startPlacementData);
+            if (pieces != null && pieces.Count > 0) FullChainRejoin(pieces[0].startTile, data);
             return this; 
         }
         public GridLink ResetStartPlacementData()
@@ -85,7 +83,7 @@ namespace PuzzleGrid
             if (!hasStartLinkRef && startPlacementData == null) return this;
             hasStartLinkRef = false;
             startPlacementData = null;
-            if (!HasEndData()) LostLinkData();
+            if (!HasEndData()) LostLinkData(null);
             return this;
         }
         #endregion
@@ -143,7 +141,6 @@ namespace PuzzleGrid
         /// <returns>True on success, false on failure. See IsOtherCompatible() for definition of compatibility</returns>
         public bool MergeLink(GridLink other, Piece otherPivot, PieceTile otherPivotTile, Piece thisPivot, PieceTile thisPivotTile)
         {
-            // these checks remove situations where: the "other" is complete, "this" is complete, "other" & "this" both are start / end, or "other" & "this" have different soundIds 
             if (this.IsLinkComplete())
             {
                 Debug.LogWarning($"Tried to merge other: {other} with this: {this}, but this is complete.");
@@ -151,76 +148,110 @@ namespace PuzzleGrid
             }
             if (!IsOtherCompatible(other))
             {
-                Debug.LogWarning($"Tried to merge {this} with incompatible link {other}"); 
+                Debug.LogWarning($"Tried to merge {this} with incompatible link {other}");
                 return false;
             }
 
             List<LinkData> otherPieces = other.GetPieces();
+            if (otherPieces == null || otherPieces.Count == 0 || pieces.Count == 0) return false;
 
-            // re-orient otherPieces so that "pivot" is always at the start of the otherPieces list. 
-            // todo:: (thought) we can allow connecting to the middle of an existing piece by splitting "other"; however, this adds some other edge cases that we'd need to think through logically...
-            int otherPivotIndex = -1;
-            for (int i = 0; i < otherPieces.Count; i++)
+            // find the indices of joining pieces
+            int thisPivotIndex = pieces.FindIndex(ld => ld.piece == thisPivot);
+            int otherPivotIndex = otherPieces.FindIndex(ld => ld.piece == otherPivot);
+
+            if (thisPivotIndex == -1 || otherPivotIndex == -1) return false;
+
+            bool thisIsFirst = thisPivotIndex == 0;
+            bool thisIsLast = thisPivotIndex == pieces.Count - 1;
+            
+            if (!thisIsFirst && !thisIsLast && pieces.Count > 1) 
             {
-                if (otherPieces[i].piece == otherPivot) { otherPivotIndex = i; break; }
-            }
-
-            // reorient list
-            Debug.Log($"Reorienting other by index found at {otherPivotIndex}");
-            if (otherPivotIndex == otherPieces.Count - 1) otherPieces.Reverse();
-            else if (otherPivotIndex != 0) 
-            { 
-                Debug.LogWarning("(unimplemented) Tried to merge with a piece that was in the middle of an existing link (or pivot was not in link)"); 
+                Debug.LogWarning("thisPivot is in the middle of the chain");
                 return false;
             }
 
-            // in this case, "other" should go after "this"  (this = Start, other = End)
-            if (other.HasEndData() || this.HasStartData())
+            // merge flow: true if [pieces] -> [otherPieces], false if [otherPieces] -> [pieces]
+            bool isThisToOther = false;
+
+            if (this.HasStartData() || other.HasEndData()) 
             {
-                Debug.Log("Other has end data, or this has start data!");
+                isThisToOther = true;
+            } 
+            else if (this.HasEndData() || other.HasStartData()) 
+            {
+                isThisToOther = false;
+            } 
+            else 
+            {
+                if (thisIsLast) isThisToOther = true;
+                else if (thisIsFirst) isThisToOther = false;
+            }
 
-                LinkData thisPivotLD = pieces.FirstOrDefault(ld => ld.piece == thisPivot);
-                if (thisPivotLD != null) thisPivotLD.endTile = thisPivotTile;
-                else Debug.LogWarning("MergeLink (branch 1): could not find thisPivot LinkData to set endTile.");
+            bool rejoinAlreadyPerformed = false;
 
+            if (isThisToOther)
+            {
+                // [pieces] -> [otherPieces]
+
+                if (thisPivotIndex == 0 && pieces.Count > 1) 
+                {
+                    ReverseLinkData(pieces);
+                }
+
+                if (otherPivotIndex == otherPieces.Count - 1 && otherPieces.Count > 1) 
+                {
+                    ReverseLinkData(otherPieces);
+                } 
+                else if (otherPivotIndex != 0 && otherPieces.Count > 1) 
+                {
+                    Debug.LogWarning("otherPivot is in middle of chain");
+                    return false;
+                }
+
+                pieces[^1].endTile = thisPivotTile;
                 otherPieces[0].startTile = otherPivotTile;
 
                 pieces.AddRange(otherPieces);
-                if (other.HasEndData()) SetEndPlacementData(other.GetEndPlacementData());
+
+                if (other.HasEndData()) 
+                {
+                    SetEndPlacementData(other.GetEndPlacementData());
+                    rejoinAlreadyPerformed = true;
+                }
             }
-            // in this case, "this" should go after "other"  (other = Start, this = End)
-            else if (other.HasStartData() || this.HasEndData())
+            else
             {
-                Debug.Log("Other has start data, and this has end data!");
+                // [otherPieces] -> [pieces]
+                
+                if (otherPivotIndex == 0 && otherPieces.Count > 1) 
+                {
+                    ReverseLinkData(otherPieces);
+                } 
+                else if (otherPivotIndex != otherPieces.Count - 1 && otherPieces.Count > 1) 
+                {
+                    Debug.LogWarning("otherPivot is in the middle of chain");
+                    return false;
+                }
 
-                otherPieces.Reverse();
-                otherPieces[otherPieces.Count - 1].endTile = otherPivotTile;
+                if (thisPivotIndex == pieces.Count - 1 && pieces.Count > 1) 
+                {
+                    ReverseLinkData(pieces);
+                }
 
-                LinkData thisPivotLD = pieces.FirstOrDefault(ld => ld.piece == thisPivot);
-                if (thisPivotLD != null)
-                    thisPivotLD.startTile = thisPivotTile;
-                else
-                    Debug.LogWarning("MergeLink (branch 2): could not find thisPivot LinkData to set startTile.");
+                otherPieces[^1].endTile = otherPivotTile;
+                pieces[0].startTile = thisPivotTile;
 
                 otherPieces.AddRange(pieces);
                 pieces = otherPieces;
-                if (other.HasStartData()) SetStartPlacementData(other.GetStartPlacementData());
-            }
-            // in this case, it is a free-standing link. We don't know the end direction of the link, so we're gonna have to just combine the two, preserving existing ordering
-            else
-            {
-                int thisPivotIndex = -1;
-                for (int i = 0; i < pieces.Count; i++)
+
+                if (other.HasStartData()) 
                 {
-                    if (pieces[i].piece == thisPivot) { thisPivotIndex = i; break; }
+                    SetStartPlacementData(other.GetStartPlacementData());
+                    rejoinAlreadyPerformed = true;
                 }
-                if (thisPivotIndex == -1) { Debug.LogWarning("Could not find thisPivot in pieces."); return false; }
-
-                pieces.InsertRange(thisPivotIndex, otherPieces);
             }
 
-            // this updates the pieces visually when multiple pieces are connected
-            if (HasStartData() || HasEndData()) ForceRejoinOnPieces(HasStartData() ? startPlacementData : endPlacementData);
+            if (!rejoinAlreadyPerformed && (HasStartData() || HasEndData())) FullChainRejoin(thisPivotTile, HasStartData() ? startPlacementData : endPlacementData);
 
             return true;
         }
@@ -243,31 +274,50 @@ namespace PuzzleGrid
             {
                 if (pieces[i].piece != at) continue;
 
+                PieceTile atTile = pieces[i].startTile != null ? pieces[i].startTile : pieces[i].endTile;
+                bool isFirst = i == 0;
+                bool isLast  = i == pieces.Count - 1;
 
-                if (i == 0 || i == pieces.Count - 1) 
+                if (isFirst || isLast)
                 {
-                    Debug.Log($"Split link - edge case (index {i}, {pieces.Count} pieces). Removing piece.");
-                    // edge case - need to update start/end fields.
-                    if (i == 0) ResetStartPlacementData();
-                    if (i == pieces.Count - 1) ResetEndPlacementData();
+                    if (HasStartData() || HasEndData()) at.LeaveLink(atTile);
+
+                    if (isFirst && pieces.Count > 1) pieces[1].startTile = null;
+                    if (isLast && pieces.Count > 1) pieces[i - 1].endTile = null;
 
                     RemovePiece(at);
+
+                    if (isFirst) ResetStartPlacementData();
+                    if (isLast)  ResetEndPlacementData();
+
+                    if (HasStartData() && pieces.Count > 0) FullChainRejoin(pieces[0].startTile, startPlacementData);
+                    else if (HasEndData() && pieces.Count > 0) FullChainRejoin(pieces[^1].endTile, endPlacementData);
+
                     return true;
                 }
 
-                // otherwise, need to create a new grid link. 
-                Debug.Log($"Split link - found piece; making new grid link.");
+                // middle-piece case
                 end = new();
                 List<LinkData> newLinkPieces = pieces.Skip(i + 1).Take(pieces.Count - i - 1).ToList();
-
-                end.pieces.AddRange(newLinkPieces); // preserves startTile & endTile
-
+                end.pieces.AddRange(newLinkPieces);
                 pieces = pieces.Take(i).ToList();
 
-                end.SetEndPlacementData(endPlacementData);
-                ResetEndPlacementData(); // note:: setting endLinkReference to null here is okay only under the assumption that links will never continue past the end position. Otherwise, we cannot assume this.
+                if (pieces.Count > 0) pieces[^1].endTile = null;
+                if (end.pieces.Count > 0) end.pieces[0].startTile = null;
 
-                Debug.Log($"Split link successful. This link is now: {start}. \n The new link is: {end}.");
+                at.LeaveLink(atTile);
+                
+                end.SetEndPlacementData(endPlacementData);
+                
+                if (!end.HasEndData() && !end.HasStartData())
+                {
+                    end.LostLinkData(null);
+                }
+
+                ResetEndPlacementData();
+
+                if (HasStartData() && pieces.Count > 0) FullChainRejoin(pieces[0].startTile, startPlacementData);
+
                 return true;
             }
 
@@ -284,54 +334,61 @@ namespace PuzzleGrid
         /// <returns>this if basedOn is null or successfully added piece; null if could not find basedOn</returns>
         public GridLink AddPiece(Piece toAdd, PieceTile toAddTile, Piece basedOn, PieceTile basedOnTile, bool creatingStartLink = false)
         {
-            if (basedOn == null) { 
-                Debug.Log($"Adding piece to {this} without basedOn. Ensure order!");
-                pieces.Add(
-                    new()
-                    { 
-                        piece = toAdd, 
-                        startTile = creatingStartLink ? toAddTile : null, 
-                        endTile = creatingStartLink ? null : toAddTile, 
-                    }
-                ); 
+            if (IsLinkComplete()) return this;
+
+            if (basedOn == null) 
+            { 
+                pieces.Add(new() { 
+                    piece = toAdd, 
+                    startTile = creatingStartLink ? toAddTile : null, 
+                    endTile = creatingStartLink ? null : toAddTile 
+                }); 
                 if (HasStartData() || HasEndData()) toAdd.JoinLink(HasStartData() ? startPlacementData : endPlacementData, toAddTile);
                 return this;
             }
-            // Debug.Log($"Adding piece {toAdd.name} based on {basedOn.name}");
 
-            // add according to basedOn
-            for (int i = 0; i < pieces.Count; i++)
+            int i = pieces.FindIndex(ld => ld.piece == basedOn);
+            if (i == -1) return null;
+
+            bool insertBefore = false;
+
+            // insert the piece before or after basedOn?
+            if (HasEndData()) 
+            { 
+                insertBefore = true; 
+            } 
+            else if (HasStartData()) 
             {
-                if (pieces[i].piece == basedOn)
+                insertBefore = false;
+            }
+            else
+            {
+                if (i == 0) insertBefore = true;
+                else if (i == pieces.Count - 1) insertBefore = false;
+                else 
                 {
-                    if (HasEndData()) 
-                    { 
-                        // add BEFORE basedOn; this means that basedOnTile is the startTile of basedOn and toAddTile is endTile of toAdd
-                        pieces[i].startTile = basedOnTile;
-                        pieces.Insert(i, new()
-                        {
-                            piece = toAdd, endTile = toAddTile
-                        });  
-                    } 
-                    else {
-                        // add AFTER basedOn; this means that basedOnTile is the endTile of basedOn and toAddTile is  startTile of toAdd
-                        pieces[i].endTile = basedOnTile;
-                        pieces.Insert(i+1, new()
-                        {
-                            piece = toAdd, startTile = toAddTile
-                        }); 
-                    }
-
-                    if (HasStartData() || HasEndData()) 
-                    {
-                        Debug.Log($"The link is a start or end. \n {this}");
-                        toAdd.JoinLink(HasStartData() ? startPlacementData : endPlacementData, toAddTile);
-                    }
-
-                    return this;
+                    Debug.LogWarning($"AddPiece: Attempted to add to the middle of a link at index {i}. Defaulting to AFTER.");
+                    insertBefore = false;
                 }
             }
-            return null;
+
+            if (insertBefore)
+            {
+                pieces[i].startTile = basedOnTile;
+                pieces.Insert(i, new() { piece = toAdd, endTile = toAddTile });  
+            }
+            else
+            {
+                pieces[i].endTile = basedOnTile;
+                pieces.Insert(i + 1, new() { piece = toAdd, startTile = toAddTile }); 
+            }
+
+            if (HasStartData() || HasEndData()) 
+            {
+                toAdd.JoinLink(HasStartData() ? startPlacementData : endPlacementData, toAddTile);
+            }
+
+            return this;
         }
 
         // remove Piece from link.
@@ -344,7 +401,7 @@ namespace PuzzleGrid
 
         public void IndexPlaySound(int index, bool isFirstInPiece, float secondsPerBeat, bool silent = false)
         {
-            if (index < 0 || index > pieces.Count) { Debug.LogWarning($"Link passed index {index}, which is out of bounds for piece count {pieces.Count}"); return; }
+            if (index < 0 || index >= pieces.Count) { Debug.LogWarning($"Link passed index {index}, which is out of bounds for piece count {pieces.Count}"); return; }
 
             if (!silent && isFirstInPiece) GetStartPlacementData().GetTrackSound().PlaySound();
 
@@ -355,14 +412,15 @@ namespace PuzzleGrid
 
         #region changing piece state
 
-        private void ForceRejoinOnPieces(LinkPlacementData associatedData)
+        private void FullChainRejoin(PieceTile tile, LinkPlacementData associatedData)
         {
-            Debug.Log("would be rejoining...");
+            pieces.ForEach(item => item.piece.JoinLink(associatedData, tile));
+            // Debug.Log("would be rejoining...");
             // pieces.ForEach(item => item.piece.JoinLink(HasStartData() ? startPlacementData : endPlacementData));
         }
-        private void LostLinkData()
+        private void LostLinkData(PieceTile tile)
         {
-            pieces.ForEach(item => item.piece.LeaveLink());
+            pieces.ForEach(item => item.piece.LeaveLink(tile));
         }
 
         #endregion
@@ -373,6 +431,17 @@ namespace PuzzleGrid
             string baseStr = base.ToString();
             baseStr += $"\n LinkStart: {startPlacementData} \n\t StartId: {startPlacementData?.GetSoundID()} \n LinkEnd: {endPlacementData} \n\tEndId: {endPlacementData?.GetSoundID()}  \n Number pieces: {pieces.Count}. \n ";
             return baseStr;
+        }
+
+        private void ReverseLinkData(List<LinkData> list)
+        {
+            list.Reverse();
+            foreach (var ld in list)
+            {
+                PieceTile temp = ld.startTile;
+                ld.startTile = ld.endTile;
+                ld.endTile = temp;
+            }
         }
         #endregion
     }
