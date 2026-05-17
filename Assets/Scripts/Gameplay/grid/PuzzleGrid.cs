@@ -156,7 +156,6 @@ namespace PuzzleGrid
             p.PlacedGrid();
             p.transform.parent = transform;
             OnPiecePlacementSuccess?.Invoke(p);
-            LogLinks();
 
             if (CheckIfGameWon()) 
             {
@@ -191,8 +190,6 @@ namespace PuzzleGrid
             // remove piece from all links
             Piece toBeRemoved = atFocus.GetPiece();
             RemoveFromGridLinks(toBeRemoved);
-
-            LogLinks();
 
             OnPieceYoinked?.Invoke(toBeRemoved);
             toBeRemoved.transform.position = GetFocusedGridTile().transform.position; // todo: should not be manually setting position
@@ -481,27 +478,5 @@ namespace PuzzleGrid
         }
         #endregion
     
-        #region other
-        // TODO: delete the visuals and just do logging stuff 
-        public void LogLinks()
-        {
-            // Debug.Log($"{gridLinks.Count} links exist");
-
-            for (int i = 0; i < gridLinks.Count; i++)
-            {
-                // Debug.Log($"Link {i} has {gridLinks[i].GetPieces().Count} pieces");
-
-                foreach (var pd in gridLinks[i].GetPieces())
-                {
-                    // Debug.Log($"  Piece {piece.name} has {piece.GetPieceTiles().Count} piecetiles");
-                    foreach (PieceTile pt in pd.piece.GetPieceTiles())
-                    {
-                        Vector2Int pos = GetPositionOfPieceTile(pt);
-                        // Debug.Log($"    PieceTile {pt.name} found at pos {pos}");
-                    }
-                }
-            }
-        }
-        #endregion
     }
 }

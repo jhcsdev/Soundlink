@@ -181,7 +181,7 @@ namespace GamePieces
         {
             OnJoinedLink?.Invoke(link, joinTile);
         }
-        public void LeaveLink()
+        public void LeaveLink(PieceTile tile)
         {
             OnLeftLink?.Invoke();
         }
@@ -189,6 +189,10 @@ namespace GamePieces
         {
             OnLinkPulse?.Invoke(c, startTile, isFirstInLink, secondsPerBeat);
         }
+        public void UpdateFillLocation(Vector2 where)
+        {
+            EmitMaterialUpdate(fillOrigin: where);
+        } 
         #endregion 
     }
 
