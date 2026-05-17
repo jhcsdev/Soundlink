@@ -9,6 +9,7 @@ using TrackSounds;
 using ChuckChuckChuck;
 using SceneTransition;
 using UnityEditor.XR;
+using Unity.VisualScripting;
 
 namespace GridLinks
 {
@@ -31,7 +32,7 @@ namespace GridLinks
         private ChuckSubInstance myChuck;
         private int curBeat = 1;
         private float metronomeStartTime = -1f;
-        private bool isMetronomePlaying = false;
+        [SerializeField] bool isMetronomePlaying = false;
 
         #region unity functions
         void Awake()
@@ -118,8 +119,8 @@ namespace GridLinks
             "));
 
             // listen to metronome events to keep track of metronome state
-            myChuck.StartListeningForChuckEvent("playMetronome", OnPlayMetronome);
-            myChuck.StartListeningForChuckEvent("pauseMetronome", OnPauseMetronome);
+            myChuck.StartListeningForChuckEvent("playMetronome", SetMetronnomePlaying);
+            myChuck.StartListeningForChuckEvent("pauseMetronome", SetMetronnomePaused);
 
             // intialize those events 
             referenceSound?.PlaySound();
@@ -133,13 +134,23 @@ namespace GridLinks
         }
         #endregion
 
-        private void OnPlayMetronome() {
+        public void SetMetronnomePlaying()
+        {
             isMetronomePlaying = true;
         }
 
-        private void OnPauseMetronome() {
+        public void SetMetronnomePaused()
+        {
             isMetronomePlaying = false;
         }
+
+        // private void OnPlayMetronome() {
+        //     isMetronomePlaying = true;
+        // }
+
+        // private void OnPauseMetronome() {
+        //     isMetronomePlaying = false;
+        // }
 
         // TODO: what happens if the metronome stops and the reference starts up?
 
@@ -162,12 +173,22 @@ namespace GridLinks
 
                 yield return wait;
 
-                // broadcast at the kick level, but that's going to need logic
-                if ((curBeat % 2) - 1 == 0)
+                // TODO: how to communicate with the other thing? 
+
+                // // broadcast at the kick level, but that's going to need logic
+                if (isMetronomePlaying) 
+                //&& DoesSchedulerHaveAnyScheduledBeat())
                 {
-                    Debug.Log("playMetronomeSound!");
-                    Debug.Log($"CurBEAT: {curBeat}");
-                    myChuck.BroadcastEvent("playMetronomeSingleSound");   
+                //     // pause the continuous metronome
+                //     myChuck.BroadcastEvent("pauseMetronome");
+                    
+                    // start playing our own metronome
+                    if ((curBeat % 2) - 1 == 0)
+                    {
+                        Debug.Log("playMetronomeSound!");
+                        Debug.Log($"CurBEAT: {curBeat}");
+                        myChuck.BroadcastEvent("playMetronomeSingleSound");   
+                    }   
                 }
 
                 nextBeatTime = Time.time + secondsPerBeat;

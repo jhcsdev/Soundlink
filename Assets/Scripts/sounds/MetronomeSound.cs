@@ -66,7 +66,6 @@ namespace TrackSounds
 
             // play whole meausre
             fun void playMeasure() {{
-                metronomeDownbeat.broadcast();
                 playClick(1);
                 playClick(0);
                 playClick(0);

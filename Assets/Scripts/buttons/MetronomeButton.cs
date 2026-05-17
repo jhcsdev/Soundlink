@@ -38,12 +38,14 @@ public class MetronomeButtonAction : MonoBehaviour
         if (isPlaying)
         {
             LinkPlaybackManager.Instance.SetMetronomeStartTime();
-            myChuck.BroadcastEvent("playMetronome");
+            // myChuck.BroadcastEvent("playMetronome");
+
+            LinkPlaybackManager.Instance.SetMetronnomePlaying();
         } 
         else
         {
-            Debug.Log("Pause metronome");
-            myChuck.BroadcastEvent("pauseMetronome");
+            // myChuck.BroadcastEvent("pauseMetronome");
+            LinkPlaybackManager.Instance.SetMetronnomePaused();
         }
     }
 }
