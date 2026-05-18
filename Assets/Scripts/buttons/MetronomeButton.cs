@@ -27,6 +27,10 @@ public class MetronomeButtonAction : MonoBehaviour
         sound?.PlaySound();
     }
 
+    public void SetInteractable(bool interactable)
+    {
+        myButton.interactable = interactable;
+    }
 
     public void PlayMetronome()
     {

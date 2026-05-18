@@ -33,6 +33,7 @@ namespace GridLinks
         private int curBeat = 1;
         private float metronomeStartTime = -1f;
         [SerializeField] bool isMetronomePlaying = false;
+        public MetronomeButtonAction metronomeButtonAction;
 
         #region unity functions
         void Awake()
@@ -49,14 +50,16 @@ namespace GridLinks
         {
             soundPlaybackEnabled = false;
             myChuck.BroadcastEvent("playReference");
+            metronomeButtonAction.SetInteractable(false);
         }
 
         // stop reference beat and start link playback
         public void PauseReferenceBeat()
         {
             myChuck.BroadcastEvent("pauseReference");
+            metronomeButtonAction.SetInteractable(true);
 
-            // pause linkplayback for half a second to ensure no overlap
+            // pause linkplayback for 1.5 seconds to ensure no overlap
             StartCoroutine(pauseLinkPlaybackForSeconds(1.5f));
         }
 
@@ -144,16 +147,8 @@ namespace GridLinks
             isMetronomePlaying = false;
         }
 
-        // private void OnPlayMetronome() {
-        //     isMetronomePlaying = true;
-        // }
-
-        // private void OnPauseMetronome() {
-        //     isMetronomePlaying = false;
-        // }
-
-        // TODO: what happens if the metronome stops and the reference starts up?
-
+        // playback of sounds in links.
+        // also controls playback of metronome so that timing is the same
         private IEnumerator PlaybackLoop()
         {
             float nextBeatTime = Time.time;
@@ -173,43 +168,31 @@ namespace GridLinks
 
                 yield return wait;
 
-                // TODO: how to communicate with the other thing? 
-
-                // // broadcast at the kick level, but that's going to need logic
+                // if metronome is on, play metronome sound (at the right time)
                 if (isMetronomePlaying) 
-                //&& DoesSchedulerHaveAnyScheduledBeat())
                 {
-                //     // pause the continuous metronome
-                //     myChuck.BroadcastEvent("pauseMetronome");
-                    
-                    // start playing our own metronome
                     if ((curBeat % 2) - 1 == 0)
                     {
-                        Debug.Log("playMetronomeSound!");
-                        Debug.Log($"CurBEAT: {curBeat}");
                         myChuck.BroadcastEvent("playMetronomeSingleSound");   
                     }   
                 }
 
                 nextBeatTime = Time.time + secondsPerBeat;
-                // curBeat += 1;
 
                 if (curBeat > beatsInLoop) { 
                     curBeat = 1; 
                 }
 
                 if (DoesSchedulerHaveAnyScheduledBeat()) {
-                    // Debug.Log("No sounds in scheduler!");
-                    // yield return untilSchedulerHasSounds;
                     if (!didLastHaveBeat)
                     {
                         didLastHaveBeat = true;
                         curBeat = 1;
                     }
-                    // didLastHaveBeat = false;
                     foreach (var key in knownLinks.Keys)
                     {
-                        if (knownLinks[key].scheduledBeats.Count < curBeat) continue; // only play when there is actually links to play
+                        // only play when there is actually links to play
+                        if (knownLinks[key].scheduledBeats.Count < curBeat) continue; 
                         var currentLinkBeat = knownLinks[key].scheduledBeats[curBeat - 1];
 
                         knownLinks[key].link.IndexPlaySound(
