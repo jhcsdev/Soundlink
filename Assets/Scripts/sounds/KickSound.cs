@@ -17,7 +17,6 @@ namespace TrackSounds
 
             myChuck.RunCode( string.Format( @"
             global float BPM;
-            global Event playMetronomeSingleSound;
 
             SinOsc kick => ADSR envKick => Gain kickGain => dac;
 
@@ -29,7 +28,6 @@ namespace TrackSounds
             (60.0 / BPM)::second => dur beat_dur;
 
             fun void playKick(float beat_note) {{
-                playMetronomeSingleSound.broadcast();
                 // turn kick on
                 KICK_GAIN => kick.gain;
                 
