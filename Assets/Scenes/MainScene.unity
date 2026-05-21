@@ -131,6 +131,7 @@ GameObject:
   - component: {fileID: 125666073}
   - component: {fileID: 125666072}
   - component: {fileID: 125666071}
+  - component: {fileID: 125666074}
   m_Layer: 5
   m_Name: lvl1
   m_TagString: Untagged
@@ -153,9 +154,9 @@ RectTransform:
   - {fileID: 319217929}
   m_Father: {fileID: 205586880}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 0, y: -19.270508}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 168.4, y: 38.541016}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &125666071
@@ -252,6 +253,26 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 125666069}
   m_CullTransparentMesh: 1
+--- !u!114 &125666074
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 125666069}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 49a44b6be8f4c4daaa7f75f8143e26ec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIFX.ButtonDecorationController
+  fadeInTime: 0.3
+  fadeOutTime: 0.3
+  fadeInColor: {r: 0.754717, g: 0.754717, b: 0.754717, a: 0.34901962}
+  fadedOutColor: {r: 0.735849, g: 0.735849, b: 0.735849, a: 0}
+  hoveredScale: 1.15
+  transitionMoveDistance: 10
+  backdropImage: {fileID: 125666072}
+  labelTMP: {fileID: 319217930}
 --- !u!1 &173240525
 GameObject:
   m_ObjectHideFlags: 0
@@ -264,6 +285,7 @@ GameObject:
   - component: {fileID: 173240529}
   - component: {fileID: 173240528}
   - component: {fileID: 173240527}
+  - component: {fileID: 173240530}
   m_Layer: 5
   m_Name: lvl4
   m_TagString: Untagged
@@ -286,9 +308,9 @@ RectTransform:
   - {fileID: 1564825157}
   m_Father: {fileID: 205586880}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 0, y: -134.89355}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 168.4, y: 38.541016}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &173240527
@@ -385,6 +407,26 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 173240525}
   m_CullTransparentMesh: 1
+--- !u!114 &173240530
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 173240525}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 49a44b6be8f4c4daaa7f75f8143e26ec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIFX.ButtonDecorationController
+  fadeInTime: 0.3
+  fadeOutTime: 0.3
+  fadeInColor: {r: 0.754717, g: 0.754717, b: 0.754717, a: 0.34901962}
+  fadedOutColor: {r: 0.735849, g: 0.735849, b: 0.735849, a: 0}
+  hoveredScale: 1.15
+  transitionMoveDistance: 10
+  backdropImage: {fileID: 173240528}
+  labelTMP: {fileID: 1564825158}
 --- !u!1 &205586879
 GameObject:
   m_ObjectHideFlags: 0
@@ -425,7 +467,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 113}
+  m_AnchoredPosition: {x: 0, y: 141}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &205586881
@@ -446,7 +488,7 @@ MonoBehaviour:
     m_Top: 0
     m_Bottom: 0
   m_ChildAlignment: 4
-  m_Spacing: 0
+  m_Spacing: 10
   m_ChildForceExpandWidth: 1
   m_ChildForceExpandHeight: 1
   m_ChildControlWidth: 0
@@ -694,6 +736,7 @@ GameObject:
   - component: {fileID: 397783137}
   - component: {fileID: 397783136}
   - component: {fileID: 397783135}
+  - component: {fileID: 397783138}
   m_Layer: 5
   m_Name: quit
   m_TagString: Untagged
@@ -803,6 +846,26 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 397783133}
   m_CullTransparentMesh: 1
+--- !u!114 &397783138
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 397783133}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 49a44b6be8f4c4daaa7f75f8143e26ec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIFX.ButtonDecorationController
+  fadeInTime: 0.3
+  fadeOutTime: 0.3
+  fadeInColor: {r: 0.85882354, g: 0.85882354, b: 0.85882354, a: 0.32156864}
+  fadedOutColor: {r: 0.8490566, g: 0.8490566, b: 0.8490566, a: 0}
+  hoveredScale: 1.15
+  transitionMoveDistance: 10
+  backdropImage: {fileID: 397783136}
+  labelTMP: {fileID: 2121631733}
 --- !u!1 &402666552
 GameObject:
   m_ObjectHideFlags: 0
@@ -952,6 +1015,7 @@ GameObject:
   - component: {fileID: 446617239}
   - component: {fileID: 446617238}
   - component: {fileID: 446617237}
+  - component: {fileID: 446617240}
   m_Layer: 5
   m_Name: lvl5
   m_TagString: Untagged
@@ -974,9 +1038,9 @@ RectTransform:
   - {fileID: 1270602762}
   m_Father: {fileID: 205586880}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 0, y: -173.43457}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 168.4, y: 38.541016}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &446617237
@@ -1073,6 +1137,26 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 446617235}
   m_CullTransparentMesh: 1
+--- !u!114 &446617240
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 446617235}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 49a44b6be8f4c4daaa7f75f8143e26ec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIFX.ButtonDecorationController
+  fadeInTime: 0.3
+  fadeOutTime: 0.3
+  fadeInColor: {r: 0.754717, g: 0.754717, b: 0.754717, a: 0.34901962}
+  fadedOutColor: {r: 0.735849, g: 0.735849, b: 0.735849, a: 0}
+  hoveredScale: 1.15
+  transitionMoveDistance: 10
+  backdropImage: {fileID: 446617238}
+  labelTMP: {fileID: 1270602763}
 --- !u!1 &457656174
 GameObject:
   m_ObjectHideFlags: 0
@@ -1085,6 +1169,7 @@ GameObject:
   - component: {fileID: 457656178}
   - component: {fileID: 457656177}
   - component: {fileID: 457656176}
+  - component: {fileID: 457656179}
   m_Layer: 5
   m_Name: lvl2
   m_TagString: Untagged
@@ -1107,9 +1192,9 @@ RectTransform:
   - {fileID: 402666553}
   m_Father: {fileID: 205586880}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 0, y: -57.811523}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 168.4, y: 38.541016}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &457656176
@@ -1206,6 +1291,26 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 457656174}
   m_CullTransparentMesh: 1
+--- !u!114 &457656179
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 457656174}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 49a44b6be8f4c4daaa7f75f8143e26ec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIFX.ButtonDecorationController
+  fadeInTime: 0.3
+  fadeOutTime: 0.3
+  fadeInColor: {r: 0.754717, g: 0.754717, b: 0.754717, a: 0.34901962}
+  fadedOutColor: {r: 0.735849, g: 0.735849, b: 0.735849, a: 0}
+  hoveredScale: 1.15
+  transitionMoveDistance: 10
+  backdropImage: {fileID: 457656177}
+  labelTMP: {fileID: 402666554}
 --- !u!1 &472500018
 GameObject:
   m_ObjectHideFlags: 0
@@ -1518,8 +1623,8 @@ Camera:
   m_GameObject: {fileID: 594476234}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 1
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_ClearFlags: 2
+  m_BackGroundColor: {r: 0, g: 0, b: 0, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -1631,8 +1736,8 @@ GameObject:
   - component: {fileID: 677761130}
   - component: {fileID: 677761129}
   - component: {fileID: 677761128}
-  - component: {fileID: 677761132}
   - component: {fileID: 677761133}
+  - component: {fileID: 677761134}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -1725,18 +1830,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
---- !u!114 &677761132
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 677761127}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c8f7e2987c83542f19d9d4be72c37709, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CanvasContextSwapper
 --- !u!114 &677761133
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1749,6 +1842,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57854a4091d404fbb8e4d214f0736f1a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MainMenuCanvasController
+--- !u!114 &677761134
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 677761127}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b5892a27f6fad41978e301cf135399b5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIFX.MultiMenuPageTransitioner
+  pages:
+  - {fileID: 1110826029}
+  - {fileID: 1685438469}
+  - {fileID: 751060036}
+  currentPage: {fileID: 1110826029}
 --- !u!1 &751060034
 GameObject:
   m_ObjectHideFlags: 0
@@ -1758,13 +1868,14 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 751060035}
+  - component: {fileID: 751060036}
   m_Layer: 5
   m_Name: Levels
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &751060035
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1787,6 +1898,29 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &751060036
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 751060034}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 690e37bd7a9bd41ae8a9be6f94ac3581, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIFX.MenuPageTransitionController
+  initialTransitions:
+  - {fileID: 1239169940}
+  sequentialTransitions:
+  - {fileID: 873729895}
+  - {fileID: 125666074}
+  - {fileID: 457656179}
+  - {fileID: 1943783737}
+  - {fileID: 173240530}
+  - {fileID: 446617240}
+  - {fileID: 1331889234}
+  sequentialDelay: 0.1
 --- !u!1 &778312395
 GameObject:
   m_ObjectHideFlags: 0
@@ -1820,7 +1954,6 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1419730489}
-  - {fileID: 1754592390}
   m_Father: {fileID: 1110826028}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.4, y: 0.65}
@@ -1872,13 +2005,13 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 677761132}
-        m_TargetAssemblyTypeName: ChildContextSwapper, Assembly-CSharp
-        m_MethodName: SwapChild
-        m_Mode: 5
+      - m_Target: {fileID: 677761134}
+        m_TargetAssemblyTypeName: UIFX.MultiMenuPageTransitioner, Assembly-CSharp
+        m_MethodName: GoToPage
+        m_Mode: 2
         m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_ObjectArgument: {fileID: 751060036}
+          m_ObjectArgumentAssemblyTypeName: UIFX.IUITransitionElement, Assembly-CSharp
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: Levels
@@ -1938,15 +2071,9 @@ MonoBehaviour:
   fadeOutTime: 0.3
   fadeInColor: {r: 0.8584906, g: 0.8584906, b: 0.8584906, a: 0.32156864}
   fadedOutColor: {r: 0.7830189, g: 0.7830189, b: 0.7830189, a: 0}
-  underlineColor: {r: 1, g: 0.0047169924, b: 0.0047169924, a: 0}
-  underlineFillTime: 0.5
-  underlineDefillTime: 0.5
   hoveredScale: 1.15
   transitionMoveDistance: 10
-  underlineImage: {fileID: 1754592391}
   backdropImage: {fileID: 778312398}
-  canvasGroup: {fileID: 0}
-  labelText: {fileID: 0}
   labelTMP: {fileID: 1419730490}
 --- !u!1 &873729890
 GameObject:
@@ -1960,6 +2087,7 @@ GameObject:
   - component: {fileID: 873729894}
   - component: {fileID: 873729893}
   - component: {fileID: 873729892}
+  - component: {fileID: 873729895}
   m_Layer: 5
   m_Name: back
   m_TagString: Untagged
@@ -2031,13 +2159,13 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 677761132}
-        m_TargetAssemblyTypeName: ChildContextSwapper, Assembly-CSharp
-        m_MethodName: SwapChild
-        m_Mode: 5
+      - m_Target: {fileID: 677761134}
+        m_TargetAssemblyTypeName: UIFX.MultiMenuPageTransitioner, Assembly-CSharp
+        m_MethodName: GoToPage
+        m_Mode: 2
         m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_ObjectArgument: {fileID: 1110826029}
+          m_ObjectArgumentAssemblyTypeName: UIFX.IUITransitionElement, Assembly-CSharp
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: Main
@@ -2081,6 +2209,26 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 873729890}
   m_CullTransparentMesh: 1
+--- !u!114 &873729895
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 873729890}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 49a44b6be8f4c4daaa7f75f8143e26ec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIFX.ButtonDecorationController
+  fadeInTime: 0.3
+  fadeOutTime: 0.3
+  fadeInColor: {r: 0.754717, g: 0.754717, b: 0.754717, a: 0.34901962}
+  fadedOutColor: {r: 0.735849, g: 0.735849, b: 0.735849, a: 0}
+  hoveredScale: 1.15
+  transitionMoveDistance: 10
+  backdropImage: {fileID: 873729893}
+  labelTMP: {fileID: 1529511012}
 --- !u!1 &1082158941
 GameObject:
   m_ObjectHideFlags: 0
@@ -2241,6 +2389,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1110826028}
+  - component: {fileID: 1110826029}
   m_Layer: 5
   m_Name: Main
   m_TagString: Untagged
@@ -2271,6 +2420,25 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1110826029
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1110826027}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 690e37bd7a9bd41ae8a9be6f94ac3581, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
+  initialTransitions:
+  - {fileID: 1289582506}
+  sequentialTransitions:
+  - {fileID: 778312400}
+  - {fileID: 1181825654}
+  - {fileID: 397783138}
+  sequentialDelay: 0.1
 --- !u!1 &1181825649
 GameObject:
   m_ObjectHideFlags: 0
@@ -2283,6 +2451,7 @@ GameObject:
   - component: {fileID: 1181825653}
   - component: {fileID: 1181825652}
   - component: {fileID: 1181825651}
+  - component: {fileID: 1181825654}
   m_Layer: 5
   m_Name: options
   m_TagString: Untagged
@@ -2354,13 +2523,13 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 677761132}
-        m_TargetAssemblyTypeName: ChildContextSwapper, Assembly-CSharp
-        m_MethodName: SwapChild
-        m_Mode: 5
+      - m_Target: {fileID: 677761134}
+        m_TargetAssemblyTypeName: UIFX.MultiMenuPageTransitioner, Assembly-CSharp
+        m_MethodName: GoToPage
+        m_Mode: 2
         m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_ObjectArgument: {fileID: 1685438469}
+          m_ObjectArgumentAssemblyTypeName: UIFX.IUITransitionElement, Assembly-CSharp
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: Options
@@ -2404,6 +2573,26 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1181825649}
   m_CullTransparentMesh: 1
+--- !u!114 &1181825654
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1181825649}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 49a44b6be8f4c4daaa7f75f8143e26ec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIFX.ButtonDecorationController
+  fadeInTime: 0.3
+  fadeOutTime: 0.3
+  fadeInColor: {r: 0.8301887, g: 0.8301887, b: 0.8301887, a: 0.29803923}
+  fadedOutColor: {r: 1, g: 1, b: 1, a: 0}
+  hoveredScale: 1.15
+  transitionMoveDistance: 10
+  backdropImage: {fileID: 1181825652}
+  labelTMP: {fileID: 2096909037}
 --- !u!1 &1236778479
 GameObject:
   m_ObjectHideFlags: 0
@@ -2415,6 +2604,7 @@ GameObject:
   - component: {fileID: 1236778480}
   - component: {fileID: 1236778482}
   - component: {fileID: 1236778481}
+  - component: {fileID: 1236778483}
   m_Layer: 5
   m_Name: options????
   m_TagString: Untagged
@@ -2542,6 +2732,23 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1236778479}
   m_CullTransparentMesh: 1
+--- !u!114 &1236778483
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1236778479}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4b147e341571b4fe5ba270cc110eb6a6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIFX.TextTransitionController
+  fadeInTime: 0.3
+  fadeOutTime: 0.2
+  fadedInColor: {r: 1, g: 1, b: 1, a: 1}
+  fadedOutColor: {r: 1, g: 1, b: 1, a: 0}
+  label: {fileID: 0}
 --- !u!1 &1239169936
 GameObject:
   m_ObjectHideFlags: 0
@@ -2553,6 +2760,7 @@ GameObject:
   - component: {fileID: 1239169937}
   - component: {fileID: 1239169939}
   - component: {fileID: 1239169938}
+  - component: {fileID: 1239169940}
   m_Layer: 5
   m_Name: levels
   m_TagString: Untagged
@@ -2679,6 +2887,23 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1239169936}
   m_CullTransparentMesh: 1
+--- !u!114 &1239169940
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1239169936}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4b147e341571b4fe5ba270cc110eb6a6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIFX.TextTransitionController
+  fadeInTime: 0.3
+  fadeOutTime: 0.2
+  fadedInColor: {r: 1, g: 1, b: 1, a: 1}
+  fadedOutColor: {r: 1, g: 1, b: 1, a: 0}
+  label: {fileID: 0}
 --- !u!1 &1270602761
 GameObject:
   m_ObjectHideFlags: 0
@@ -2829,6 +3054,7 @@ GameObject:
   - component: {fileID: 1289582503}
   - component: {fileID: 1289582505}
   - component: {fileID: 1289582504}
+  - component: {fileID: 1289582506}
   m_Layer: 5
   m_Name: GameName
   m_TagString: Untagged
@@ -2955,6 +3181,23 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1289582502}
   m_CullTransparentMesh: 1
+--- !u!114 &1289582506
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1289582502}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4b147e341571b4fe5ba270cc110eb6a6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
+  fadeInTime: 0.3
+  fadeOutTime: 0.2
+  fadedInColor: {r: 1, g: 1, b: 1, a: 1}
+  fadedOutColor: {r: 1, g: 1, b: 1, a: 0}
+  label: {fileID: 0}
 --- !u!1 &1331889229
 GameObject:
   m_ObjectHideFlags: 0
@@ -2967,6 +3210,7 @@ GameObject:
   - component: {fileID: 1331889233}
   - component: {fileID: 1331889232}
   - component: {fileID: 1331889231}
+  - component: {fileID: 1331889234}
   m_Layer: 5
   m_Name: lvl6
   m_TagString: Untagged
@@ -2989,9 +3233,9 @@ RectTransform:
   - {fileID: 1638192908}
   m_Father: {fileID: 205586880}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 0, y: -211.97559}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 168.4, y: 38.541016}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1331889231
@@ -3088,6 +3332,26 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1331889229}
   m_CullTransparentMesh: 1
+--- !u!114 &1331889234
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1331889229}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 49a44b6be8f4c4daaa7f75f8143e26ec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIFX.ButtonDecorationController
+  fadeInTime: 0.3
+  fadeOutTime: 0.3
+  fadeInColor: {r: 0.754717, g: 0.754717, b: 0.754717, a: 0.34901962}
+  fadedOutColor: {r: 0.735849, g: 0.735849, b: 0.735849, a: 0}
+  hoveredScale: 1.15
+  transitionMoveDistance: 10
+  backdropImage: {fileID: 1331889232}
+  labelTMP: {fileID: 1638192909}
 --- !u!1 &1419730488
 GameObject:
   m_ObjectHideFlags: 0
@@ -3513,6 +3777,7 @@ GameObject:
   - component: {fileID: 1576542502}
   - component: {fileID: 1576542501}
   - component: {fileID: 1576542500}
+  - component: {fileID: 1576542503}
   m_Layer: 5
   m_Name: back
   m_TagString: Untagged
@@ -3584,13 +3849,13 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 677761132}
-        m_TargetAssemblyTypeName: ChildContextSwapper, Assembly-CSharp
-        m_MethodName: SwapChild
-        m_Mode: 5
+      - m_Target: {fileID: 677761134}
+        m_TargetAssemblyTypeName: UIFX.MultiMenuPageTransitioner, Assembly-CSharp
+        m_MethodName: GoToPage
+        m_Mode: 2
         m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_ObjectArgument: {fileID: 1110826029}
+          m_ObjectArgumentAssemblyTypeName: UIFX.IUITransitionElement, Assembly-CSharp
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: Main
@@ -3634,6 +3899,26 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1576542498}
   m_CullTransparentMesh: 1
+--- !u!114 &1576542503
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1576542498}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 49a44b6be8f4c4daaa7f75f8143e26ec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIFX.ButtonDecorationController
+  fadeInTime: 0.3
+  fadeOutTime: 0.3
+  fadeInColor: {r: 0.735849, g: 0.735849, b: 0.735849, a: 0.3529412}
+  fadedOutColor: {r: 0.7264151, g: 0.7264151, b: 0.7264151, a: 0}
+  hoveredScale: 1.15
+  transitionMoveDistance: 10
+  backdropImage: {fileID: 1576542501}
+  labelTMP: {fileID: 472500020}
 --- !u!1 &1638192907
 GameObject:
   m_ObjectHideFlags: 0
@@ -3784,6 +4069,7 @@ GameObject:
   - component: {fileID: 1653981919}
   - component: {fileID: 1653981921}
   - component: {fileID: 1653981920}
+  - component: {fileID: 1653981922}
   m_Layer: 5
   m_Name: Options
   m_TagString: Untagged
@@ -3910,6 +4196,23 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1653981918}
   m_CullTransparentMesh: 1
+--- !u!114 &1653981922
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1653981918}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4b147e341571b4fe5ba270cc110eb6a6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIFX.TextTransitionController
+  fadeInTime: 0.3
+  fadeOutTime: 0.2
+  fadedInColor: {r: 1, g: 1, b: 1, a: 1}
+  fadedOutColor: {r: 1, g: 1, b: 1, a: 0}
+  label: {fileID: 0}
 --- !u!1 &1685438467
 GameObject:
   m_ObjectHideFlags: 0
@@ -3919,13 +4222,14 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1685438468}
+  - component: {fileID: 1685438469}
   m_Layer: 5
   m_Name: Options
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1685438468
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3939,8 +4243,8 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1653981919}
-  - {fileID: 1576542499}
   - {fileID: 1236778480}
+  - {fileID: 1576542499}
   m_Father: {fileID: 677761131}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -3948,81 +4252,24 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!1 &1754592389
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1754592390}
-  - component: {fileID: 1754592392}
-  - component: {fileID: 1754592391}
-  m_Layer: 5
-  m_Name: test underline
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!224 &1754592390
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1754592389}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 778312396}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 237, y: 0}
-  m_SizeDelta: {x: 100, y: 100}
-  m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1754592391
+--- !u!114 &1685438469
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1754592389}
+  m_GameObject: {fileID: 1685438467}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Script: {fileID: 11500000, guid: 690e37bd7a9bd41ae8a9be6f94ac3581, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
-  m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_Sprite: {fileID: 0}
-  m_Type: 0
-  m_PreserveAspect: 0
-  m_FillCenter: 1
-  m_FillMethod: 4
-  m_FillAmount: 1
-  m_FillClockwise: 1
-  m_FillOrigin: 0
-  m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
---- !u!222 &1754592392
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1754592389}
-  m_CullTransparentMesh: 1
+  m_EditorClassIdentifier: Assembly-CSharp::UIFX.MenuPageTransitionController
+  initialTransitions:
+  - {fileID: 1653981922}
+  sequentialTransitions:
+  - {fileID: 1236778483}
+  - {fileID: 1576542503}
+  sequentialDelay: 0.1
 --- !u!1 &1943783732
 GameObject:
   m_ObjectHideFlags: 0
@@ -4035,6 +4282,7 @@ GameObject:
   - component: {fileID: 1943783736}
   - component: {fileID: 1943783735}
   - component: {fileID: 1943783734}
+  - component: {fileID: 1943783737}
   m_Layer: 5
   m_Name: lvl3
   m_TagString: Untagged
@@ -4057,9 +4305,9 @@ RectTransform:
   - {fileID: 530431515}
   m_Father: {fileID: 205586880}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 0, y: -96.35254}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 168.4, y: 38.541016}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1943783734
@@ -4156,6 +4404,26 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1943783732}
   m_CullTransparentMesh: 1
+--- !u!114 &1943783737
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1943783732}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 49a44b6be8f4c4daaa7f75f8143e26ec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIFX.ButtonDecorationController
+  fadeInTime: 0.3
+  fadeOutTime: 0.3
+  fadeInColor: {r: 0.754717, g: 0.754717, b: 0.754717, a: 0.34901962}
+  fadedOutColor: {r: 0.735849, g: 0.735849, b: 0.735849, a: 0}
+  hoveredScale: 1.15
+  transitionMoveDistance: 10
+  backdropImage: {fileID: 1943783735}
+  labelTMP: {fileID: 530431516}
 --- !u!1 &2096909035
 GameObject:
   m_ObjectHideFlags: 0

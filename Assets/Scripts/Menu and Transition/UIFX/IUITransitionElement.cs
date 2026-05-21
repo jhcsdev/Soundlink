@@ -1,13 +1,14 @@
+using UnityEngine;
 using UnityEngine.Events;
 
 namespace UIFX
 {
     // Monobehaviours implementing this interface should be UI elements, and their parent should have the IUITransitionBaseControl 
     // interface attached; they will subscribe to its OnEnter / OnExit actions.
-    public interface IUITransitionElement
+    public abstract class IUITransitionElement : MonoBehaviour
     {
-        public void Enter(UnityAction<IUITransitionElement> onComplete);
-        public void Exit(UnityAction<IUITransitionElement> onComplete);
-        public void FastKill();
+        public abstract void Enter(UnityAction<IUITransitionElement> onComplete);
+        public abstract void Exit(UnityAction<IUITransitionElement> onComplete);
+        public abstract void FastKill();
     }
 }

@@ -7,15 +7,14 @@ using UnityEngine.Events;
 
 namespace UIFX
 {
-    public class ButtonDecorationController : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IUITransitionElement
+    public class ButtonDecorationController : IUITransitionElement, IPointerEnterHandler, IPointerExitHandler
     {
         [Header("Animation")]
-        [SerializeField] private float fadeInTime;
-        [SerializeField] private float fadeOutTime;
+        [SerializeField] private float fadeInTime = 0.3f;
+        [SerializeField] private float fadeOutTime = 0.3f;
         [SerializeField] private Color fadeInColor;
         [SerializeField] private Color fadedOutColor;
-        [SerializeField] private Color underlineColor;
-        [SerializeField] private float hoveredScale;
+        [SerializeField] private float hoveredScale = 1.15f;
         [SerializeField] private float transitionMoveDistance = 10f;
         [Header("Object config")]
         [SerializeField] private Image backdropImage;
@@ -41,7 +40,6 @@ namespace UIFX
 
         public void OnPointerEnter(PointerEventData ped)
         {
-            // Debug.Log("hello hovering over " + gameObject.name);
             if (fadeOutSequence != null && fadeOutSequence.active) { fadeOutSequence.Kill(); }
             fadeOutSequence = null;
 
@@ -53,7 +51,6 @@ namespace UIFX
         }
         public void OnPointerExit(PointerEventData ped)
         {
-            // Debug.Log("And that's an exit");
             if (fadeInSequence != null && fadeInSequence.active) { fadeInSequence.Kill(); }
             fadeInSequence = null;
 
@@ -64,7 +61,7 @@ namespace UIFX
             );
         }
 
-        public void Enter(UnityAction<IUITransitionElement> enterComplete)
+        public override void Enter(UnityAction<IUITransitionElement> enterComplete)
         {
             if (exitTransitionSequence != null && exitTransitionSequence.active) exitTransitionSequence.Complete();
             exitTransitionSequence = null;
@@ -78,9 +75,9 @@ namespace UIFX
                     labelTMP.DOColor(new Color(c.r, c.g, c.b, 1f), fadeInTime)
                 )
                 .OnComplete(() => enterComplete.Invoke(this)).Play();
-                    
         }
-        public void Exit(UnityAction<IUITransitionElement> exitComplete)
+
+        public override void Exit(UnityAction<IUITransitionElement> exitComplete)
         {
             if (enterTransitionSequence != null && enterTransitionSequence.active) enterTransitionSequence.Complete();
             enterTransitionSequence = null;
@@ -94,6 +91,14 @@ namespace UIFX
                 ).Join(
                     labelTMP.DOColor(new Color(c.r, c.g, c.b, 0f), fadeOutTime)
                 ).OnComplete(() => exitComplete.Invoke(this)).Play();
+        }
+
+        public override void FastKill()
+        {
+            fadeInSequence?.Kill(); fadeInSequence = null;
+            fadeOutSequence?.Kill(); fadeOutSequence = null;
+            enterTransitionSequence?.Kill(); enterTransitionSequence = null;
+            exitTransitionSequence?.Kill(); exitTransitionSequence  = null;
         }
     }
 }
