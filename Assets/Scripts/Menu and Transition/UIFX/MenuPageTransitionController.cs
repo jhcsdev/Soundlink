@@ -85,6 +85,11 @@ namespace UIFX
         public override void Exit(UnityAction<IUITransitionElement> onComplete)
         {
             Debug.Log("EXIT: " + gameObject.name);
+            if (sequentialCoroutine != null)          // ← add this
+            {                                          // ← add this
+                StopCoroutine(sequentialCoroutine);    // ← add this
+                sequentialCoroutine = null;            // ← add this
+            }                                          // ← add this
             pendingExitComplete = onComplete;
             activeExitTransitions = new HashSet<IUITransitionElement>();
 

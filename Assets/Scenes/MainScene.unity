@@ -152,11 +152,11 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 319217929}
-  m_Father: {fileID: 205586880}
+  m_Father: {fileID: 751060035}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 420.75, y: -100.27051}
   m_SizeDelta: {x: 168.4, y: 38.541016}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &125666071
@@ -267,11 +267,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UIFX.ButtonDecorationController
   fadeInTime: 0.3
   fadeOutTime: 0.3
-  fadeInColor: {r: 0.754717, g: 0.754717, b: 0.754717, a: 0.34901962}
-  fadedOutColor: {r: 0.735849, g: 0.735849, b: 0.735849, a: 0}
+  fadeInColor: {r: 0.754717, g: 0.754717, b: 0.754717, a: 0.36078432}
+  fadedOutColor: {r: 0.8396226, g: 0.8396226, b: 0.8396226, a: 0}
   hoveredScale: 1.15
   transitionMoveDistance: 10
   backdropImage: {fileID: 125666072}
+  button: {fileID: 125666071}
   labelTMP: {fileID: 319217930}
 --- !u!1 &173240525
 GameObject:
@@ -306,11 +307,11 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1564825157}
-  m_Father: {fileID: 205586880}
+  m_Father: {fileID: 751060035}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 420.75, y: -245.89355}
   m_SizeDelta: {x: 168.4, y: 38.541016}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &173240527
@@ -421,93 +422,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UIFX.ButtonDecorationController
   fadeInTime: 0.3
   fadeOutTime: 0.3
-  fadeInColor: {r: 0.754717, g: 0.754717, b: 0.754717, a: 0.34901962}
-  fadedOutColor: {r: 0.735849, g: 0.735849, b: 0.735849, a: 0}
+  fadeInColor: {r: 0.754717, g: 0.754717, b: 0.754717, a: 0.36078432}
+  fadedOutColor: {r: 0.8396226, g: 0.8396226, b: 0.8396226, a: 0}
   hoveredScale: 1.15
   transitionMoveDistance: 10
   backdropImage: {fileID: 173240528}
+  button: {fileID: 173240527}
   labelTMP: {fileID: 1564825158}
---- !u!1 &205586879
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 205586880}
-  - component: {fileID: 205586881}
-  - component: {fileID: 205586882}
-  m_Layer: 5
-  m_Name: Level buttons
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!224 &205586880
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 205586879}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 125666070}
-  - {fileID: 457656175}
-  - {fileID: 1943783733}
-  - {fileID: 173240526}
-  - {fileID: 446617236}
-  - {fileID: 1331889230}
-  m_Father: {fileID: 751060035}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 141}
-  m_SizeDelta: {x: 0, y: 0}
-  m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &205586881
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 205586879}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 59f8146938fff824cb5fd77236b75775, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.VerticalLayoutGroup
-  m_Padding:
-    m_Left: 0
-    m_Right: 0
-    m_Top: 0
-    m_Bottom: 0
-  m_ChildAlignment: 4
-  m_Spacing: 10
-  m_ChildForceExpandWidth: 1
-  m_ChildForceExpandHeight: 1
-  m_ChildControlWidth: 0
-  m_ChildControlHeight: 0
-  m_ChildScaleWidth: 0
-  m_ChildScaleHeight: 0
-  m_ReverseArrangement: 0
---- !u!114 &205586882
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 205586879}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 827974a139f294201a6dffe1e70b2e5e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: '::'
 --- !u!1 &319217928
 GameObject:
   m_ObjectHideFlags: 0
@@ -860,11 +781,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UIFX.ButtonDecorationController
   fadeInTime: 0.3
   fadeOutTime: 0.3
-  fadeInColor: {r: 0.85882354, g: 0.85882354, b: 0.85882354, a: 0.32156864}
-  fadedOutColor: {r: 0.8490566, g: 0.8490566, b: 0.8490566, a: 0}
+  fadeInColor: {r: 0.7264151, g: 0.7264151, b: 0.7264151, a: 0.34901962}
+  fadedOutColor: {r: 0.7830189, g: 0.7830189, b: 0.7830189, a: 0}
   hoveredScale: 1.15
   transitionMoveDistance: 10
   backdropImage: {fileID: 397783136}
+  button: {fileID: 397783135}
   labelTMP: {fileID: 2121631733}
 --- !u!1 &402666552
 GameObject:
@@ -1036,11 +958,11 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1270602762}
-  m_Father: {fileID: 205586880}
+  m_Father: {fileID: 751060035}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 420.75, y: -294.43457}
   m_SizeDelta: {x: 168.4, y: 38.541016}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &446617237
@@ -1151,11 +1073,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UIFX.ButtonDecorationController
   fadeInTime: 0.3
   fadeOutTime: 0.3
-  fadeInColor: {r: 0.754717, g: 0.754717, b: 0.754717, a: 0.34901962}
-  fadedOutColor: {r: 0.735849, g: 0.735849, b: 0.735849, a: 0}
+  fadeInColor: {r: 0.754717, g: 0.754717, b: 0.754717, a: 0.36078432}
+  fadedOutColor: {r: 0.8396226, g: 0.8396226, b: 0.8396226, a: 0}
   hoveredScale: 1.15
   transitionMoveDistance: 10
   backdropImage: {fileID: 446617238}
+  button: {fileID: 446617237}
   labelTMP: {fileID: 1270602763}
 --- !u!1 &457656174
 GameObject:
@@ -1190,11 +1113,11 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 402666553}
-  m_Father: {fileID: 205586880}
+  m_Father: {fileID: 751060035}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 420.75, y: -148.81152}
   m_SizeDelta: {x: 168.4, y: 38.541016}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &457656176
@@ -1305,11 +1228,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UIFX.ButtonDecorationController
   fadeInTime: 0.3
   fadeOutTime: 0.3
-  fadeInColor: {r: 0.754717, g: 0.754717, b: 0.754717, a: 0.34901962}
-  fadedOutColor: {r: 0.735849, g: 0.735849, b: 0.735849, a: 0}
+  fadeInColor: {r: 0.754717, g: 0.754717, b: 0.754717, a: 0.36078432}
+  fadedOutColor: {r: 0.8396226, g: 0.8396226, b: 0.8396226, a: 0}
   hoveredScale: 1.15
   transitionMoveDistance: 10
   backdropImage: {fileID: 457656177}
+  button: {fileID: 457656176}
   labelTMP: {fileID: 402666554}
 --- !u!1 &472500018
 GameObject:
@@ -1857,7 +1781,6 @@ MonoBehaviour:
   pages:
   - {fileID: 1110826029}
   - {fileID: 1685438469}
-  - {fileID: 751060036}
   currentPage: {fileID: 1110826029}
 --- !u!1 &751060034
 GameObject:
@@ -1889,7 +1812,12 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1239169937}
-  - {fileID: 205586880}
+  - {fileID: 125666070}
+  - {fileID: 457656175}
+  - {fileID: 1943783733}
+  - {fileID: 173240526}
+  - {fileID: 446617236}
+  - {fileID: 1331889230}
   - {fileID: 873729891}
   m_Father: {fileID: 677761131}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -2066,14 +1994,15 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 49a44b6be8f4c4daaa7f75f8143e26ec, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: '::'
+  m_EditorClassIdentifier: Assembly-CSharp::UIFX.ButtonDecorationController
   fadeInTime: 0.3
   fadeOutTime: 0.3
-  fadeInColor: {r: 0.8584906, g: 0.8584906, b: 0.8584906, a: 0.32156864}
+  fadeInColor: {r: 0.7264151, g: 0.7264151, b: 0.7264151, a: 0.34901962}
   fadedOutColor: {r: 0.7830189, g: 0.7830189, b: 0.7830189, a: 0}
   hoveredScale: 1.15
   transitionMoveDistance: 10
   backdropImage: {fileID: 778312398}
+  button: {fileID: 778312397}
   labelTMP: {fileID: 1419730490}
 --- !u!1 &873729890
 GameObject:
@@ -2223,11 +2152,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UIFX.ButtonDecorationController
   fadeInTime: 0.3
   fadeOutTime: 0.3
-  fadeInColor: {r: 0.754717, g: 0.754717, b: 0.754717, a: 0.34901962}
-  fadedOutColor: {r: 0.735849, g: 0.735849, b: 0.735849, a: 0}
+  fadeInColor: {r: 0.754717, g: 0.754717, b: 0.754717, a: 0.36078432}
+  fadedOutColor: {r: 0.8396226, g: 0.8396226, b: 0.8396226, a: 0}
   hoveredScale: 1.15
   transitionMoveDistance: 10
   backdropImage: {fileID: 873729893}
+  button: {fileID: 873729892}
   labelTMP: {fileID: 1529511012}
 --- !u!1 &1082158941
 GameObject:
@@ -2587,11 +2517,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UIFX.ButtonDecorationController
   fadeInTime: 0.3
   fadeOutTime: 0.3
-  fadeInColor: {r: 0.8301887, g: 0.8301887, b: 0.8301887, a: 0.29803923}
-  fadedOutColor: {r: 1, g: 1, b: 1, a: 0}
+  fadeInColor: {r: 0.7264151, g: 0.7264151, b: 0.7264151, a: 0.34901962}
+  fadedOutColor: {r: 0.7830189, g: 0.7830189, b: 0.7830189, a: 0}
   hoveredScale: 1.15
   transitionMoveDistance: 10
   backdropImage: {fileID: 1181825652}
+  button: {fileID: 1181825651}
   labelTMP: {fileID: 2096909037}
 --- !u!1 &1236778479
 GameObject:
@@ -2748,7 +2679,7 @@ MonoBehaviour:
   fadeOutTime: 0.2
   fadedInColor: {r: 1, g: 1, b: 1, a: 1}
   fadedOutColor: {r: 1, g: 1, b: 1, a: 0}
-  label: {fileID: 0}
+  label: {fileID: 1236778481}
 --- !u!1 &1239169936
 GameObject:
   m_ObjectHideFlags: 0
@@ -3192,12 +3123,12 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4b147e341571b4fe5ba270cc110eb6a6, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: '::'
+  m_EditorClassIdentifier: Assembly-CSharp::UIFX.TextTransitionController
   fadeInTime: 0.3
   fadeOutTime: 0.2
   fadedInColor: {r: 1, g: 1, b: 1, a: 1}
   fadedOutColor: {r: 1, g: 1, b: 1, a: 0}
-  label: {fileID: 0}
+  label: {fileID: 1289582504}
 --- !u!1 &1331889229
 GameObject:
   m_ObjectHideFlags: 0
@@ -3231,11 +3162,11 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1638192908}
-  m_Father: {fileID: 205586880}
+  m_Father: {fileID: 751060035}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 420.75, y: -342.9756}
   m_SizeDelta: {x: 168.4, y: 38.541016}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1331889231
@@ -3346,11 +3277,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UIFX.ButtonDecorationController
   fadeInTime: 0.3
   fadeOutTime: 0.3
-  fadeInColor: {r: 0.754717, g: 0.754717, b: 0.754717, a: 0.34901962}
-  fadedOutColor: {r: 0.735849, g: 0.735849, b: 0.735849, a: 0}
+  fadeInColor: {r: 0.754717, g: 0.754717, b: 0.754717, a: 0.36078432}
+  fadedOutColor: {r: 0.8396226, g: 0.8396226, b: 0.8396226, a: 0}
   hoveredScale: 1.15
   transitionMoveDistance: 10
   backdropImage: {fileID: 1331889232}
+  button: {fileID: 1331889231}
   labelTMP: {fileID: 1638192909}
 --- !u!1 &1419730488
 GameObject:
@@ -3913,11 +3845,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UIFX.ButtonDecorationController
   fadeInTime: 0.3
   fadeOutTime: 0.3
-  fadeInColor: {r: 0.735849, g: 0.735849, b: 0.735849, a: 0.3529412}
-  fadedOutColor: {r: 0.7264151, g: 0.7264151, b: 0.7264151, a: 0}
+  fadeInColor: {r: 0.7169812, g: 0.7169812, b: 0.7169812, a: 0.38431373}
+  fadedOutColor: {r: 0.7075472, g: 0.7075472, b: 0.7075472, a: 0}
   hoveredScale: 1.15
   transitionMoveDistance: 10
   backdropImage: {fileID: 1576542501}
+  button: {fileID: 1576542500}
   labelTMP: {fileID: 472500020}
 --- !u!1 &1638192907
 GameObject:
@@ -4212,7 +4145,7 @@ MonoBehaviour:
   fadeOutTime: 0.2
   fadedInColor: {r: 1, g: 1, b: 1, a: 1}
   fadedOutColor: {r: 1, g: 1, b: 1, a: 0}
-  label: {fileID: 0}
+  label: {fileID: 1653981920}
 --- !u!1 &1685438467
 GameObject:
   m_ObjectHideFlags: 0
@@ -4303,11 +4236,11 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 530431515}
-  m_Father: {fileID: 205586880}
+  m_Father: {fileID: 751060035}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 420.75, y: -197.35254}
   m_SizeDelta: {x: 168.4, y: 38.541016}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1943783734
@@ -4418,11 +4351,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UIFX.ButtonDecorationController
   fadeInTime: 0.3
   fadeOutTime: 0.3
-  fadeInColor: {r: 0.754717, g: 0.754717, b: 0.754717, a: 0.34901962}
-  fadedOutColor: {r: 0.735849, g: 0.735849, b: 0.735849, a: 0}
+  fadeInColor: {r: 0.754717, g: 0.754717, b: 0.754717, a: 0.36078432}
+  fadedOutColor: {r: 0.8396226, g: 0.8396226, b: 0.8396226, a: 0}
   hoveredScale: 1.15
   transitionMoveDistance: 10
   backdropImage: {fileID: 1943783735}
+  button: {fileID: 1943783734}
   labelTMP: {fileID: 530431516}
 --- !u!1 &2096909035
 GameObject:

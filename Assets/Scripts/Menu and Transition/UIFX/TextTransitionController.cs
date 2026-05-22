@@ -21,6 +21,10 @@ namespace UIFX
         {
             label = GetComponent<TMP_Text>();
         }
+        void Reset()
+        {
+            if (!TryGetComponent(out label)) Debug.LogWarning($"{name} failed to get label text");
+        } 
 
         void OnEnable()
         {
@@ -30,6 +34,7 @@ namespace UIFX
 
         public override void Enter(UnityAction<IUITransitionElement> onComplete)
         {
+            Debug.Log($"{name} enter");
             exitSequence?.Kill();
             exitSequence = null;
 

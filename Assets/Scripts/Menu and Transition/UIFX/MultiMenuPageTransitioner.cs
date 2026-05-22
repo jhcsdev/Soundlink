@@ -38,6 +38,10 @@ namespace UIFX
                     isEntering = false;
                     EnterPending();
                 }
+                else
+                {
+                    currentPage.Exit(ExitComplete);
+                }
             }
             else
             {
@@ -54,8 +58,9 @@ namespace UIFX
                 currentPage.FastKill();
                 currentPage = null;
                 isEntering = false;
+                pendingPage = null;
+                return;
             }
-
             pendingPage = null;
             currentPage.Exit(ExitComplete);
         }

@@ -37,6 +37,10 @@ namespace UIFX
         void Reset()
         {
             Debug.Log("Reset running on " + gameObject.name);
+            if (!TryGetComponent(out backdropImage)) Debug.LogWarning("Failed to retrieve image reference for button deco controller: " + name);
+            if (!TryGetComponent(out button)) Debug.LogWarning("Failed to retrieve button for buttondecorationcontroller: " + name);
+            labelTMP = GetComponentInChildren<TMP_Text>();
+            if (labelTMP == null) Debug.LogWarning("Failed to retrieve labelTMP for button controller: " + name);
         }
 
         void OnEnable()
@@ -69,6 +73,7 @@ namespace UIFX
 
         public override void Enter(UnityAction<IUITransitionElement> enterComplete)
         {
+            Debug.Log(name);
             if (exitTransitionSequence != null && exitTransitionSequence.active) exitTransitionSequence.Complete();
             exitTransitionSequence = null;
 
@@ -80,11 +85,12 @@ namespace UIFX
                 ).Join(
                     labelTMP.DOColor(new Color(c.r, c.g, c.b, 1f), fadeInTime)
                 )
-                .OnComplete(() => enterComplete.Invoke(this)).Play();
+                .OnComplete(() => { button.interactable = true; enterComplete.Invoke(this); }).Play();
         }
 
         public override void Exit(UnityAction<IUITransitionElement> exitComplete)
         {
+            Debug.Log("exit" + name);
             if (enterTransitionSequence != null && enterTransitionSequence.active) enterTransitionSequence.Complete();
             enterTransitionSequence = null;
 
@@ -96,7 +102,7 @@ namespace UIFX
                     transform.DOLocalMoveY(originalLocalPosition.y - transitionMoveDistance, fadeOutTime)
                 ).Join(
                     labelTMP.DOColor(new Color(c.r, c.g, c.b, 0f), fadeOutTime)
-                ).OnComplete(() => exitComplete.Invoke(this)).Play();
+                ).OnComplete(() => { button.interactable = false; exitComplete.Invoke(this); } ).Play();
         }
 
         public override void FastKill()
