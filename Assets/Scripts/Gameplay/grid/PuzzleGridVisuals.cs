@@ -45,9 +45,11 @@ namespace PuzzleGrid
         [SerializeField] private Transform gridPointer;
         private SpriteRenderer pointerRenderer;
         [SerializeField] private List<Sprite> gridTiles;
+        [SerializeField] private Color gridTileMultColor = Color.white;
         #endregion
 
         #region camera
+        [Header("Camera")]
         private Camera cam;
         // [SerializeField] private Vector2 camOffset = new(1.5f, 0);
         // [SerializeField] private int displayGridTilesX;
@@ -55,6 +57,7 @@ namespace PuzzleGrid
         // [SerializeField] private float camMoveTime = 0.15f;
         // [SerializeField, Tooltip("applied to zooming to give slight buffer at edges")] 
         // private float camZoomRatioMult = 1.25f; 
+        [SerializeField] private bool adjustCameraPos =true;
         #endregion
         
         #region other variables
@@ -116,6 +119,7 @@ namespace PuzzleGrid
             int spriteIndex = (int)(position.x + position.y) % gridTiles.Count;
             tile.SetSprite(gridTiles[spriteIndex]);
             if (tile.HasLinkPlacementData()) tile.SetLinkColorByPlacementData();
+            tile.MultColor(gridTileMultColor);
             Vector2 worldPos = tile.transform.position;
 
             maximumKnownTilePosition = Vector2.Max(maximumKnownTilePosition, position);
@@ -125,7 +129,10 @@ namespace PuzzleGrid
 
         void InitializeGrid()
         {
-            Vector4 screenFit = LevelLoader.instance.GetGridFitShape();
+            if (!adjustCameraPos) return;
+            Vector4 screenFit;
+            if (LevelLoader.instance != null) screenFit = LevelLoader.instance.GetGridFitShape();
+            else screenFit = new (-0.2f, 1.2f, -0.2f, 1.2f);
             
             Vector3 gridCenter = minimumKnownPosition + (maximumKnownPosition - minimumKnownPosition) / 2f;
             Vector2 gridSize = maximumKnownPosition - minimumKnownPosition;

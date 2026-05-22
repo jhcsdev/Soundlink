@@ -17,7 +17,8 @@ namespace PuzzleGrid
         [SerializeField] private FloatEventStream WonGameStream;
         [SerializeField] private float tileRealsize = 1f;
 
-        private GridData gridData; 
+        [SerializeField] private GridData gridData; 
+        [SerializeField] private bool emitWin;
 
         private GridTile[,] tiles; // index via [x,y]
         public List<GridLink> gridLinks = new();
@@ -49,10 +50,10 @@ namespace PuzzleGrid
         #region unity functions
         void OnEnable()
         {
-            if (LevelLoader.instance == null) Debug.LogError("Warning: A LevelLoader needs to exist in the scene for grid to build.");
-            if (LevelLoader.instance.GetGridData() == null) Debug.LogError("Warning: LevelLoader exists, but grid failed to retrieve GridData.");
+            if (LevelLoader.instance == null && gridData == null) Debug.LogError("Warning: A LevelLoader should exist in the scene for grid to build.");
+            if (LevelLoader.instance != null && gridData == null && LevelLoader.instance.GetGridData() == null) Debug.LogError("Warning: LevelLoader exists, but grid failed to retrieve GridData.");
 
-            gridData = LevelLoader.instance.GetGridData();
+            if (gridData == null) gridData = LevelLoader.instance.GetGridData();
             tiles = new GridTile[gridData.width, gridData.height];
         }
 
@@ -157,7 +158,7 @@ namespace PuzzleGrid
             p.transform.parent = transform;
             OnPiecePlacementSuccess?.Invoke(p);
 
-            if (CheckIfGameWon()) 
+            if (CheckIfGameWon() && emitWin) 
             {
                 WonGameStream.Invoke(LevelLoader.instance.GetLevel());
             }

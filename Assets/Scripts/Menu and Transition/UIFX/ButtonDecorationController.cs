@@ -28,6 +28,7 @@ namespace UIFX
         private Sequence exitTransitionSequence;
         #endregion
         private Vector3 originalLocalPosition;
+        private Vector3 exitFinalPosition = Vector3.zero;
 
         void Awake()
         {
@@ -73,11 +74,12 @@ namespace UIFX
 
         public override void Enter(UnityAction<IUITransitionElement> enterComplete)
         {
-            Debug.Log(name);
             if (exitTransitionSequence != null && exitTransitionSequence.active) exitTransitionSequence.Complete();
             exitTransitionSequence = null;
 
             var c = labelTMP.color; labelTMP.color = new Color(c.r, c.g, c.b, 0f);
+
+            if (exitFinalPosition != Vector3.zero) transform.position = exitFinalPosition;
 
             enterTransitionSequence = DOTween.Sequence()
                 .Append(
@@ -85,12 +87,11 @@ namespace UIFX
                 ).Join(
                     labelTMP.DOColor(new Color(c.r, c.g, c.b, 1f), fadeInTime)
                 )
-                .OnComplete(() => { button.interactable = true; enterComplete.Invoke(this); }).Play();
+                .OnComplete(() => { enterComplete.Invoke(this); }).Play();
         }
 
         public override void Exit(UnityAction<IUITransitionElement> exitComplete)
         {
-            Debug.Log("exit" + name);
             if (enterTransitionSequence != null && enterTransitionSequence.active) enterTransitionSequence.Complete();
             enterTransitionSequence = null;
 
@@ -102,7 +103,13 @@ namespace UIFX
                     transform.DOLocalMoveY(originalLocalPosition.y - transitionMoveDistance, fadeOutTime)
                 ).Join(
                     labelTMP.DOColor(new Color(c.r, c.g, c.b, 0f), fadeOutTime)
-                ).OnComplete(() => { button.interactable = false; exitComplete.Invoke(this); } ).Play();
+                ).OnComplete(
+                    () => { 
+                        exitFinalPosition = transform.position; 
+                        transform.position = transform.position + Vector3.one * 1000;
+                        exitComplete.Invoke(this); 
+                    } 
+                ).Play();
         }
 
         public override void FastKill()

@@ -16,6 +16,7 @@ namespace UIFX
         [SerializeField] private TMP_Text label;
         private Sequence enterSequence;
         private Sequence exitSequence;
+        private Vector3 exitFinalPosition = Vector3.zero;
 
         void Awake()
         {
@@ -29,14 +30,16 @@ namespace UIFX
         void OnEnable()
         {
             var c = label.color;
-            label.color = new Color(c.r, c.g, c.b, 0f);
+            // label.color = new Color(c.r, c.g, c.b, 0f);
         }
 
         public override void Enter(UnityAction<IUITransitionElement> onComplete)
         {
             Debug.Log($"{name} enter");
-            exitSequence?.Kill();
+            if (exitSequence != null && exitSequence.active) exitSequence.Kill();
             exitSequence = null;
+            
+            if (exitFinalPosition != Vector3.zero) transform.position = exitFinalPosition;
 
             enterSequence = DOTween.Sequence()
                 .Append(label.DOColor(fadedInColor, fadeInTime))
@@ -46,12 +49,17 @@ namespace UIFX
 
         public override void Exit(UnityAction<IUITransitionElement> onComplete)
         {
-            enterSequence?.Kill();
+            Debug.Log($"{name} exiting, label is {label}");
+            if (enterSequence != null && enterSequence.active) enterSequence.Kill();
             enterSequence = null;
 
             exitSequence = DOTween.Sequence()
                 .Append(label.DOColor(fadedOutColor, fadeOutTime))
-                .OnComplete(() => onComplete?.Invoke(this))
+                .OnComplete(() => { 
+                        exitFinalPosition = transform.position; 
+                        transform.position = transform.position + Vector3.one * 1000;
+                        onComplete.Invoke(this); 
+                    } )
                 .Play();
         }
 
