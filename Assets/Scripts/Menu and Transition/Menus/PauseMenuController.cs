@@ -11,7 +11,7 @@ namespace Menus
     {
         [SerializeField] private BasicEventStream OpenPauseMenuStream;
         [SerializeField] private FloatEventStream PauseGameStream; // emits a 1 if paused, 0 if not
-        [SerializeField, Tooltip("This long between pausing / unpausing is mandated")] private float pauseAllowanceCooldown = 0.1f;
+        // [SerializeField, Tooltip("This long between pausing / unpausing is mandated")] private float pauseAllowanceCooldown = 0.1f;
 
         public UnityAction<bool> PauseMenuStateChanged;
         public UnityAction<PauseMenuSubState> SubmenuStateChange;

@@ -49,12 +49,12 @@ namespace PuzzleGrid
 
         #region camera
         private Camera cam;
-        [SerializeField] private Vector2 camOffset = new(1.5f, 0);
-        [SerializeField] private int displayGridTilesX;
-        [SerializeField] private int displayGridTilesY;
-        [SerializeField] private float camMoveTime = 0.15f;
-        [SerializeField, Tooltip("applied to zooming to give slight buffer at edges")] 
-        private float camZoomRatioMult = 1.25f; 
+        // [SerializeField] private Vector2 camOffset = new(1.5f, 0);
+        // [SerializeField] private int displayGridTilesX;
+        // [SerializeField] private int displayGridTilesY;
+        // [SerializeField] private float camMoveTime = 0.15f;
+        // [SerializeField, Tooltip("applied to zooming to give slight buffer at edges")] 
+        // private float camZoomRatioMult = 1.25f; 
         #endregion
         
         #region other variables

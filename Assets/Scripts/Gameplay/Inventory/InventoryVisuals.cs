@@ -26,9 +26,9 @@ namespace Inventory
         #region animation
         [Header("Animation configuration")]
         [Header("Focus / unfocus animation")]
-        [SerializeField] private float focusedAnchorX = 0.55f;
+        // [SerializeField] private float focusedAnchorX = 0.55f;
         [SerializeField] private float unfocusedAnchorX = 0.8f;
-        [SerializeField] private float focusUnfocusAnimationTime = 0.2f;
+        // [SerializeField] private float focusUnfocusAnimationTime = 0.2f;
         [Header("Focus pointer animation")]
         [SerializeField] private float pointerMoveTime = 0.1f;
         [SerializeField] private float pointerSquishTo = 0.5f;
@@ -38,10 +38,10 @@ namespace Inventory
         [SerializeField] private float pointerFailedMovementTime = 0.2f;
         [SerializeField] private Color pointerFailedMovementColor = new(0.9f, 0.5f, 0.5f);
         private Color pointerNormalColor;
-        [SerializeField, Tooltip("the percent of the way through that the focus pointer will appear when grid is focused")]
-        private float pointerAppearAtRatioTime = 0.7f;
-        [SerializeField, Tooltip("vice-versa to above")]
-        private float pointerDisappearAtRatioTime = 0.3f;
+        // [SerializeField, Tooltip("the percent of the way through that the focus pointer will appear when grid is focused")]
+        // private float pointerAppearAtRatioTime = 0.7f;
+        // [SerializeField, Tooltip("vice-versa to above")]
+        // private float pointerDisappearAtRatioTime = 0.3f;
 
         [Header("Scroll animation")]
         [SerializeField] private float scrollAnimationTime = 0.15f;

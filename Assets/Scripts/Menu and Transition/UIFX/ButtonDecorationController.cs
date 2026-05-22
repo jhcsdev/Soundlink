@@ -18,6 +18,7 @@ namespace UIFX
         [SerializeField] private float transitionMoveDistance = 10f;
         [Header("Object config")]
         [SerializeField] private Image backdropImage;
+        [SerializeField] private Button button;
         [SerializeField] private TMP_Text labelTMP;
 
         #region sequences
@@ -31,6 +32,11 @@ namespace UIFX
         void Awake()
         {
             originalLocalPosition = transform.localPosition;
+        }
+
+        void Reset()
+        {
+            Debug.Log("Reset running on " + gameObject.name);
         }
 
         void OnEnable()

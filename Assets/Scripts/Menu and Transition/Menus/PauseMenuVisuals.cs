@@ -16,8 +16,8 @@ namespace Menus
         private static float fadeOutTime = 0.2f;
         private static Color backdropColor = new(0.1f, 0.1f, 0.1f, 0.7f);
         private static Color invisibleColor = new(0, 0, 0, 0);
-        private static float sweepInTime = 0.8f;
-        private static float sweepOutTime = 0.8f;
+        // private static float sweepInTime = 0.8f;
+        // private static float sweepOutTime = 0.8f;
         #endregion
 
         #region animation objects
