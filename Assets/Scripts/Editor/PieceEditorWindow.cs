@@ -146,7 +146,7 @@ public class PieceEditorWindow : EditorWindow
         EditorUtility.SetDirty(targetPiece);
         AssetDatabase.SaveAssets();
 
-        Debug.Log($"[PieceEditor] Saved {activeCells.Count} tile(s) to '{targetPiece.name}'.");
+        // Debug.Log($"[PieceEditor] Saved {activeCells.Count} tile(s) to '{targetPiece.name}'.");
     }
     #endregion
 

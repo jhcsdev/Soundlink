@@ -14,7 +14,7 @@ namespace Inventory
     public class PieceAutoPlacement
     {
         public PieceData data;
-        public Vector2 where;
+        public Vector2Int where;
         public int clockwiseRotations;
     }
 }

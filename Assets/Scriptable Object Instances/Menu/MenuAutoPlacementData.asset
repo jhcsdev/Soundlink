@@ -12,4 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6dff13fd919a4494fb89f23b2d29f969, type: 3}
   m_Name: MenuAutoPlacementData
   m_EditorClassIdentifier: Assembly-CSharp::Inventory.AutoPlaceData
-  autoPlacements: []
+  autoPlacements:
+  - data: {fileID: 11400000, guid: ad1292bf3284342458c0c7f9af07370c, type: 2}
+    where: {x: 3, y: 3}
+    clockwiseRotations: 2
+  - data: {fileID: 11400000, guid: 9b8b0810896f94ddf96d77f69e41daa2, type: 2}
+    where: {x: 3, y: 6}
+    clockwiseRotations: 0

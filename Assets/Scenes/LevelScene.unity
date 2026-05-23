@@ -4697,6 +4697,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Grid
       objectReference: {fileID: 0}
+    - target: {fileID: 8232864124688979429, guid: 5e78a4f59428f432ab8b656f896683a4, type: 3}
+      propertyPath: emitWin
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

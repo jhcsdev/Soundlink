@@ -20,11 +20,12 @@ public class LevelCompleteMenu : MonoBehaviour
 
     void LevelComplete(float _)
     {
+        Debug.Log("Level complete menu active");
         levelCompleteRoot.gameObject.SetActive(true); // todo:: improve
     }
     public void OnReturnPressed()
     {
-        Debug.Log("return pressed");
+        // Debug.Log("return pressed");
         AsyncSceneLoader.Instance.LoadMainScene();
     }
 }

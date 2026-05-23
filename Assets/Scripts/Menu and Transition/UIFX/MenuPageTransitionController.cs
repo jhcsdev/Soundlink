@@ -57,7 +57,7 @@ namespace UIFX
         #region IUITransitionElement funcs
         public override void Enter(UnityAction<IUITransitionElement> onComplete)
         {
-            Debug.Log("ENTER: " + gameObject.name);
+            // Debug.Log("ENTER: " + gameObject.name);
             pendingEnterComplete = onComplete;
             activeEnterTransitions = new HashSet<IUITransitionElement>();
             initialsEnterDone = false;
@@ -84,7 +84,7 @@ namespace UIFX
 
         public override void Exit(UnityAction<IUITransitionElement> onComplete)
         {
-            Debug.Log("EXIT: " + gameObject.name);
+            // Debug.Log("EXIT: " + gameObject.name);
             if (sequentialCoroutine != null)          // ← add this
             {                                          // ← add this
                 StopCoroutine(sequentialCoroutine);    // ← add this

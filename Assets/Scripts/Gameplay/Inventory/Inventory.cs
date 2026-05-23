@@ -94,7 +94,7 @@ namespace Inventory
         // put Piece in next available position
         public Vector2Int putPiece(Piece piece) {
             if (piece == null) {
-                Debug.Log("Error in PutPiece(): Piece cannot be null");
+                Debug.LogError("Piece cannot be null");
                 return new Vector2Int(-1, -1);
             }
 
@@ -155,33 +155,6 @@ namespace Inventory
 
         public override Vector2Int? PlaceAtFocusPosition(Piece piece) {
             return putPiece(piece);
-        }
-
-        public void PrintInventory()
-        {
-            if (piecesLookup == null)
-            {
-                Debug.Log("Error: inventory not initialized.");
-                return;
-            }
-
-            if (piecesLookup.Count == 0)
-            {
-                Debug.Log("Inventory is empty.");
-                return;
-            }
-
-            Debug.Log("=== Inventory Contents ===");
-
-            foreach (var kvp in piecesLookup)
-            {
-                Vector2Int position = kvp.Key;
-                Piece piece = kvp.Value;
-
-                string pieceName = piece != null ? piece.name : "NULL";
-
-                Debug.Log($"Position: {position} → Piece: {pieceName}");
-            }
         }
     }
 }

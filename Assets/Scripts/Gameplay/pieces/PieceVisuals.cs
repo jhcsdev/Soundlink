@@ -389,7 +389,7 @@ namespace GamePieces
         }
         private void LinkLeft()
         {
-            Debug.Log("link leave");
+            // Debug.Log("link leave");
             // depending on existing sequences, need to make considerations about what is happening
             // if ongoing join sequence -- revert it (todo:: may need to introduce some sort of state parameter that sets true in case of extended join sequence which reverts leaving)
             // if ongoing leave sequence -- error, this should never happen
@@ -469,7 +469,6 @@ namespace GamePieces
             pulseSequence = DOTween.Sequence();
 
             if(pulseProgress == pieceTiles.Count) {
-                Debug.Log("LAST");
                 pulseSequence.Append(
                     pieceMaterial.DOFloat(maximumPulseDistance+materialFillFadeDistance+1, FillAmountID, pulseOneUnitTime)
                 ).Pause();

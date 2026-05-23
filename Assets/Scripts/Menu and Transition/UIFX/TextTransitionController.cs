@@ -35,7 +35,7 @@ namespace UIFX
 
         public override void Enter(UnityAction<IUITransitionElement> onComplete)
         {
-            Debug.Log($"{name} enter");
+            // Debug.Log($"{name} enter");
             if (exitSequence != null && exitSequence.active) exitSequence.Kill();
             exitSequence = null;
             
@@ -49,7 +49,7 @@ namespace UIFX
 
         public override void Exit(UnityAction<IUITransitionElement> onComplete)
         {
-            Debug.Log($"{name} exiting, label is {label}");
+            // Debug.Log($"{name} exiting, label is {label}");
             if (enterSequence != null && enterSequence.active) enterSequence.Kill();
             enterSequence = null;
 

@@ -23,7 +23,7 @@ namespace UIFX
 
         public void TriggerEnter(TransitionControllerParams<IUITransitionElement> focusedElement)
         {
-            Debug.Log("Triggered enter in multi");
+            // Debug.Log("Triggered enter in multi");
             var target = focusedElement.param;
             if (target == currentPage && pendingPage == null) return;
 
@@ -86,6 +86,6 @@ namespace UIFX
             currentPage.Enter(EnterComplete);
         }
 
-        private void BypassComplete(IUITransitionElement _) { Debug.Log("Bypass"); }
+        private void BypassComplete(IUITransitionElement _) { /*Debug.Log("Bypass");*/ }
     }
 }
