@@ -1,22 +1,28 @@
 using System;
 using SceneTransition;
 using StreamEvents;
+using UIFX;
 using UnityEngine;
-using UnityEngine.Events;
-using UnityEngine.SceneManagement;
 
 namespace Menus
-    {
+{
+    [RequireComponent(typeof(MultiMenuPageTransitioner))]
     public class PauseMenuController : MonoBehaviour
     {
         [SerializeField] private BasicEventStream OpenPauseMenuStream;
         [SerializeField] private FloatEventStream PauseGameStream; // emits a 1 if paused, 0 if not
         // [SerializeField, Tooltip("This long between pausing / unpausing is mandated")] private float pauseAllowanceCooldown = 0.1f;
+        [SerializeField] private IUITransitionElement pauseClosed;
+        [SerializeField] private IUITransitionElement pauseOpened;
 
-        public UnityAction<bool> PauseMenuStateChanged;
-        public UnityAction<PauseMenuSubState> SubmenuStateChange;
+        private MultiMenuPageTransitioner transitioner;
 
         private bool isPaused = false;
+
+        void Awake()
+        {
+            transitioner = GetComponent<MultiMenuPageTransitioner>();
+        }
 
         void OnEnable()
         {
@@ -27,26 +33,17 @@ namespace Menus
             OpenPauseMenuStream.Unsub(TogglePauseMenu);
         }
         
-        void TogglePauseMenu()
+        public void TogglePauseMenu()
         {
             isPaused = !isPaused;
-            PauseMenuStateChanged?.Invoke(isPaused);
-            SubmenuStateChange?.Invoke(isPaused ? PauseMenuSubState.MAIN_PAUSE_MENU : PauseMenuSubState.ALL_CLOSED);
+            transitioner.GoToPage(isPaused ? pauseOpened : pauseClosed);
             PauseGameStream.Invoke(Convert.ToInt32(isPaused));
         }
 
-        public void HowToPlayPressed()
+        public void ChangeMenu(IUITransitionElement menu)
         {
-            SubmenuStateChange?.Invoke(PauseMenuSubState.HOW_TO_PLAY);
-        }
-        public void ToMainPauseScreen()
-        {
-            SubmenuStateChange?.Invoke(PauseMenuSubState.MAIN_PAUSE_MENU);
-        }
-
-        public void BackToGamePressed()
-        {
-            TogglePauseMenu();
+            pauseOpened = menu;
+            transitioner.GoToPage(isPaused ? pauseOpened : pauseClosed);
         }
 
         public void ToMainMenuPressed()
@@ -54,11 +51,4 @@ namespace Menus
             AsyncSceneLoader.Instance.LoadMainScene();
         }
     }
-
-    public enum PauseMenuSubState
-    {
-        MAIN_PAUSE_MENU,
-        HOW_TO_PLAY,
-        ALL_CLOSED
-    }
-    }
+}
