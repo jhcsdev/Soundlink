@@ -18,15 +18,14 @@ public class MetronomeButtonAction : MonoBehaviour
         // grab same chuck subsinstance as track sound 
         myChuck = ChuckManager.Instance.chuckSubInstance;
 
-        // must declare Chuck events before creating listeners
-        myChuck.RunCode( string.Format( @"
-            global Event playMetronome;
-            global Event pauseMetronome;
-        "));
-
+        // initialize sound
         sound?.PlaySound();
     }
 
+    public void SetInteractable(bool interactable)
+    {
+        myButton.interactable = interactable;
+    }
 
     public void PlayMetronome()
     {
@@ -38,12 +37,11 @@ public class MetronomeButtonAction : MonoBehaviour
         if (isPlaying)
         {
             LinkPlaybackManager.Instance.SetMetronomeStartTime();
-            myChuck.BroadcastEvent("playMetronome");
+            LinkPlaybackManager.Instance.SetMetronnomePlaying();
         } 
         else
         {
-            Debug.Log("Pause metronome");
-            myChuck.BroadcastEvent("pauseMetronome");
+            LinkPlaybackManager.Instance.SetMetronnomePaused();
         }
     }
 }

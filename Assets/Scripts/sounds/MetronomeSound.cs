@@ -17,8 +17,10 @@ namespace TrackSounds
 
             myChuck.RunCode( string.Format( @"
             global float BPM;
-            global Event playMetronome;
-            global Event pauseMetronome;
+            // global Event playMetronome;
+            // global Event pauseMetronome;
+            // global Event metronomeDownbeat;
+            global Event playMetronomeSingleSound;
 
             // metronome
             SinOsc click => ADSR envClick => Gain clickGain => dac;
@@ -62,30 +64,12 @@ namespace TrackSounds
                 }}
             }}
 
-            // play whole meausre
-            fun void playMeasure() {{
-                playClick(1);
-                playClick(0);
-                playClick(0);
-                playClick(0); 
-            }}
-
-            // loop the whole beat
-            fun void beatLoop() {{
-                // snap to timing
-                beat_dur - (now % beat_dur) => now;  // snap to grid
-                while (true) {{
-                    spork ~ playMeasure();
-                    4.0 * beat_dur => now;  
-                }}
-            }}
-
             while (true) {{
-                playMetronome => now;
-                spork ~ beatLoop() @=> Shred @ myShred;
-                pauseMetronome => now;
-                myShred.exit();
-            }}"));
+                playMetronomeSingleSound => now;
+                spork ~ playClick(0);
+            }}
+
+            // spork ~ singleSoundLoop();"));
         }
     }
 }
