@@ -590,6 +590,7 @@ GameObject:
   - component: {fileID: 178475315}
   - component: {fileID: 178475317}
   - component: {fileID: 178475316}
+  - component: {fileID: 178475318}
   m_Layer: 5
   m_Name: you win
   m_TagString: Untagged
@@ -613,8 +614,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.75, y: 0.8}
   m_AnchorMax: {x: 0.95, y: 0.9}
-  m_AnchoredPosition: {x: 264.25, y: 120.04999}
-  m_SizeDelta: {x: 151, y: 34.299988}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &178475316
 MonoBehaviour:
@@ -640,8 +641,8 @@ MonoBehaviour:
 
 '
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: dc36b3fdc14f47ebb36fd484a67e268a, type: 2}
+  m_sharedMaterial: {fileID: 2140032, guid: dc36b3fdc14f47ebb36fd484a67e268a, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -672,8 +673,8 @@ MonoBehaviour:
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 0
-  m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_HorizontalAlignment: 2
+  m_VerticalAlignment: 4096
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_characterHorizontalScale: 1
@@ -718,6 +719,23 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 178475314}
   m_CullTransparentMesh: 1
+--- !u!114 &178475318
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 178475314}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4b147e341571b4fe5ba270cc110eb6a6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIFX.TextTransitionController
+  fadeInTime: 0.3
+  fadeOutTime: 0.2
+  fadedInColor: {r: 1, g: 1, b: 1, a: 1}
+  fadedOutColor: {r: 1, g: 1, b: 1, a: 0}
+  label: {fileID: 178475316}
 --- !u!1 &244024412
 GameObject:
   m_ObjectHideFlags: 0
@@ -908,11 +926,11 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1643729573}
         m_TargetAssemblyTypeName: Menus.PauseMenuController, Assembly-CSharp
-        m_MethodName: ChangeMenu
-        m_Mode: 2
+        m_MethodName: TogglePauseMenu
+        m_Mode: 1
         m_Arguments:
-          m_ObjectArgument: {fileID: 1926166282}
-          m_ObjectArgumentAssemblyTypeName: UIFX.IUITransitionElement, Assembly-CSharp
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
@@ -1497,6 +1515,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UIFX.MenuPageTransitionController
   initialTransitions:
   - {fileID: 44907211}
+  - {fileID: 1894317421}
   sequentialTransitions:
   - {fileID: 501620973}
   - {fileID: 1418808742}
@@ -2216,13 +2235,14 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 845535789}
+  - component: {fileID: 845535790}
   m_Layer: 5
   m_Name: LevelCompleteRoot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &845535789
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2240,11 +2260,29 @@ RectTransform:
   - {fileID: 178475315}
   m_Father: {fileID: 1890604978}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 100, y: 100}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &845535790
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 845535788}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 690e37bd7a9bd41ae8a9be6f94ac3581, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIFX.MenuPageTransitionController
+  initialTransitions:
+  - {fileID: 2102835381}
+  sequentialTransitions:
+  - {fileID: 178475318}
+  - {fileID: 1779379051}
+  sequentialDelay: 0.1
 --- !u!114 &848501141 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2182090388445826159, guid: 7d34c0018b1164281bee8dc244735905, type: 3}
@@ -2705,6 +2743,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UIFX.MenuPageTransitionController
   initialTransitions:
   - {fileID: 73996004}
+  - {fileID: 1733439787}
   sequentialTransitions:
   - {fileID: 949048405}
   - {fileID: 2089991357}
@@ -3187,7 +3226,7 @@ MonoBehaviour:
         m_MethodName: ChangeMenu
         m_Mode: 2
         m_Arguments:
-          m_ObjectArgument: {fileID: 1418808742}
+          m_ObjectArgument: {fileID: 1251284064}
           m_ObjectArgumentAssemblyTypeName: UIFX.IUITransitionElement, Assembly-CSharp
           m_IntArgument: 0
           m_FloatArgument: 0
@@ -3457,8 +3496,8 @@ MonoBehaviour:
 
 '
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: dc36b3fdc14f47ebb36fd484a67e268a, type: 2}
+  m_sharedMaterial: {fileID: 2140032, guid: dc36b3fdc14f47ebb36fd484a67e268a, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -3660,7 +3699,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 0, g: 0, b: 0, a: 0}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -3862,6 +3901,7 @@ GameObject:
   - component: {fileID: 1779379050}
   - component: {fileID: 1779379049}
   - component: {fileID: 1779379048}
+  - component: {fileID: 1779379051}
   m_Layer: 5
   m_Name: Main Menu
   m_TagString: Untagged
@@ -3886,8 +3926,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.75, y: 0.1}
   m_AnchorMax: {x: 0.95, y: 0.2}
-  m_AnchoredPosition: {x: 264.25, y: -120.04999}
-  m_SizeDelta: {x: 151, y: 34.300003}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1779379048
 MonoBehaviour:
@@ -3983,6 +4023,27 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1779379046}
   m_CullTransparentMesh: 1
+--- !u!114 &1779379051
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1779379046}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 49a44b6be8f4c4daaa7f75f8143e26ec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIFX.ButtonDecorationController
+  fadeInTime: 0.3
+  fadeOutTime: 0.3
+  fadeInColor: {r: 0, g: 0, b: 0, a: 0}
+  fadedOutColor: {r: 0, g: 0, b: 0, a: 0}
+  hoveredScale: 1.15
+  transitionMoveDistance: 10
+  backdropImage: {fileID: 1779379049}
+  button: {fileID: 1779379048}
+  labelTMP: {fileID: 1432669842}
 --- !u!1 &1877936224
 GameObject:
   m_ObjectHideFlags: 0
@@ -4257,6 +4318,7 @@ GameObject:
   - component: {fileID: 1890604976}
   - component: {fileID: 1890604975}
   - component: {fileID: 1890604979}
+  - component: {fileID: 1890604980}
   m_Layer: 5
   m_Name: LevelCompleteCanvas
   m_TagString: Untagged
@@ -4361,6 +4423,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LevelCompleteMenu
   levelCompleteStream: {fileID: 11400000, guid: 4ae1725c93056447e855df663a235b1f, type: 2}
   levelCompleteRoot: {fileID: 845535789}
+--- !u!114 &1890604980
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1890604974}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b5892a27f6fad41978e301cf135399b5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIFX.MultiMenuPageTransitioner
+  pages:
+  - {fileID: 845535790}
+  - {fileID: 2128624554}
+  currentPage: {fileID: 2128624554}
 --- !u!1 &1894317417
 GameObject:
   m_ObjectHideFlags: 0
@@ -4413,7 +4491,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 0, g: 0, b: 0, a: 0}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -5028,6 +5106,7 @@ GameObject:
   - component: {fileID: 2102835378}
   - component: {fileID: 2102835380}
   - component: {fileID: 2102835379}
+  - component: {fileID: 2102835381}
   m_Layer: 5
   m_Name: Image
   m_TagString: Untagged
@@ -5051,8 +5130,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.7, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 264.25, y: 0}
-  m_SizeDelta: {x: 226.5, y: 343}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2102835379
 MonoBehaviour:
@@ -5092,6 +5171,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2102835377}
   m_CullTransparentMesh: 1
+--- !u!114 &2102835381
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2102835377}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 292d69d0df71041a58553eaa8554c9ef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIFX.ImageFadeInController
+  fadeInColor: {r: 0.1, g: 0.1, b: 0.1, a: 0.7}
+  fadeOutColor: {r: 0, g: 0, b: 0, a: 0}
+  fadeTime: 0.2
 --- !u!1 &2118611571
 GameObject:
   m_ObjectHideFlags: 0
@@ -5167,6 +5261,57 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2118611571}
   m_CullTransparentMesh: 1
+--- !u!1 &2128624553
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2128624555}
+  - component: {fileID: 2128624554}
+  m_Layer: 5
+  m_Name: Empty
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &2128624554
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2128624553}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 690e37bd7a9bd41ae8a9be6f94ac3581, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIFX.MenuPageTransitionController
+  initialTransitions: []
+  sequentialTransitions: []
+  sequentialDelay: 0.1
+--- !u!224 &2128624555
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2128624553}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 1, y: 0}
+  m_AnchorMax: {x: 1, y: 0}
+  m_AnchoredPosition: {x: 848, y: -45}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1001 &362228747595235850
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5542,6 +5687,7 @@ SceneRoots:
   - {fileID: 629775669}
   - {fileID: 1303689730}
   - {fileID: 1890604978}
+  - {fileID: 2128624555}
   - {fileID: 6643164909577830650}
   - {fileID: 5249214690161089775}
   - {fileID: 4629511553569041738}
