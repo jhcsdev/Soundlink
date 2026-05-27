@@ -1,0 +1,46 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e28649601a3744f7a97b948ed0ac6d14, type: 3}
+  m_Name: MenuGrid
+  m_EditorClassIdentifier: Assembly-CSharp::PuzzleGrid.GridData
+  width: 22
+  height: 13
+  linkDatas:
+  - startPos: {x: 0, y: 0}
+    endPos: {x: 10, y: 10}
+    playsSound: {fileID: 11400000, guid: 7d7f630fb01264a42bc4e7a9229cd792, type: 2}
+    soundID: 0
+    baseColor: {r: 0.74722564, g: 0.47843137, b: 0.8392157, a: 1}
+    pulseColor: {r: 0.9637214, g: 0.08495504, b: 1.6226416, a: 1}
+    borderColor: {r: 1.0885391, g: 0, b: 2, a: 0}
+  - startPos: {x: 4, y: 2}
+    endPos: {x: 2, y: 12}
+    playsSound: {fileID: 11400000, guid: e460ad7bde21649b1928b973ece08954, type: 2}
+    soundID: 1
+    baseColor: {r: 0.8392157, g: 0.47843137, b: 0.47843137, a: 1}
+    pulseColor: {r: 1.6226416, g: 0.08419368, b: 0.08419368, a: 1}
+    borderColor: {r: 2, g: 0.075971946, b: 0, a: 1}
+  - startPos: {x: 18, y: 5}
+    endPos: {x: 2, y: 5}
+    playsSound: {fileID: 11400000, guid: e289adf0955214fb78d177916d62e51e, type: 2}
+    soundID: 2
+    baseColor: {r: 0.25907797, g: 0.7735849, b: 0.7064177, a: 1}
+    pulseColor: {r: 0.4593045, g: 1.4980392, b: 1.3372829, a: 1}
+    borderColor: {r: 0.46610245, g: 2.0166063, b: 1.4562082, a: 1}
+  - startPos: {x: 12, y: 18}
+    endPos: {x: 22, y: 4}
+    playsSound: {fileID: 11400000, guid: 708bdced4d376455e88133cd869d777f, type: 2}
+    soundID: 3
+    baseColor: {r: 0.5008916, g: 0.8018868, b: 0.374466, a: 1}
+    pulseColor: {r: 0.34552887, g: 1.4339623, b: 0.16909932, a: 1}
+    borderColor: {r: 0.6647383, g: 1.8301886, b: 0.6729325, a: 1}
+  currentSoundID: 0

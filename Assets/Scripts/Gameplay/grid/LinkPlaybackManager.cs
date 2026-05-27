@@ -17,7 +17,7 @@ namespace GridLinks
         public static LinkPlaybackManager Instance;
 
         [SerializeField] float bpm;
-        [SerializeField, Tooltip("number of beats for the playback loop")] private int beatsInLoop;
+        [SerializeField, Tooltip("number of beats for the playback loop")] private int beatsInLoop = -1;
         [SerializeField] TrackSound referenceSound;
         private float secondsPerBeat;
         private PuzzleGrid.PuzzleGrid puzzleGrid;
@@ -104,7 +104,8 @@ namespace GridLinks
 
             // initiate chuck subsinstance
             myChuck = ChuckManager.Instance.chuckSubInstance;
-            beatsInLoop = LevelLoader.instance.GetBeatsInLoop();
+            if (beatsInLoop > 0) Debug.LogWarning("Note: LinkPlaybackManager using pre-set beatsInLoop serialized inspector values");
+            else beatsInLoop = LevelLoader.instance.GetBeatsInLoop();
 
             // must declare Chuck events before creating listeners
             // this is to coordinate reference beat playback

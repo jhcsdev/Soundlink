@@ -16,6 +16,7 @@ namespace SceneTransition
         [SerializeField] private Color backgroundFadeColor = new(0, 0, 0, 1);
         [SerializeField] private float fadeToBlackTime = 0.5f;
         [SerializeField] private float fadeFromBlackTime = 0.5f;
+        [SerializeField] private float holdBlackTime = 1;
         private Color invisibleColor = new(0, 0, 0, 0);
 
         #region animation sequences
@@ -110,6 +111,12 @@ namespace SceneTransition
         }
         void FadeFromBlack()
         {
+            StartCoroutine(RunFadeFromBlack());
+        }
+        private IEnumerator RunFadeFromBlack()
+        {
+            yield return new WaitForSeconds(holdBlackTime);
+            
             if (fadeFromBlackSequence == null)
             {
                 fadeFromBlackSequence = DOTween.Sequence()

@@ -172,7 +172,6 @@ namespace GamePieces
         }
         public void SetColorPermanent(Color c, float time=0.2f)
         {
-            Debug.Log("Set color permanent");
             OnSetColor?.Invoke(c, time);
         }
         #endregion
