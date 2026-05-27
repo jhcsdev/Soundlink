@@ -117,5 +117,9 @@ namespace PuzzleGrid
 
             spriteRenderer.color = tileType == GridTileType.START ? goalLinkData.GetPulseColor() : goalLinkData.GetBaseColor();
         }
+        public void MultColor(Color with)
+        {
+            spriteRenderer.color *= with;
+        }
     }
 }

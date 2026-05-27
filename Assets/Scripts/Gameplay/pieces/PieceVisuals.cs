@@ -14,7 +14,7 @@ namespace GamePieces
         #region anim config
         // todo:: potentially abstract these into a runtime singleton that harvests values from a scriptable object? could be easier to switch out different configs
         [Header("placement")]
-        private static float placementBetweenTileTime = 0.05f;
+        // private static float placementBetweenTileTime = 0.05f;
         private static float placementScaleupTime = 0.15f;
         private static Ease placementEaseMode = Ease.OutSine;
         private static float placementFailPunchScaleStrength = 0.07f;
@@ -34,7 +34,7 @@ namespace GamePieces
         [Header("movement")]
         private static float movementTime = 0.1f;
         private static Ease movementEase = Ease.OutSine;
-        private static float movementFailPunchStrength = 0.1f;
+        // private static float movementFailPunchStrength = 0.1f;
         [Header("materials")]
         static readonly int FillOriginID = Shader.PropertyToID("_FillOrigin");
         static readonly int FillAmountID = Shader.PropertyToID("_FillDistance");
@@ -389,7 +389,7 @@ namespace GamePieces
         }
         private void LinkLeft()
         {
-            Debug.Log("link leave");
+            // Debug.Log("link leave");
             // depending on existing sequences, need to make considerations about what is happening
             // if ongoing join sequence -- revert it (todo:: may need to introduce some sort of state parameter that sets true in case of extended join sequence which reverts leaving)
             // if ongoing leave sequence -- error, this should never happen

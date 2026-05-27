@@ -11,6 +11,7 @@ public class MetronomeButtonAction : MonoBehaviour
     public TrackSound sound;
     private ChuckSubInstance myChuck;
     private bool isPlaying = false;
+    // private bool initialized = false;
 
     void Start()
     {

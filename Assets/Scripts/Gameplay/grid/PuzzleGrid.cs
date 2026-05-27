@@ -17,7 +17,8 @@ namespace PuzzleGrid
         [SerializeField] private FloatEventStream WonGameStream;
         [SerializeField] private float tileRealsize = 1f;
 
-        private GridData gridData; 
+        [SerializeField] private GridData gridData; 
+        [SerializeField] private bool emitWin;
 
         private GridTile[,] tiles; // index via [x,y]
         public List<GridLink> gridLinks = new();
@@ -49,10 +50,10 @@ namespace PuzzleGrid
         #region unity functions
         void OnEnable()
         {
-            if (LevelLoader.instance == null) Debug.LogError("Warning: A LevelLoader needs to exist in the scene for grid to build.");
-            if (LevelLoader.instance.GetGridData() == null) Debug.LogError("Warning: LevelLoader exists, but grid failed to retrieve GridData.");
+            if (LevelLoader.instance == null && gridData == null) Debug.LogError("Warning: A LevelLoader should exist in the scene for grid to build.");
+            if (LevelLoader.instance != null && gridData == null && LevelLoader.instance.GetGridData() == null) Debug.LogError("Warning: LevelLoader exists, but grid failed to retrieve GridData.");
 
-            gridData = LevelLoader.instance.GetGridData();
+            if (gridData == null) gridData = LevelLoader.instance.GetGridData();
             tiles = new GridTile[gridData.width, gridData.height];
         }
 
@@ -106,6 +107,12 @@ namespace PuzzleGrid
 
             return Vector2Int.zero;
         }
+        // wrapper for the below function that just sets the focus position immediately prior.
+        public void PlaceAtFocusPositionWithPositionOverride(Vector2Int location, Piece p)
+        {
+            focusPosition = location;
+            PlaceAtFocusPosition(p);
+        }
         public override Vector2Int? PlaceAtFocusPosition(Piece p)
         {
             // first check, then set, to avoid having to "unset"
@@ -154,11 +161,13 @@ namespace PuzzleGrid
             }  
 
             p.PlacedGrid();
+            p.transform.position = GetFocusedGridTile().transform.position; // todo:: unsure if this should stay here
             p.transform.parent = transform;
             OnPiecePlacementSuccess?.Invoke(p);
 
-            if (CheckIfGameWon()) 
+            if (CheckIfGameWon() && emitWin) 
             {
+                Debug.Log("Game won!");
                 WonGameStream.Invoke(LevelLoader.instance.GetLevel());
             }
 
@@ -261,7 +270,7 @@ namespace PuzzleGrid
                 }
                 else
                 {
-                    Debug.Log("No existing link — creating new one.");
+                    // Debug.Log("No existing link — creating new one.");
                     AddLinkToKnownLinks(CreateNewLink(p, pieceTile, neighborPiece, neighborPieceTile));
                     connectedTracks++;
                 }
@@ -272,19 +281,19 @@ namespace PuzzleGrid
             {
                 if (linksForBasePiece.Contains(existingLink))
                 {
-                    Debug.Log("Current piece already belongs to this link — skipping.");
+                    // Debug.Log("Current piece already belongs to this link — skipping.");
                     continue;
                 }
 
-                Debug.Log("Adding current piece to neighbor's existing link.");
+                // Debug.Log("Adding current piece to neighbor's existing link.");
                 if (linksForBasePiece.Count > 0)
                 {
-                    Debug.Log("\t Merging links");
+                    // Debug.Log("\t Merging links");
                     MergeLinks(linksForBasePiece[0], existingLink, neighborPiece, neighborPieceTile, p, pieceTile);
                 }
                 else
                 {
-                    Debug.Log("\t Updating existing link");
+                    // Debug.Log("\t Updating existing link");
                     UpdateLink(existingLink, p, pieceTile, neighborPiece, neighborPieceTile);
                 }
             }
@@ -302,7 +311,7 @@ namespace PuzzleGrid
 
             foreach (GridLink link in gridsContainedIn)
             {
-                Debug.Log("Removing Piece from Link");
+                // Debug.Log("Removing Piece from Link");
                 if (!link.ContainsPiece(piece)) continue;
                 int startIdIfExists = link.GetStartSoundIDIfExists(); // because we might lose the start data, we have to store before splitting, then reset (OnAStartLinkFullyDestroyed) if necessary
 
@@ -314,7 +323,8 @@ namespace PuzzleGrid
 
                 if (endLink != null && endLink.IsLinkLive()) 
                 { 
-                    Debug.Log($"Created new endLink {endLink}; adding to links."); gridLinks.Add(endLink);
+                    // Debug.Log($"Created new endLink {endLink}; adding to links."); 
+                    gridLinks.Add(endLink);
                     if (endLink.HasStartData()) { Debug.LogWarning("Warning: 'end' Link created after splitting has start data."); }
                 }
 
@@ -324,7 +334,7 @@ namespace PuzzleGrid
                 } 
                 else
                 {
-                    Debug.Log($"Start link {startLink} died after split merge.");
+                    // Debug.Log($"Start link {startLink} died after split merge.");
                     if (!startLink.IsLinkLive()) gridLinks.Remove(link); // remove link from known links if necessary.
                     if (startIdIfExists >= 0) OnAStartLinkFullyDestroyed?.Invoke(startIdIfExists);
                 }
@@ -358,7 +368,7 @@ namespace PuzzleGrid
         /// <returns>Newly-created link</returns>
         public GridLink CreateEndLink(Piece piece, PieceTile endTile, GridTile gridTile)
         {
-            Debug.Log("END LINK");
+            // Debug.Log("END LINK");
             GridLink newLink = new(); 
             return newLink.SetEndPlacementData(gridTile.GetLinkPlacementData()).AddPiece(piece, endTile, null, null, false);
         }
@@ -385,7 +395,7 @@ namespace PuzzleGrid
         {
             if (baseLink.MergeLink(mergeTo, mergePivot, mergePivotTile, basePivot, basePivotTile))
             {
-                Debug.Log("Merge success.");
+                // Debug.Log("Merge success.");
                 gridLinks.Remove(mergeTo);
                 if (baseLink.HasStartData()) OnAStartLinkUpdated?.Invoke(baseLink);
             } else { Debug.LogWarning("Merge failed."); }
