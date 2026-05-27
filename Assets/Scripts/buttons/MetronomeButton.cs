@@ -11,19 +11,13 @@ public class MetronomeButtonAction : MonoBehaviour
     public TrackSound sound;
     private ChuckSubInstance myChuck;
     private bool isPlaying = false;
-    private bool initialized = false;
 
     void Start()
     {
         // grab same chuck subsinstance as track sound 
         myChuck = ChuckManager.Instance.chuckSubInstance;
 
-        // must declare Chuck events before creating listeners
-        myChuck.RunCode( string.Format( @"
-            global Event playMetronome;
-            global Event pauseMetronome;
-        "));
-
+        // initialize sound
         sound?.PlaySound();
     }
 
@@ -42,13 +36,10 @@ public class MetronomeButtonAction : MonoBehaviour
         if (isPlaying)
         {
             LinkPlaybackManager.Instance.SetMetronomeStartTime();
-            // myChuck.BroadcastEvent("playMetronome");
-
             LinkPlaybackManager.Instance.SetMetronnomePlaying();
         } 
         else
         {
-            // myChuck.BroadcastEvent("pauseMetronome");
             LinkPlaybackManager.Instance.SetMetronnomePaused();
         }
     }

@@ -117,13 +117,7 @@ namespace GridLinks
             myChuck.RunCode( string.Format( @"
                 global Event playReference;
                 global Event pauseReference;
-                global Event playMetronome;
-                global Event pauseMetronome;
             "));
-
-            // listen to metronome events to keep track of metronome state
-            myChuck.StartListeningForChuckEvent("playMetronome", SetMetronnomePlaying);
-            myChuck.StartListeningForChuckEvent("pauseMetronome", SetMetronnomePaused);
 
             // intialize those events 
             referenceSound?.PlaySound();

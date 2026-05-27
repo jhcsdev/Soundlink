@@ -286,7 +286,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LevelLoader
   OnLevelCompleted: {fileID: 11400000, guid: 4ae1725c93056447e855df663a235b1f, type: 2}
-  activeLevel: {fileID: 11400000, guid: 0adc73ac6aaad4710ac2309d82962b8d, type: 2}
+  activeLevel: {fileID: 11400000, guid: b3f59f3bb44fe4ef895932e0fcb7d3f0, type: 2}
 --- !u!4 &51757165
 Transform:
   m_ObjectHideFlags: 0
@@ -4330,8 +4330,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GridLinks.LinkPlaybackManager
   bpm: 90
   beatsInLoop: 8
-  referenceSound: {fileID: 11400000, guid: d16c574643abe4451b64fc54c14ff424, type: 2}
+  referenceSound: {fileID: 11400000, guid: e71749b0c10c14b728c62fad5a4a2de7, type: 2}
   soundPlaybackEnabled: 1
+  isMetronomePlaying: 0
+  metronomeButtonAction: {fileID: 1877936229}
 --- !u!1 &1779379046
 GameObject:
   m_ObjectHideFlags: 0

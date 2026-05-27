@@ -469,7 +469,6 @@ namespace GamePieces
             pulseSequence = DOTween.Sequence();
 
             if(pulseProgress == pieceTiles.Count) {
-                Debug.Log("LAST");
                 pulseSequence.Append(
                     pieceMaterial.DOFloat(maximumPulseDistance+materialFillFadeDistance+1, FillAmountID, pulseOneUnitTime)
                 ).Pause();
