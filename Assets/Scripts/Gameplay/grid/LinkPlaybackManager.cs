@@ -50,14 +50,15 @@ namespace GridLinks
         {
             soundPlaybackEnabled = false;
             myChuck.BroadcastEvent("playReference");
-            metronomeButtonAction.SetInteractable(false);
+            // TODO: need to change this back!
+            // metronomeButtonAction.SetInteractable(false);
         }
 
         // stop reference beat and start link playback
         public void PauseReferenceBeat()
         {
             myChuck.BroadcastEvent("pauseReference");
-            metronomeButtonAction.SetInteractable(true);
+            // metronomeButtonAction.SetInteractable(true);
 
             // pause linkplayback for 1.5 seconds to ensure no overlap
             StartCoroutine(pauseLinkPlaybackForSeconds(1.5f));
@@ -163,10 +164,10 @@ namespace GridLinks
 
                 yield return wait;
 
-                // if metronome is on, play metronome sound (at the right time)
+                // if metronome is on, play every quarter note
                 if (isMetronomePlaying) 
                 {
-                    if ((curBeat % 2) - 1 == 0)
+                    if ((curBeat % 4) - 1 == 0)
                     {
                         myChuck.BroadcastEvent("playMetronomeSingleSound");   
                     }   
