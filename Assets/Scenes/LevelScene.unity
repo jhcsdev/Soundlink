@@ -304,11 +304,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LevelLoader
   OnLevelCompleted: {fileID: 11400000, guid: 4ae1725c93056447e855df663a235b1f, type: 2}
-<<<<<<< HEAD
-  activeLevel: {fileID: 11400000, guid: b3f59f3bb44fe4ef895932e0fcb7d3f0, type: 2}
-=======
   activeLevel: {fileID: 11400000, guid: 3ed3359442a854e99b77e940d5ba53ae, type: 2}
->>>>>>> main
 --- !u!4 &51757165
 Transform:
   m_ObjectHideFlags: 0
@@ -3893,76 +3889,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 36ca6301bd3014d7ea3859d3634944df, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PuzzleGrid.PuzzleGrid
-<<<<<<< HEAD
-  gridBottomLeftPosition: {x: 0, y: 0}
-  WonGameStream: {fileID: 11400000, guid: 4ae1725c93056447e855df663a235b1f, type: 2}
-  tileRealsize: 1
-  gridLinks: []
---- !u!4 &1771607252
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1771607250}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -8.1, y: -3.7, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 541209897}
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1771607253
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1771607250}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 56310cebc2f234b0fac264cee8e831ea, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PuzzleGrid.PuzzleGridVisuals
-  tilePulseScaleTime: 0.3
-  tilePulseToSize: 0.85
-  pointerMoveTime: 0.1
-  pointerFailedMoveTime: 0.1
-  pointerFailedMoveColor: {r: 0.9, g: 0.5, b: 0.5, a: 1}
-  pointerSquishTo: 0.35
-  pointerNormalSize: 0.65
-  pointerScaleInOutTime: 0.2
-  gridPointer: {fileID: 541209897}
-  gridTiles:
-  - {fileID: 21300000, guid: ca6f44d08e1b64a07bd00667e0aeca18, type: 3}
-  - {fileID: -371271769975134872, guid: 16ae1469daea84fa8ac78e2e3fad9133, type: 3}
-  camOffset: {x: 2, y: 0}
-  displayGridTilesX: 200
-  displayGridTilesY: 200
-  camMoveTime: 0.15
-  camZoomRatioMult: 1.2
---- !u!114 &1771607254
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1771607250}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0b620929824064f23849dd7cddc2afe5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::GridLinks.LinkPlaybackManager
-  bpm: 90
-  beatsInLoop: 8
-  referenceSound: {fileID: 11400000, guid: e71749b0c10c14b728c62fad5a4a2de7, type: 2}
-  soundPlaybackEnabled: 1
-  isMetronomePlaying: 0
-  metronomeButtonAction: {fileID: 1877936229}
-=======
->>>>>>> main
 --- !u!1 &1779379046
 GameObject:
   m_ObjectHideFlags: 0

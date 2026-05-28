@@ -23,21 +23,18 @@ namespace TrackSounds
             global Event playMetronomeSingleSound;
 
             // metronome
-            SinOsc click => ADSR envClick => Gain clickGain => dac;
-            SinOsc clickAccent => ADSR envAccent => Gain accentGain => dac;
+            SinOsc click => ADSR envClick  => dac;
+            SinOsc clickAccent => ADSR envAccent => dac;
 
-            (1::ms, 5::ms, 0.0, 15::ms) => envClick.set;
-            (1::ms, 5::ms, 0.0, 15::ms) => envAccent.set;
+            (5::ms, 5::ms, 0.0, 15::ms) => envClick.set;
+            (5::ms, 5::ms, 0.0, 15::ms) => envAccent.set;
 
             // diff freqs for click, accent (on the downbeat)
             880.0 => click.freq;
             1760.0 => clickAccent.freq; 
 
-            0.95 => click.gain;
-            1.0 => clickAccent.gain;
-
-            1.5 => clickGain.gain;
-            1.75 => accentGain.gain;
+            0.55 => click.gain;
+            .65 => clickAccent.gain;
 
             // bpm and timing
             (60.0 / BPM)::second => dur beat_dur;
