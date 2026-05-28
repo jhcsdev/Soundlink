@@ -10,6 +10,7 @@ public class ReferenceButtonAction : MonoBehaviour
     [SerializeField] Sprite playSprite;
     [SerializeField] Sprite pauseSprite;
     [SerializeField] Image buttonImage;
+    [SerializeField] MetronomeButtonAction metronomeButton;
     private bool isPlaying = false;
 
     void Start()
@@ -30,11 +31,13 @@ public class ReferenceButtonAction : MonoBehaviour
         {
             // instead of broadcast, use manager instance
             LinkPlaybackManager.Instance.PlayReferenceBeat();
+            metronomeButton.SetInteractable(false);
         } 
         else
         {
             Debug.Log("Pause reference");
             LinkPlaybackManager.Instance.PauseReferenceBeat();
+            metronomeButton.SetInteractable(true);
         }
     }
 }
