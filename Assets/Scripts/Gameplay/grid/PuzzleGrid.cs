@@ -246,6 +246,10 @@ namespace PuzzleGrid
             pointerActive = false;
             OnDeactivatePointer?.Invoke(GetFocusedGridTile());
         }
+        public override void HideGrid()
+        {
+            DeactivatePointerIfActivated();
+        }
         
         #endregion
         

@@ -27,4 +27,5 @@ public abstract class PlayerInteractableGrid : MonoBehaviour
     public virtual void FocusGrid(bool holdingPiece=false) => isFocused = true;
     public virtual void UnfocusGrid() => isFocused = false;
     public virtual void Hover(Piece p) {}
+    public abstract void HideGrid();
 }
