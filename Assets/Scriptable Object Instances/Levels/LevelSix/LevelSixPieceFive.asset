@@ -16,7 +16,7 @@ MonoBehaviour:
   - relativeOffset: {x: -1, y: 0}
     isOrigin: 0
     type: 0
-    glue: 03000000
+    glue: 
     tileType: 14
     spriteDirection: 3
   - relativeOffset: {x: 0, y: 0}
@@ -34,7 +34,7 @@ MonoBehaviour:
   - relativeOffset: {x: 2, y: 0}
     isOrigin: 0
     type: 0
-    glue: 
+    glue: 02000000
     tileType: 14
     spriteDirection: 1
   isSilentPiece: 1

@@ -17,4 +17,4 @@ MonoBehaviour:
   level: 4
   numBeatsInLoop: 8
   fitGridBetween: {x: 0.13, y: 0.57, z: 0.2, w: 0.8}
-  referenceBeatTrackSound: {fileID: 11400000, guid: e71749b0c10c14b728c62fad5a4a2de7, type: 2}
+  referenceBeat: {fileID: 11400000, guid: e71749b0c10c14b728c62fad5a4a2de7, type: 2}
