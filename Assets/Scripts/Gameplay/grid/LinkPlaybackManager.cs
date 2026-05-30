@@ -76,6 +76,11 @@ namespace GridLinks
             metronomeStartTime = Time.time;
         }
 
+        public float getBPM()
+        {
+            return bpm;
+        }
+
         public IEnumerator SyncAndStart()
         {
             if (metronomeStartTime < 0f)

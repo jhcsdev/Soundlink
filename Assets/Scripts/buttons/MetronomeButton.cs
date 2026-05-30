@@ -80,10 +80,7 @@ public class MetronomeButtonAction : MonoBehaviour, IPointerClickHandler
         // change color 
         if (bodyImage) 
         bodyImage.color = interactable ? yesInteractColor : noInteractColor;
-
-        // if (outlineImage)
-        // outlineImage.color = interactable ? Color.white : noInteractColor;
-        
+                
         if (pendulumImage)
         pendulumImage.color = interactable ? Color.white : noInteractColor;
 
