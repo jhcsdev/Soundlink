@@ -7,6 +7,8 @@ using UnityEngine;
 using TrackSounds;
 using ChuckChuckChuck;
 using SceneTransition;
+using UnityEditor.XR;
+using Unity.VisualScripting;
 
 namespace GridLinks
 {
@@ -29,6 +31,8 @@ namespace GridLinks
         private ChuckSubInstance myChuck;
         private int curBeat = 1;
         private float metronomeStartTime = -1f;
+        [SerializeField] bool isMetronomePlaying = false;
+        public MetronomeButtonAction metronomeButtonAction;
 
         private TrackSound winSound;
         private bool playWinSound;
@@ -53,14 +57,16 @@ namespace GridLinks
         {
             soundPlaybackEnabled = false;
             myChuck.BroadcastEvent("playReference");
+            metronomeButtonAction.SetInteractable(false);
         }
 
         // stop reference beat and start link playback
         public void PauseReferenceBeat()
         {
             myChuck.BroadcastEvent("pauseReference");
+            metronomeButtonAction.SetInteractable(true);
 
-            // pause linkplayback for half a second to ensure no overlap
+            // pause linkplayback for 1.5 seconds to ensure no overlap
             StartCoroutine(pauseLinkPlaybackForSeconds(1.5f));
         }
 
@@ -133,10 +139,23 @@ namespace GridLinks
         }
         #endregion
 
+        public void SetMetronnomePlaying()
+        {
+            isMetronomePlaying = true;
+        }
+
+        public void SetMetronnomePaused()
+        {
+            isMetronomePlaying = false;
+        }
+
+        // playback of sounds in links.
+        // also controls playback of metronome so that timing is the same
         private IEnumerator PlaybackLoop()
         {
             float nextBeatTime = Time.time;
             WaitUntil untilSchedulerHasSounds = new(DoesSchedulerHaveAnyScheduledBeat);
+            bool didLastHaveBeat = false;
 
             while (true)
             {
@@ -151,9 +170,13 @@ namespace GridLinks
 
                 yield return wait;
 
-                if (!DoesSchedulerHaveAnyScheduledBeat()) {
-                    yield return untilSchedulerHasSounds;
-                    curBeat = 1;
+                // if metronome is on, play metronome sound (at the right time)
+                if (isMetronomePlaying) 
+                {
+                    if ((curBeat % 2) - 1 == 0)
+                    {
+                        myChuck.BroadcastEvent("playMetronomeSingleSound");   
+                    }   
                 }
 
                 nextBeatTime = Time.time + secondsPerBeat;
@@ -164,18 +187,26 @@ namespace GridLinks
 
                 if (curBeat == 1 && playWinSound) winSound.PlaySound();
 
-                foreach (var key in knownLinks.Keys)
-                {
-                    if (knownLinks[key].scheduledBeats.Count < curBeat) continue; // only play when there is actually links to play
-                    var currentLinkBeat = knownLinks[key].scheduledBeats[curBeat - 1];
+                if (DoesSchedulerHaveAnyScheduledBeat()) {
+                    if (!didLastHaveBeat)
+                    {
+                        didLastHaveBeat = true;
+                        curBeat = 1;
+                    }
+                    foreach (var key in knownLinks.Keys)
+                    {
+                        // only play when there is actually links to play
+                        if (knownLinks[key].scheduledBeats.Count < curBeat) continue; 
+                        var currentLinkBeat = knownLinks[key].scheduledBeats[curBeat - 1];
 
-                    knownLinks[key].link.IndexPlaySound(
-                        currentLinkBeat.indexInLink, 
-                        currentLinkBeat.firstInPiece,
-                        secondsPerBeat,
-                        currentLinkBeat.silent
-                    );
-                }
+                        knownLinks[key].link.IndexPlaySound(
+                            currentLinkBeat.indexInLink, 
+                            currentLinkBeat.firstInPiece,
+                            secondsPerBeat,
+                            currentLinkBeat.silent
+                        );
+                    }
+                } else didLastHaveBeat = false;
 
                 curBeat += 1;
             }

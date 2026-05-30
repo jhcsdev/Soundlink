@@ -12,9 +12,6 @@ public class ReferenceButtonAction : MonoBehaviour
     [SerializeField] Image buttonImage;
     private bool isPlaying = false;
 
-    // TODO: 
-    // - metronome should sync with reference beat or link playback
-    // - that should happen either way, regardless of which is played first
     void Start()
     {
     }
