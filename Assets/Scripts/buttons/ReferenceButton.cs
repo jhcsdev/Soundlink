@@ -33,7 +33,6 @@ public class ReferenceButtonAction : MonoBehaviour
         } 
         else
         {
-            Debug.Log("Pause reference");
             LinkPlaybackManager.Instance.PauseReferenceBeat();
             metronomeButton.SetInteractable(true);
         }

@@ -20,7 +20,8 @@ namespace GridLinks
 
         [SerializeField] float bpm;
         [SerializeField, Tooltip("number of beats for the playback loop")] private int beatsInLoop = -1;
-        [SerializeField] TrackSound referenceSound;
+        // TODO: this should actually level data (levelloader.getreferencebeat)
+        // [SerializeField] TrackSound referenceSound;
         private float secondsPerBeat;
         private PuzzleGrid.PuzzleGrid puzzleGrid;
 
@@ -125,6 +126,10 @@ namespace GridLinks
                 global Event playReference;
                 global Event pauseReference;
             "));
+
+            // TODO: get the level data dynamically
+            // TODO: this should actually level data (levelloader.getreferencebeat)
+            TrackSound referenceSound = LevelLoader.instance.GetReferencePlayback();
 
             // intialize those events 
             referenceSound?.PlaySound();
