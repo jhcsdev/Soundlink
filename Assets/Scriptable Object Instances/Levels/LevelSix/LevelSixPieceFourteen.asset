@@ -17,12 +17,18 @@ MonoBehaviour:
     isOrigin: 1
     type: 0
     glue: 
+    tileType: 12
+    spriteDirection: 2
+  - relativeOffset: {x: 0, y: 1}
+    isOrigin: 0
+    type: 0
+    glue: 
     tileType: 14
-    spriteDirection: 3
+    spriteDirection: 0
   - relativeOffset: {x: 1, y: 0}
     isOrigin: 0
     type: 0
-    glue: 02000000
+    glue: 
     tileType: 14
     spriteDirection: 1
   isSilentPiece: 0
