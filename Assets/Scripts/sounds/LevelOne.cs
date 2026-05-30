@@ -22,12 +22,11 @@ namespace TrackSounds
             global Event pauseReference;
             global float BPM;
 
-            SinOsc kick => ADSR envKick => Gain kickGain => dac;
+            SinOsc kick => ADSR envKick => dac;
 
             (2::ms, 10::ms, 0, 10::ms) => envKick.set;
-            2.0 => kickGain.gain;
             150 => kick.freq;
-            1.0 => float KICK_GAIN;
+            1.0 => kick.gain;
 
             (60.0 / BPM)::second => dur beat_dur;
             beat_dur / 4.0 => dur sixteenth;
@@ -47,23 +46,16 @@ namespace TrackSounds
             }}
 
             fun void kickPattern() {{
-                playKick(2.0);
-                playKick(2.0);  
+                playKick(4.0);
+                playKick(4.0);  
             }}
 
             fun void beatLoop() {{
                 beat_dur - (now % beat_dur) => now;  // snap to grid
                 while (true) {{
                     spork ~ kickPattern();
-                    4.0 * sixteenth => now;  
+                    8.0 * sixteenth => now;  
                 }}
-            }}
-
-            while (true) {{
-                playReference => now;
-                spork ~ beatLoop() @=> Shred @ myShred;
-                pauseReference => now;
-                myShred.exit();
             }}
 
             while (true) {{

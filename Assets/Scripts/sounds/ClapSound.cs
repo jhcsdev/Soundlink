@@ -23,7 +23,7 @@ namespace TrackSounds
             1500 => filter.freq;
             1.5 => filter.Q;
             .85 => float CLAP_GAIN;
-            2.0 => clapGain.gain;
+            1.0 => clapGain.gain;
             (60.0 / BPM)::second => dur beat_dur;
 
             fun void playClap(float beat_note) {{

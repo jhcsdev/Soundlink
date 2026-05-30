@@ -87,5 +87,12 @@ namespace SceneTransition
             if (activeLevel == null) { Debug.LogError("Level Loader needs an active level."); return -1; } 
             return activeLevel.level;
         }
+        public TrackSound GetReferencePlayback()
+        {
+            if (activeLevel == null) { Debug.LogError("Level Loader needs an active level."); return null; } 
+            if (activeLevel.referenceBeat == null) { Debug.LogError("Level loader has level, but is missing the inventory data"); return null; }
+
+            return activeLevel.referenceBeat;
+        }
     }
 }

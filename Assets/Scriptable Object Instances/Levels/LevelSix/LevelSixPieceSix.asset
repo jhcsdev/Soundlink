@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: LevelSixPieceSix
   m_EditorClassIdentifier: Assembly-CSharp::GamePieces.PieceData
   tiles:
-  - relativeOffset: {x: -1, y: -1}
+  - relativeOffset: {x: -1, y: 1}
     isOrigin: 0
     type: 0
     glue: 03000000
@@ -23,8 +23,8 @@ MonoBehaviour:
     isOrigin: 0
     type: 0
     glue: 
-    tileType: 12
-    spriteDirection: 1
+    tileType: 14
+    spriteDirection: 2
   - relativeOffset: {x: 0, y: 0}
     isOrigin: 1
     type: 0
@@ -35,6 +35,6 @@ MonoBehaviour:
     isOrigin: 0
     type: 0
     glue: 
-    tileType: 14
+    tileType: 12
     spriteDirection: 0
   isSilentPiece: 0

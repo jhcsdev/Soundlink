@@ -17,40 +17,39 @@ namespace TrackSounds
             if (myChuck == null) Debug.Log("There is no Chuck!");
 
             myChuck.RunCode( string.Format(@"
-            // level six: four sounds (kick, snare, hat, clap)
+            // level six: all four sounds
             global Event playReference;
             global Event pauseReference;
             global float BPM;
 
             // load sounds
-            SinOsc kick => ADSR envKick => Gain kickGain => dac;
-            Noise clap => BPF filter => ADSR envClap => Gain clapGain => dac;
+            SinOsc kick => ADSR envKick => dac;
+            Noise clap => BPF filter => ADSR envClap => dac;
             Noise hat => HPF hpf => ADSR envHat => dac;
             Noise snare => LPF lpf => ADSR envSnare => dac;
 
             // shape sounds
             (2::ms, 10::ms, 0, 10::ms) => envKick.set;
-            2.0 => kickGain.gain;
             150 => kick.freq;
-            1.0 => float KICK_GAIN;
+            1.0 => kick.gain;
 
             (2::ms, 10::ms, 0, 5::ms) => envClap.set;
             1500 => filter.freq;
             1.5 => filter.Q;
-            .85 => float CLAP_GAIN;
-            2.0 => clapGain.gain;
+            .85 => clap.gain;
 
             (1::ms, 20::ms, 0, 10::ms) => envHat.set;
             8000 => hpf.freq;
             8 => hpf.Q;
-            .45 => float HAT_GAIN;
+            .20 => float HAT_GAIN;
+            HAT_GAIN => hat.gain;
 
             (2::ms, 50::ms, 0, 10::ms) => envSnare.set;
             1800 => lpf.freq;
             1.5 => lpf.Q;
-            .7 => float SNARE_GAIN;
+            .7 => snare.gain;
 
-            // set durations based off BPM
+            // set BPM
             (60.0 / BPM)::second => dur beat_dur;
             beat_dur / 4.0 => dur sixteenth;
 
@@ -86,7 +85,7 @@ namespace TrackSounds
                 wait_time => now;
             }}
 
-            fun void playHat(float beat_note) {{   
+            fun void playHat(float beat_note) {{  
                 // calculate hold and release times
                 beat_note * sixteenth => dur total_time;
                 envHat.releaseTime() => dur release_time;
@@ -118,31 +117,31 @@ namespace TrackSounds
             fun void restKick(float beat_note) {{
                 0 => kick.gain;
                 beat_note * sixteenth => now;
-                KICK_GAIN => kick.gain;   
+                1.0 => kick.gain;   
             }}
 
             fun void restClap(float beat_note) {{
                 0 => clap.gain;
                 beat_note * sixteenth => now;
-                CLAP_GAIN => clap.gain;   
+                .85 => clap.gain;   
             }}
 
             fun void restHat(float beat_note) {{
                 0 => hat.gain;
                 beat_note * sixteenth => now;
-                HAT_GAIN => hat.gain;   
+                .20 => hat.gain;   
             }}
 
             fun void restSnare(float beat_note) {{
                 0 => snare.gain;
                 beat_note * sixteenth => now;
-                SNARE_GAIN => snare.gain;   
+                .70 => snare.gain;   
             }}
 
             fun void kickPattern() {{
-                playKick(2.0);
-                playKick(1.0);
                 playKick(3.0);
+                playKick(1.0);
+                playKick(2.0);
                 playKick(2.0);
             }}
 
@@ -154,14 +153,14 @@ namespace TrackSounds
             fun void hatPattern() {{
                 playHat(2.0);
                 playHat(2.0);
-                playHat(2.0);
                 playHat(1.0);
+                playHat(2.0);
                 playHat(1.0);
             }}
 
             fun void snarePattern() {{
-                restClap(4.0);
-                playClap(4.0);
+                restSnare(4.0);
+                playSnare(4.0);
             }}
 
             // play whole beat once

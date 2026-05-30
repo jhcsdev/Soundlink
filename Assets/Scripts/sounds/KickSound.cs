@@ -20,8 +20,8 @@ namespace TrackSounds
 
             SinOsc kick => ADSR envKick => Gain kickGain => dac;
 
-            (.05::ms, 10::ms, 0, 10::ms) => envKick.set;
-            2.0 => kickGain.gain;
+            (5::ms, 10::ms, 0, 10::ms) => envKick.set;
+            .8 => kickGain.gain;
             150 => kick.freq;
             1.0 => float KICK_GAIN;
             
