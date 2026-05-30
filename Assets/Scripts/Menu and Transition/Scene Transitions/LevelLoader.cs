@@ -1,6 +1,7 @@
 using Inventory;
 using PuzzleGrid;
 using StreamEvents;
+using TrackSounds;
 using UnityEngine;
 
 namespace SceneTransition
@@ -59,6 +60,11 @@ namespace SceneTransition
         {
             if (activeLevel == null) { Debug.LogError("Level Loader needs an active level."); return 0; } 
             return activeLevel.numBeatsInLoop;
+        }
+        public TrackSound GetReferenceBeat()
+        {
+            if (activeLevel == null) { Debug.LogError("Level Loader needs an active level."); return null; }
+            return activeLevel.referenceBeat;
         }
 
         public GridData GetGridData()
