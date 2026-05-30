@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,6 +33,14 @@ namespace GridLinks
         private float metronomeStartTime = -1f;
         [SerializeField] bool isMetronomePlaying = false;
         public MetronomeButtonAction metronomeButtonAction;
+
+        private TrackSound winSound;
+        private bool playWinSound;
+        public void SetPlayWinSound(TrackSound what, bool doPlay)
+        {
+            winSound = what;
+            playWinSound = doPlay;
+        }
 
         #region unity functions
         void Awake()
@@ -178,6 +185,8 @@ namespace GridLinks
                     curBeat = 1; 
                 }
 
+                if (curBeat == 1 && playWinSound) winSound.PlaySound();
+
                 if (DoesSchedulerHaveAnyScheduledBeat()) {
                     if (!didLastHaveBeat)
                     {
@@ -200,7 +209,6 @@ namespace GridLinks
                 } else didLastHaveBeat = false;
 
                 curBeat += 1;
-                // NO yield return waitBeat here — WaitUntil at the top handles timing
             }
         }
 
@@ -208,21 +216,14 @@ namespace GridLinks
         {
             foreach (int key in knownLinks.Keys)
             {
-                // Debug.Log($"examining key {key}; there are {knownLinks[key].scheduledBeats.Count} beats scheduled!");
                 if (knownLinks[key].scheduledBeats.Count > 0) return true;
             }
             return false;
         }
 
-        private void ParseLinks() // turns the list of grid-links into a list of "parsable" objects that are easier to play sound with 
-        {
-            puzzleGrid.GetAllLinks().ForEach((l) => ScheduleSingleLink(l));
-        }
-
         private void ScheduleSingleLink(GridLink which)
         {
             int soundId = which.GetStartSoundIDIfExists();
-            // Debug.Log($"Schedule Single Link for ID: {soundId}");
             if (soundId == -1) { 
                 Debug.LogError($"Scheduled a link that is not connected to any start sound: IsStartLink {which.HasStartData()}, IsEndLink {which.HasEndData()}"); 
                 return;
@@ -247,11 +248,9 @@ namespace GridLinks
             int indexInLink = 0;
             foreach (Piece p in which.GetPieces().Select(ld => ld.piece))
             {
-                // Debug.Log("Scheduling piece");
                 // need to schedule even if silent, but must indicate whether to play sound or not
                 for (int i = 0; i < p.GetPieceTiles().Count; i++)
                 {
-                    // Debug.Log($"\tScheduling {i}.");
                     knownLinks[soundId].scheduledBeats.Add(
                         new() 
                         {
@@ -276,5 +275,7 @@ namespace GridLinks
 
         // NOTE: if wanted to reset link playback, just move curBeat to global and set equal to one.
         public void EnableSoundPlayback() => soundPlaybackEnabled = true;
+
+        public void ResetPlayback() => curBeat = 1;
     }
 }

@@ -156,5 +156,8 @@ namespace Inventory
         public override Vector2Int? PlaceAtFocusPosition(Piece piece) {
             return putPiece(piece);
         }
+
+        public override void HideGrid()
+        {}
     }
 }

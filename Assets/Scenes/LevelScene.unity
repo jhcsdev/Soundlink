@@ -304,11 +304,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LevelLoader
   OnLevelCompleted: {fileID: 11400000, guid: 4ae1725c93056447e855df663a235b1f, type: 2}
-<<<<<<< HEAD
   activeLevel: {fileID: 11400000, guid: b3f59f3bb44fe4ef895932e0fcb7d3f0, type: 2}
-=======
-  activeLevel: {fileID: 11400000, guid: 3ed3359442a854e99b77e940d5ba53ae, type: 2}
->>>>>>> main
 --- !u!4 &51757165
 Transform:
   m_ObjectHideFlags: 0
@@ -3893,7 +3889,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 36ca6301bd3014d7ea3859d3634944df, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PuzzleGrid.PuzzleGrid
-<<<<<<< HEAD
   gridBottomLeftPosition: {x: 0, y: 0}
   WonGameStream: {fileID: 11400000, guid: 4ae1725c93056447e855df663a235b1f, type: 2}
   tileRealsize: 1
@@ -3961,8 +3956,6 @@ MonoBehaviour:
   soundPlaybackEnabled: 1
   isMetronomePlaying: 0
   metronomeButtonAction: {fileID: 1877936229}
-=======
->>>>>>> main
 --- !u!1 &1779379046
 GameObject:
   m_ObjectHideFlags: 0
