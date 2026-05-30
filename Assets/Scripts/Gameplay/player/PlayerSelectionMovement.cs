@@ -48,11 +48,18 @@ namespace Player
             OnGamePaused.Sub(PauseUpdated);
             OnGameWonStream.Sub(GameWon);
         }
-        void GameWon(float _) => pauseAllowed = false;
+        void GameWon(float _)
+        {
+            pauseAllowed = false;
+            actionsAllowed = false;
+            Invoke(nameof(runHide), 0.2f);
+        } 
+        void runHide() => currentGrid.HideGrid();
 
         void OnDisable()
         {
             OnGamePaused.Unsub(PauseUpdated);
+            OnGameWonStream.Unsub(GameWon);
         }
 
         void Start()

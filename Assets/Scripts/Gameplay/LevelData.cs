@@ -1,5 +1,3 @@
-
-
 using Inventory;
 using PuzzleGrid;
 using TrackSounds;
@@ -16,5 +14,5 @@ public class LevelData : ScriptableObject
     public int numBeatsInLoop;
     [Tooltip("Xmin, Xmax, Ymin, Ymax -- in SCREEN SPACE")]
     public Vector4 fitGridBetween;
-    public TrackSound referenceBeatTrackSound;
+    public TrackSound referenceBeat;
 }
