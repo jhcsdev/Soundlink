@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <!-- Unity template macros are replaced during the build process -->
+    <title>{{{ PAGE_TITLE }}}</title>
+    <style>
+      body { margin: 0; padding: 0; background-color: #111; overflow: hidden; }
+      #unity-container { 
+        width: 100vw; 
+        height: 100vh; 
+        display: flex; 
+        align-items: center; 
+        justify-content: center; 
+        position: relative; }
+      #unity-canvas { 
+        width: {{{ UNITY_WIDTH }}}px; 
+        height: {{{ UNITY_HEIGHT }}}px; 
+        background: #231f20; }
+      #unity-loading-bar { 
+        position: absolute; 
+        left: 50%; 
+        top: 50%; 
+        transform: translate(-50%, -50%); 
+        color: white; font-family: 
+        sans-serif; 
+        display: block; }
+      #unity-progress-bar-empty { width: 200px; height: 10px; background: #444; border-radius: 5px; margin-top: 5px; }
+      #unity-progress-bar-full { width: 0%; height: 100%; background: #2196F3; border-radius: 5px; transition: width 0.1s; }
+    </style>
+  </head>
+  <body>
+    <div id="unity-container">
+      <!-- The element where the WebGL content is rendered -->
+      <canvas id="unity-canvas"></canvas>
+      
+      <!-- Custom loading screen overlay -->
+      <div id="unity-loading-bar">
+        <div id="unity-custom-text">Loading...</div>
+        <div id="unity-progress-bar-empty">
+          <div id="unity-progress-bar-full"></div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      var canvas = document.querySelector("#unity-canvas");
+      var loadingBar = document.querySelector("#unity-loading-bar");
+      var progressBarFull = document.querySelector("#unity-progress-bar-full");
+
+      // Build configuration paths generated automatically by Unity macros
+      var buildUrl = "Build";
+      var loaderUrl = buildUrl + "/{{{ LOADER_FILENAME }}}";
+      var config = {
+        dataUrl: buildUrl + "/{{{ DATA_FILENAME }}}",
+        frameworkUrl: buildUrl + "/{{{ FRAMEWORK_FILENAME }}}",
+        codeUrl: buildUrl + "/{{{ CODE_FILENAME }}}",
+        streamingAssetsUrl: "StreamingAssets",
+        companyName: "{{{ COMPANY_NAME }}}",
+        productName: "{{{ PRODUCT_NAME }}}",
+        productVersion: "{{{ PRODUCT_VERSION }}}",
+      };
+
+      // Injects the main WebGL engine loader script
+      var script = document.createElement("script");
+      script.src = loaderUrl;
+      script.onload = () => {
+        createUnityInstance(canvas, config, (progress) => {
+          // Updates the custom visual HTML loading bar
+          progressBarFull.style.width = (100 * progress) + "%";
+        }).then((unityInstance) => {
+          // Hides the loading screen once initialization completes
+          loadingBar.style.display = "none";
+        }).catch((message) => {
+          alert("Unity WebGL Instance Error: " + message);
+        });
+      };
+      document.body.appendChild(script);
+    </script>
+  </body>
+</html>
