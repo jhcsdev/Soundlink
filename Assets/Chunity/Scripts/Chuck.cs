@@ -1567,6 +1567,7 @@ public class Chuck
 
     [DllImport( PLUGIN_NAME )]
     private static extern bool startListeningForChuckEvent( System.UInt32 chuckID, System.String name, VoidCallback callback );
+
 #if !UNITY_WEBGL
     [DllImport( PLUGIN_NAME )]
     private static extern bool startListeningForNamedChuckEvent( System.UInt32 chuckID, System.String name, NamedVoidCallback callback );
