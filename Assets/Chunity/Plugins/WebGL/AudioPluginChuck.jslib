@@ -483,6 +483,28 @@ mergeInto(LibraryManager.library, {
         
         return true;
     },
+    startListeningForChuckEventWithID: function( chuckID, name, callback )
+    {
+        (function( c ) {
+            var callbackID = theChuck.startListeningForEvent( Pointer_stringify( name ), function() {
+                dynCall( 'v', c, 0 );
+            });
+            this.stopIDs[ c ] = callbackID;
+        })(callback);
+        
+        return true;
+    },
+    startListeningForNamedChuckEvent: function( chuckID, name, callback )
+    {
+        (function( c ) {
+            var callbackID = theChuck.startListeningForEvent( Pointer_stringify( name ), function() {
+                dynCall( 'v', c, 0 );
+            });
+            this.stopIDs[ c ] = callbackID;
+        })(callback);
+        
+        return true;
+    },
     startListeningForChuckEventWithUnityStyleCallback: function( chuckID, name, gameObject, method )
     {
         (function( g, m ) {

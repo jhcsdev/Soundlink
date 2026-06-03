@@ -7,8 +7,6 @@ using UnityEngine;
 using TrackSounds;
 using ChuckChuckChuck;
 using SceneTransition;
-using UnityEditor.XR;
-using Unity.VisualScripting;
 
 namespace GridLinks
 {
@@ -37,6 +35,7 @@ namespace GridLinks
 
         private TrackSound winSound;
         private bool playWinSound;
+        
         public void SetPlayWinSound(TrackSound what, bool doPlay)
         {
             winSound = what;
@@ -134,12 +133,13 @@ namespace GridLinks
                 global Event pauseReference;
             "));
 
-            // TODO: get the level data dynamically
-            // TODO: this should actually level data (levelloader.getreferencebeat)
-            TrackSound referenceSound = LevelLoader.instance.GetReferencePlayback();
+            if (LevelLoader.instance.GetGridData() != null) {
+                TrackSound referenceSound = LevelLoader.instance.GetReferencePlayback();
 
-            // intialize those events 
-            referenceSound?.PlaySound();
+                // intialize those events 
+                referenceSound?.PlaySound();
+            }
+
 
             // if playback is already enabled in inspector, sync to metronome on start
             if (soundPlaybackEnabled)

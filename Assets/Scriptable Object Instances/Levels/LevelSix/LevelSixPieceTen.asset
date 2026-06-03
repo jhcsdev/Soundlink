@@ -22,12 +22,6 @@ MonoBehaviour:
   - relativeOffset: {x: 1, y: 0}
     isOrigin: 0
     type: 0
-    glue: 
-    tileType: 14
-    spriteDirection: 1
-  - relativeOffset: {x: 1, y: 0}
-    isOrigin: 0
-    type: 0
     glue: 01000000
     tileType: 14
     spriteDirection: 1

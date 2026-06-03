@@ -1568,12 +1568,13 @@ public class Chuck
     [DllImport( PLUGIN_NAME )]
     private static extern bool startListeningForChuckEvent( System.UInt32 chuckID, System.String name, VoidCallback callback );
 
+#if !UNITY_WEBGL
     [DllImport( PLUGIN_NAME )]
     private static extern bool startListeningForNamedChuckEvent( System.UInt32 chuckID, System.String name, NamedVoidCallback callback );
 
     [DllImport( PLUGIN_NAME )]
     private static extern bool startListeningForChuckEventWithID( System.UInt32 chuckID, CK_INT callbackID, System.String name, VoidCallbackWithID callback );
-
+#endif
     [DllImport( PLUGIN_NAME )]
     private static extern bool stopListeningForChuckEvent( System.UInt32 chuckID, System.String name, VoidCallback callback );
 
