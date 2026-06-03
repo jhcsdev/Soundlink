@@ -727,7 +727,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &397783134
 RectTransform:
   m_ObjectHideFlags: 0
@@ -791,7 +791,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 397783136}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 677761133}
+        m_TargetAssemblyTypeName: Menus.MainMenuCanvasController, Assembly-CSharp
+        m_MethodName: Quit
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &397783136
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2704,6 +2716,7 @@ MonoBehaviour:
   sequentialTransitions:
   - {fileID: 778312400}
   - {fileID: 1181825654}
+  - {fileID: 397783138}
   sequentialDelay: 0.1
 --- !u!1 &1181825649
 GameObject:
@@ -4839,6 +4852,10 @@ PrefabInstance:
       propertyPath: beatsInLoop
       value: 24
       objectReference: {fileID: 0}
+    - target: {fileID: 115078341785133327, guid: 5e78a4f59428f432ab8b656f896683a4, type: 3}
+      propertyPath: grabRefTrackFromLvlLoader
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 188331772166917620, guid: 5e78a4f59428f432ab8b656f896683a4, type: 3}
       propertyPath: m_LocalPosition.x
       value: -10.37
@@ -4915,6 +4932,10 @@ PrefabInstance:
       propertyPath: gridData
       value: 
       objectReference: {fileID: 11400000, guid: ecf7e98bfd7794e07929bdc141445a64, type: 2}
+    - target: {fileID: 8232864124688979429, guid: 5e78a4f59428f432ab8b656f896683a4, type: 3}
+      propertyPath: grabDataFromLevelLoader
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
