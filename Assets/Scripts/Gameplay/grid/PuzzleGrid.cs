@@ -24,6 +24,7 @@ namespace PuzzleGrid
         public List<GridLink> gridLinks = new();
 
         private int totalTracksInGrid = 0;
+        [SerializeField] private bool grabDataFromLevelLoader = true;
 
         #region notifications
         private bool pointerActive = true;
@@ -51,9 +52,10 @@ namespace PuzzleGrid
         void OnEnable()
         {
             if (LevelLoader.instance == null && gridData == null) Debug.LogError("Warning: A LevelLoader should exist in the scene for grid to build.");
-            if (LevelLoader.instance != null && gridData == null && LevelLoader.instance.GetGridData() == null) Debug.LogError("Warning: LevelLoader exists, but grid failed to retrieve GridData.");
+            if (LevelLoader.instance != null && gridData == null && LevelLoader.instance.GetGridData() == null && grabDataFromLevelLoader)
+                Debug.LogError("Warning: LevelLoader exists, but grid failed to retrieve GridData.");
 
-            if (gridData == null) gridData = LevelLoader.instance.GetGridData();
+            if (gridData == null && grabDataFromLevelLoader) gridData = LevelLoader.instance.GetGridData();
             tiles = new GridTile[gridData.width, gridData.height];
         }
 

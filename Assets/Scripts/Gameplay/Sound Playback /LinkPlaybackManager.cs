@@ -20,6 +20,7 @@ namespace GridLinks
         // TODO: this should actually level data (levelloader.getreferencebeat)
         // [SerializeField] TrackSound referenceSound;
         private float secondsPerBeat;
+        [SerializeField] private bool grabRefTrackFromLvlLoader = true;
         private PuzzleGrid.PuzzleGrid puzzleGrid;
 
         [SerializeField] private bool soundPlaybackEnabled;
@@ -133,7 +134,7 @@ namespace GridLinks
                 global Event pauseReference;
             "));
 
-            if (LevelLoader.instance.GetGridData() != null) {
+            if (grabRefTrackFromLvlLoader && LevelLoader.instance.GetGridData() != null ) {
                 TrackSound referenceSound = LevelLoader.instance.GetReferencePlayback();
 
                 // intialize those events 
