@@ -27,12 +27,12 @@ namespace UIFX
         private Sequence enterTransitionSequence;
         private Sequence exitTransitionSequence;
         #endregion
-        private Vector3 originalLocalPosition;
-        private Vector3 exitFinalPosition = Vector3.zero;
+        private Vector2 originalPosition;
+        private Vector2 exitFinalPosition = Vector3.zero;
 
         void Awake()
         {
-            originalLocalPosition = transform.localPosition;
+            originalPosition = transform.position;
         }
 
         void Reset()
@@ -79,11 +79,11 @@ namespace UIFX
 
             var c = labelTMP.color; labelTMP.color = new Color(c.r, c.g, c.b, 0f);
 
-            if (exitFinalPosition != Vector3.zero) transform.position = exitFinalPosition;
+            if (exitFinalPosition != Vector2.zero) transform.position = exitFinalPosition;
 
             enterTransitionSequence = DOTween.Sequence()
                 .Append(
-                    transform.DOLocalMoveY(originalLocalPosition.y, fadeInTime)
+                    transform.DOMove(originalPosition, fadeInTime)
                 ).Join(
                     labelTMP.DOColor(new Color(c.r, c.g, c.b, 1f), fadeInTime)
                 )
@@ -100,13 +100,13 @@ namespace UIFX
             exitTransitionSequence = DOTween.Sequence().Append(
                     backdropImage.DOColor(fadedOutColor, fadeOutTime)
                 ).Join(
-                    transform.DOLocalMoveY(originalLocalPosition.y - transitionMoveDistance, fadeOutTime)
+                    transform.DOMove(originalPosition - new Vector2(0, transitionMoveDistance), fadeOutTime)
                 ).Join(
                     labelTMP.DOColor(new Color(c.r, c.g, c.b, 0f), fadeOutTime)
                 ).OnComplete(
                     () => { 
                         exitFinalPosition = transform.position; 
-                        transform.position = transform.position + Vector3.one * 1000;
+                        transform.position = transform.position + Vector3.one * 10000;
                         exitComplete.Invoke(this); 
                     } 
                 ).Play();

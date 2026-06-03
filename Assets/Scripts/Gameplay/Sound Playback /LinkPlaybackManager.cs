@@ -35,6 +35,7 @@ namespace GridLinks
 
         private TrackSound winSound;
         private bool playWinSound;
+        
         public void SetPlayWinSound(TrackSound what, bool doPlay)
         {
             winSound = what;
