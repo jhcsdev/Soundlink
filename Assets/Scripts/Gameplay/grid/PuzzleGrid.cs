@@ -98,9 +98,21 @@ namespace PuzzleGrid
             Vector2Int intended = focusPosition + direction;
 
             // check x pos, y up
-            if (intended.x < 0 || intended.x >= gridData.width || intended.y < 0 || intended.y >= gridData.height) { 
-                if (pointerActive) { OnFailedLeavingGrid?.Invoke(direction); } 
-                return Vector2Int.zero; 
+            if (intended.y < 0 || intended.y >= gridData.height)
+            {
+                if (pointerActive) { OnFailedLeavingGrid?.Invoke(direction); }
+                return Vector2Int.zero;
+            }
+
+            if (intended.x < 0)
+            {
+                if (pointerActive) { OnFailedLeavingGrid?.Invoke(direction); }
+                return Vector2Int.zero;
+            }
+
+            if (intended.x >= gridData.width)
+            {
+                return direction;
             }
 
             // otherwise movement is ok
