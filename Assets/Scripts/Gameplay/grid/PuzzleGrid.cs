@@ -169,7 +169,6 @@ namespace PuzzleGrid
 
             if (CheckIfGameWon() && emitWin) 
             {
-                Debug.Log("Game won!");
                 WonGameStream.Invoke(LevelLoader.instance.GetLevel());
             }
 

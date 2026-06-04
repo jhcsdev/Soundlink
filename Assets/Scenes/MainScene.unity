@@ -268,7 +268,7 @@ MonoBehaviour:
   fadeInTime: 0.3
   fadeOutTime: 0.3
   fadeInColor: {r: 0.754717, g: 0.754717, b: 0.754717, a: 0.36078432}
-  fadedOutColor: {r: 0.8396226, g: 0.8396226, b: 0.8396226, a: 0}
+  fadedOutColor: {r: 0.8396226, g: 0.8396226, b: 0.8396226, a: 0.21176471}
   hoveredScale: 1.15
   transitionMoveDistance: 10
   backdropImage: {fileID: 125666072}
@@ -423,7 +423,7 @@ MonoBehaviour:
   fadeInTime: 0.3
   fadeOutTime: 0.3
   fadeInColor: {r: 0.754717, g: 0.754717, b: 0.754717, a: 0.36078432}
-  fadedOutColor: {r: 0.8396226, g: 0.8396226, b: 0.8396226, a: 0}
+  fadedOutColor: {r: 0.8396226, g: 0.8396226, b: 0.8396226, a: 0.21176471}
   hoveredScale: 1.15
   transitionMoveDistance: 10
   backdropImage: {fileID: 173240528}
@@ -515,13 +515,13 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 24.7
-  m_fontSizeBase: 28.47
+  m_fontSize: 35
+  m_fontSizeBase: 35
   m_fontWeight: 400
-  m_enableAutoSizing: 1
+  m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 0
+  m_fontStyle: 1
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
   m_textAlignment: 65535
@@ -947,13 +947,13 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 23.9
-  m_fontSizeBase: 28.47
+  m_fontSize: 35
+  m_fontSizeBase: 35
   m_fontWeight: 400
-  m_enableAutoSizing: 1
+  m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 0
+  m_fontStyle: 1
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
   m_textAlignment: 65535
@@ -1149,7 +1149,7 @@ MonoBehaviour:
   fadeInTime: 0.3
   fadeOutTime: 0.3
   fadeInColor: {r: 0.754717, g: 0.754717, b: 0.754717, a: 0.36078432}
-  fadedOutColor: {r: 0.8396226, g: 0.8396226, b: 0.8396226, a: 0}
+  fadedOutColor: {r: 0.8396226, g: 0.8396226, b: 0.8396226, a: 0.21176471}
   hoveredScale: 1.15
   transitionMoveDistance: 10
   backdropImage: {fileID: 446617238}
@@ -1304,7 +1304,7 @@ MonoBehaviour:
   fadeInTime: 0.3
   fadeOutTime: 0.3
   fadeInColor: {r: 0.754717, g: 0.754717, b: 0.754717, a: 0.36078432}
-  fadedOutColor: {r: 0.8396226, g: 0.8396226, b: 0.8396226, a: 0}
+  fadedOutColor: {r: 0.8396226, g: 0.8396226, b: 0.8396226, a: 0.21176471}
   hoveredScale: 1.15
   transitionMoveDistance: 10
   backdropImage: {fileID: 457656177}
@@ -1564,13 +1564,13 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 24.7
-  m_fontSizeBase: 28.47
+  m_fontSize: 35
+  m_fontSizeBase: 35
   m_fontWeight: 400
-  m_enableAutoSizing: 1
+  m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 0
+  m_fontStyle: 1
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
   m_textAlignment: 65535
@@ -3352,13 +3352,13 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 25.5
-  m_fontSizeBase: 28.47
+  m_fontSize: 35
+  m_fontSizeBase: 35
   m_fontWeight: 400
-  m_enableAutoSizing: 1
+  m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 0
+  m_fontStyle: 1
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
   m_textAlignment: 65535
@@ -3822,7 +3822,7 @@ MonoBehaviour:
   fadeInTime: 0.3
   fadeOutTime: 0.3
   fadeInColor: {r: 0.754717, g: 0.754717, b: 0.754717, a: 0.36078432}
-  fadedOutColor: {r: 0.8396226, g: 0.8396226, b: 0.8396226, a: 0}
+  fadedOutColor: {r: 0.8396226, g: 0.8396226, b: 0.8396226, a: 0.21176471}
   hoveredScale: 1.15
   transitionMoveDistance: 10
   backdropImage: {fileID: 1331889232}
@@ -3912,13 +3912,13 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 24
-  m_fontSizeBase: 24
+  m_fontSize: 48
+  m_fontSizeBase: 48
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 16.97
   m_fontSizeMax: 72
-  m_fontStyle: 0
+  m_fontStyle: 1
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
   m_textAlignment: 65535
@@ -4186,13 +4186,13 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 23.9
-  m_fontSizeBase: 28.47
+  m_fontSize: 35
+  m_fontSizeBase: 35
   m_fontWeight: 400
-  m_enableAutoSizing: 1
+  m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 0
+  m_fontStyle: 1
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
   m_textAlignment: 65535
@@ -4478,13 +4478,13 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 23.9
-  m_fontSizeBase: 28.47
+  m_fontSize: 35
+  m_fontSizeBase: 35
   m_fontWeight: 400
-  m_enableAutoSizing: 1
+  m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 0
+  m_fontStyle: 1
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
   m_textAlignment: 65535
@@ -4927,11 +4927,11 @@ PrefabInstance:
     - target: {fileID: 3379418465435771253, guid: 5e78a4f59428f432ab8b656f896683a4, type: 3}
       propertyPath: 'gridTiles.Array.data[0]'
       value: 
-      objectReference: {fileID: 21300000, guid: ca6f44d08e1b64a07bd00667e0aeca18, type: 3}
+      objectReference: {fileID: 10917, guid: 0000000000000000f000000000000000, type: 0}
     - target: {fileID: 3379418465435771253, guid: 5e78a4f59428f432ab8b656f896683a4, type: 3}
       propertyPath: 'gridTiles.Array.data[1]'
       value: 
-      objectReference: {fileID: 21300000, guid: 39015290bebf94b8cbde46d06bf00788, type: 3}
+      objectReference: {fileID: 10917, guid: 0000000000000000f000000000000000, type: 0}
     - target: {fileID: 4237453462767458922, guid: 5e78a4f59428f432ab8b656f896683a4, type: 3}
       propertyPath: m_Name
       value: Grid1
@@ -5168,7 +5168,7 @@ MonoBehaviour:
   fadeInTime: 0.3
   fadeOutTime: 0.3
   fadeInColor: {r: 0.754717, g: 0.754717, b: 0.754717, a: 0.36078432}
-  fadedOutColor: {r: 0.8396226, g: 0.8396226, b: 0.8396226, a: 0}
+  fadedOutColor: {r: 0.8396226, g: 0.8396226, b: 0.8396226, a: 0.21176471}
   hoveredScale: 1.15
   transitionMoveDistance: 10
   backdropImage: {fileID: 1943783735}
@@ -5378,7 +5378,7 @@ MonoBehaviour:
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 0
+  m_fontStyle: 1
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 4096
   m_textAlignment: 65535
@@ -5482,7 +5482,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'quit game '
+  m_text: QUIT
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: dc36b3fdc14f47ebb36fd484a67e268a, type: 2}
   m_sharedMaterial: {fileID: 2140032, guid: dc36b3fdc14f47ebb36fd484a67e268a, type: 2}
@@ -5509,13 +5509,13 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 24
-  m_fontSizeBase: 24
+  m_fontSize: 48
+  m_fontSizeBase: 48
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 0
+  m_fontStyle: 1
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
   m_textAlignment: 65535

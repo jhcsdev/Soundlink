@@ -83,7 +83,7 @@ namespace UIFX
 
             var c = labelTMP.color; labelTMP.color = new Color(c.r, c.g, c.b, 0f);
 
-            if (exitFinalPosition != Vector2.zero) { Debug.Log("exiting position: " + exitFinalPosition); transform.position = exitFinalPosition; }
+            if (exitFinalPosition != Vector2.zero) { transform.position = exitFinalPosition; }
 
             enterTransitionSequence = DOTween.Sequence()
                 .Append(
