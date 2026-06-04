@@ -116,7 +116,12 @@ namespace Inventory
 
             Vector2Int candidate = focusPosition + direction;
 
-            if (candidate.x < 0 || candidate.x >= inventoryData.rowSize || candidate.y < 0 || candidate.y > maxY)
+            if (candidate.x < 0)
+            {
+                return direction;
+            }
+
+            if (candidate.x >= inventoryData.rowSize || candidate.y < 0 || candidate.y > maxY)
             {
                 OnFocusMovementFailure?.Invoke(direction);
                 return Vector2Int.zero;

@@ -304,7 +304,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LevelLoader
   OnLevelCompleted: {fileID: 11400000, guid: 4ae1725c93056447e855df663a235b1f, type: 2}
-  activeLevel: {fileID: 11400000, guid: 13ef4f53ccccd40d1b5c0837f69ee124, type: 2}
+  activeLevel: {fileID: 11400000, guid: 3ed3359442a854e99b77e940d5ba53ae, type: 2}
 --- !u!4 &51757165
 Transform:
   m_ObjectHideFlags: 0
@@ -2126,7 +2126,7 @@ MonoBehaviour:
   playSprite: {fileID: 21300000, guid: 89a5ae9f9ca3648d99ebe68370a1de31, type: 3}
   pauseSprite: {fileID: 21300000, guid: 70b69d848391b4827b0fb30e0bbf9473, type: 3}
   buttonImage: {fileID: 771828666}
-  metronomeButton: {fileID: 0}
+  metronomeButton: {fileID: 1415747504}
 --- !u!114 &771828669
 MonoBehaviour:
   m_ObjectHideFlags: 0

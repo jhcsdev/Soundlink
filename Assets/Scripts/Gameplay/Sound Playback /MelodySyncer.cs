@@ -29,13 +29,10 @@ namespace SoundPlayback
 
         private IEnumerator PlaybackLoop()
         {
-            WaitForSeconds beatWaitTime = new(secondsPerBeat);
+            WaitForSeconds beatWaitTime = new(secondsPerBeat * introductionBeatLength);
             
             introductionTrackSound.PlaySound();
-            for(int i = 0; i < introductionBeatLength; i++)
-            {
-                yield return beatWaitTime;
-            }
+            yield return beatWaitTime;
                
             LinkPlaybackManager.Instance.ResetPlayback();
             LinkPlaybackManager.Instance.SetPlayWinSound(mainSoundtrack, true);

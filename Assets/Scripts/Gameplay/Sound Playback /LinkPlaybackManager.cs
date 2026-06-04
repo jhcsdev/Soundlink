@@ -17,9 +17,8 @@ namespace GridLinks
 
         [SerializeField] float bpm;
         [SerializeField, Tooltip("number of beats for the playback loop")] private int beatsInLoop = -1;
-        // TODO: this should actually level data (levelloader.getreferencebeat)
-        // [SerializeField] TrackSound referenceSound;
         private float secondsPerBeat;
+        [SerializeField] private bool grabRefTrackFromLvlLoader = true;
         private PuzzleGrid.PuzzleGrid puzzleGrid;
 
         [SerializeField] private bool soundPlaybackEnabled;
@@ -35,11 +34,14 @@ namespace GridLinks
 
         private TrackSound winSound;
         private bool playWinSound;
+        private bool winSoundLoops = false;
         
-        public void SetPlayWinSound(TrackSound what, bool doPlay)
+        public void SetPlayWinSound(TrackSound what, bool doPlay, bool winSoundLoops = true)
         {
             winSound = what;
             playWinSound = doPlay;
+            soundPlaybackEnabled = true;
+            this.winSoundLoops = winSoundLoops;
         }
 
         #region unity functions
@@ -133,7 +135,7 @@ namespace GridLinks
                 global Event pauseReference;
             "));
 
-            if (LevelLoader.instance.GetGridData() != null) {
+            if (grabRefTrackFromLvlLoader && LevelLoader.instance.GetGridData() != null ) {
                 TrackSound referenceSound = LevelLoader.instance.GetReferencePlayback();
 
                 // intialize those events 
@@ -170,6 +172,7 @@ namespace GridLinks
 
             while (true)
             {
+                                Debug.Log(curBeat);
                 if (!soundPlaybackEnabled)
                 {
                     nextBeatTime = Time.time;
@@ -196,7 +199,10 @@ namespace GridLinks
                     curBeat = 1; 
                 }
 
-                if (curBeat == 1 && playWinSound) winSound.PlaySound();
+                if (curBeat == 1 && playWinSound) { 
+                    if (winSoundLoops) playWinSound = false;
+                    winSound.PlaySound();
+                }
 
                 if (DoesSchedulerHaveAnyScheduledBeat()) {
                     if (!didLastHaveBeat)

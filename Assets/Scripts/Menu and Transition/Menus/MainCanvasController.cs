@@ -10,5 +10,10 @@ namespace Menus
             Debug.Log("Loading level!");
             LevelLoader.instance.LoadLevel(forLevel);
         }
+
+        public void Quit()
+        {
+            Application.Quit();
+        }
     }
 }

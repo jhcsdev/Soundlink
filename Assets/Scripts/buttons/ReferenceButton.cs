@@ -11,10 +11,6 @@ public class ReferenceButtonAction : MonoBehaviour
     [SerializeField] MetronomeButtonAction metronomeButton;
     private bool isPlaying = false;
 
-    void Start()
-    {
-    }
-
     public void PlayReference()
     {
         // deselect button so it cannot receive keyboard submit events 

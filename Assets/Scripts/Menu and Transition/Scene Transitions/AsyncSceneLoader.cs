@@ -60,7 +60,7 @@ namespace SceneTransition
 
             WaitUntil sceneWait = new(() => allowStartLoading);
             yield return sceneWait;
-            allowStartLoading = false; // todo:: not sure if this is really necessary; probably, the scene loading should start before fade black has even begun?
+            allowStartLoading = false; 
 
             AsyncOperation op = SceneManager.LoadSceneAsync(loadScene);
             op.allowSceneActivation = false;
@@ -76,7 +76,7 @@ namespace SceneTransition
 
             WaitUntil sceneWait = new(() => allowStartLoading);
             yield return sceneWait;
-            allowStartLoading = false; // todo:: not sure if this is really necessary; probably, the scene loading should start before fade black has even begun?
+            allowStartLoading = false; 
 
             AsyncOperation op = SceneManager.LoadSceneAsync(sceneIndex);
             op.allowSceneActivation = false;
@@ -88,7 +88,6 @@ namespace SceneTransition
 
         void FadeToBlack()
         {
-            // todo::
             if (fadeToBlackSequence == null)
             {
                 fadeToBlackSequence = DOTween.Sequence()

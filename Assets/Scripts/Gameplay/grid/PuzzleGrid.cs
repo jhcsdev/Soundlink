@@ -24,6 +24,7 @@ namespace PuzzleGrid
         public List<GridLink> gridLinks = new();
 
         private int totalTracksInGrid = 0;
+        [SerializeField] private bool grabDataFromLevelLoader = true;
 
         #region notifications
         private bool pointerActive = true;
@@ -51,9 +52,10 @@ namespace PuzzleGrid
         void OnEnable()
         {
             if (LevelLoader.instance == null && gridData == null) Debug.LogError("Warning: A LevelLoader should exist in the scene for grid to build.");
-            if (LevelLoader.instance != null && gridData == null && LevelLoader.instance.GetGridData() == null) Debug.LogError("Warning: LevelLoader exists, but grid failed to retrieve GridData.");
+            if (LevelLoader.instance != null && gridData == null && LevelLoader.instance.GetGridData() == null && grabDataFromLevelLoader)
+                Debug.LogError("Warning: LevelLoader exists, but grid failed to retrieve GridData.");
 
-            if (gridData == null) gridData = LevelLoader.instance.GetGridData();
+            if (gridData == null && grabDataFromLevelLoader) gridData = LevelLoader.instance.GetGridData();
             tiles = new GridTile[gridData.width, gridData.height];
         }
 
@@ -96,9 +98,21 @@ namespace PuzzleGrid
             Vector2Int intended = focusPosition + direction;
 
             // check x pos, y up
-            if (intended.x < 0 || intended.x >= gridData.width || intended.y < 0 || intended.y >= gridData.height) { 
-                if (pointerActive) { OnFailedLeavingGrid?.Invoke(direction); } 
-                return Vector2Int.zero; 
+            if (intended.y < 0 || intended.y >= gridData.height)
+            {
+                if (pointerActive) { OnFailedLeavingGrid?.Invoke(direction); }
+                return Vector2Int.zero;
+            }
+
+            if (intended.x < 0)
+            {
+                if (pointerActive) { OnFailedLeavingGrid?.Invoke(direction); }
+                return Vector2Int.zero;
+            }
+
+            if (intended.x >= gridData.width)
+            {
+                return direction;
             }
 
             // otherwise movement is ok
@@ -161,13 +175,12 @@ namespace PuzzleGrid
             }  
 
             p.PlacedGrid();
-            p.transform.position = GetFocusedGridTile().transform.position; // todo:: unsure if this should stay here
+            p.transform.position = GetFocusedGridTile().transform.position;
             p.transform.parent = transform;
             OnPiecePlacementSuccess?.Invoke(p);
 
             if (CheckIfGameWon() && emitWin) 
             {
-                Debug.Log("Game won!");
                 WonGameStream.Invoke(LevelLoader.instance.GetLevel());
             }
 

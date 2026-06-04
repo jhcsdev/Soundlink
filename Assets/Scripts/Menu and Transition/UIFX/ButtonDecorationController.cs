@@ -29,10 +29,14 @@ namespace UIFX
         #endregion
         private Vector2 originalPosition;
         private Vector2 exitFinalPosition = Vector3.zero;
+        private bool originalSet = false;
 
         void Awake()
         {
-            originalPosition = transform.position;
+            if (!originalSet) {
+                originalPosition = transform.position;
+                originalSet = true;
+            }
         }
 
         void Reset()
@@ -79,7 +83,7 @@ namespace UIFX
 
             var c = labelTMP.color; labelTMP.color = new Color(c.r, c.g, c.b, 0f);
 
-            if (exitFinalPosition != Vector2.zero) transform.position = exitFinalPosition;
+            if (exitFinalPosition != Vector2.zero) { transform.position = exitFinalPosition; }
 
             enterTransitionSequence = DOTween.Sequence()
                 .Append(
@@ -92,6 +96,10 @@ namespace UIFX
 
         public override void Exit(UnityAction<IUITransitionElement> exitComplete)
         {
+            if (!originalSet) {
+                originalPosition = transform.position;
+                originalSet = true;
+            }
             if (enterTransitionSequence != null && enterTransitionSequence.active) enterTransitionSequence.Complete();
             enterTransitionSequence = null;
 

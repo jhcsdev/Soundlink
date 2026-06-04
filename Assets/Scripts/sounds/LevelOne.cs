@@ -13,6 +13,7 @@ namespace TrackSounds
         public override void PlaySound()
         {
             myChuck = ChuckManager.Instance.chuckSubInstance;
+            Debug.Log("Level 1" );
 
             if (myChuck == null) Debug.Log("There is no Chuck!");
 

@@ -1,5 +1,3 @@
-
-using System;
 using GamePieces;
 using StreamEvents;
 using UnityEngine;
@@ -144,6 +142,7 @@ namespace Player
             if (referencedPiece == null) // grabbing piece from grid; stay in grid, i think?
             {
                 referencedPiece = currentGrid.TakeAtFocusPosition();
+                if (referencedPiece != null) currentGrid.Hover(referencedPiece);
             }
             else // you are holding a piece and are not in the inventory; place the piece
             {
@@ -167,6 +166,11 @@ namespace Player
 
             if (referencedPiece != null) 
             {
+                if (currentGrid is PuzzleGrid.PuzzleGrid puzzleGrid)
+                {
+                    puzzleGrid.OnPieceSentBackToInventory?.Invoke(referencedPiece);
+                }
+
                 inventoryGrid.PlaceAtFocusPosition(referencedPiece);
                 referencedPiece = null;
             }
