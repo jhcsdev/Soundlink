@@ -10,43 +10,25 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8ff008db6973d4e3aa386dd6cc299a27, type: 3}
-  m_Name: Piece1
+  m_Name: Snare 3
   m_EditorClassIdentifier: Assembly-CSharp::GamePieces.PieceData
   tiles:
   - relativeOffset: {x: -1, y: 0}
     isOrigin: 0
     type: 0
-    glue: 0300000001000000
-    tileType: 12
-    spriteDirection: 2
-  - relativeOffset: {x: -1, y: 1}
-    isOrigin: 0
-    type: 0
-    glue: 020000000000000003000000
+    glue: 03000000
     tileType: 14
-    spriteDirection: 0
+    spriteDirection: 3
   - relativeOffset: {x: 0, y: -1}
     isOrigin: 0
     type: 0
-    glue: 030000000100000002000000
+    glue: 01000000
     tileType: 14
     spriteDirection: 2
   - relativeOffset: {x: 0, y: 0}
     isOrigin: 1
     type: 0
-    glue: 00000000
-    tileType: 9
-    spriteDirection: 0
-  - relativeOffset: {x: 1, y: 0}
-    isOrigin: 0
-    type: 0
-    glue: 0100000002000000
+    glue: 
     tileType: 12
-    spriteDirection: 1
-  - relativeOffset: {x: 1, y: 1}
-    isOrigin: 0
-    type: 0
-    glue: 020000000300000000000000
-    tileType: 14
     spriteDirection: 0
   isSilentPiece: 0

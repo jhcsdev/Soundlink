@@ -13,9 +13,132 @@ MonoBehaviour:
   m_Name: MenuAutoPlacementData
   m_EditorClassIdentifier: Assembly-CSharp::Inventory.AutoPlaceData
   autoPlacements:
-  - data: {fileID: 11400000, guid: ad1292bf3284342458c0c7f9af07370c, type: 2}
-    where: {x: 3, y: 3}
-    clockwiseRotations: 2
-  - data: {fileID: 11400000, guid: 9b8b0810896f94ddf96d77f69e41daa2, type: 2}
-    where: {x: 3, y: 6}
+  - data: {fileID: 11400000, guid: e3b0c8b42274e474783a16ddddf6b50b, type: 2}
+    where: {x: 2, y: 0}
+    clockwiseRotations: 0
+  - data: {fileID: 11400000, guid: a8e9301b934864aab844c4efb577b1b9, type: 2}
+    where: {x: 5, y: 1}
+    clockwiseRotations: 0
+  - data: {fileID: 11400000, guid: 0ad4b3d877f2745b88d6c207376b2aaf, type: 2}
+    where: {x: 6, y: 4}
+    clockwiseRotations: 0
+  - data: {fileID: 11400000, guid: efc8f32a2668c4901b2469a379d88d59, type: 2}
+    where: {x: 7, y: 5}
+    clockwiseRotations: 0
+  - data: {fileID: 11400000, guid: e4501d3dd61fd47da9a5464e4435e23e, type: 2}
+    where: {x: 7, y: 7}
+    clockwiseRotations: 0
+  - data: {fileID: 11400000, guid: ed8d1045950f945b7bd27076bd70101b, type: 2}
+    where: {x: 8, y: 8}
+    clockwiseRotations: 0
+  - data: {fileID: 11400000, guid: c020f65ed807a4505ad801e1db050259, type: 2}
+    where: {x: 9, y: 10}
+    clockwiseRotations: 0
+  - data: {fileID: 11400000, guid: 8b5ba2cb47a0142dd8df3c54f14d1f0a, type: 2}
+    where: {x: 11, y: 11}
+    clockwiseRotations: 0
+  - data: {fileID: 11400000, guid: 0edf3e94b031a4e0ebe80ed5aee3d77d, type: 2}
+    where: {x: 6, y: 10}
+    clockwiseRotations: 0
+  - data: {fileID: 11400000, guid: fe7c89a2c25d84461b66118c81d1d6c3, type: 2}
+    where: {x: 7, y: 10}
+    clockwiseRotations: 0
+  - data: {fileID: 11400000, guid: a769d5120ae3f4478b086759c2674763, type: 2}
+    where: {x: 7, y: 9}
+    clockwiseRotations: 0
+  - data: {fileID: 11400000, guid: 5949ca4b1b8004487986ddab7d5f0b8e, type: 2}
+    where: {x: 8, y: 9}
+    clockwiseRotations: 0
+  - data: {fileID: 11400000, guid: b31f9df8f6aa247cc87f996fbf077566, type: 2}
+    where: {x: 9, y: 7}
+    clockwiseRotations: 0
+  - data: {fileID: 11400000, guid: d4d3a590baf31462fb02ad50a0de45c6, type: 2}
+    where: {x: 9, y: 6}
+    clockwiseRotations: 0
+  - data: {fileID: 11400000, guid: 3e3f421f463304b72ae4fe20998ebddb, type: 2}
+    where: {x: 10, y: 6}
+    clockwiseRotations: 0
+  - data: {fileID: 11400000, guid: ba8d849260d7144b797c2d26ae7416ce, type: 2}
+    where: {x: 10, y: 5}
+    clockwiseRotations: 0
+  - data: {fileID: 11400000, guid: 85a682e0938d54d3ab595c93bc0fd089, type: 2}
+    where: {x: 9, y: 5}
+    clockwiseRotations: 0
+  - data: {fileID: 11400000, guid: 1b5225b009c7f4ce797f31dd190778d3, type: 2}
+    where: {x: 9, y: 4}
+    clockwiseRotations: 0
+  - data: {fileID: 11400000, guid: 891913fe1f95a4f2eb94f52f5b508328, type: 2}
+    where: {x: 9, y: 3}
+    clockwiseRotations: 0
+  - data: {fileID: 11400000, guid: c8f631774eed241b59054e7a3753857f, type: 2}
+    where: {x: 11, y: 3}
+    clockwiseRotations: 0
+  - data: {fileID: 11400000, guid: de1974a30bbdf4898a33c816b455ca7f, type: 2}
+    where: {x: 13, y: 2}
+    clockwiseRotations: 0
+  - data: {fileID: 11400000, guid: fd439d4ae5d054a55b7175bcacbd883a, type: 2}
+    where: {x: 14, y: 3}
+    clockwiseRotations: 0
+  - data: {fileID: 11400000, guid: 58e6caf71c5be43db84fee03c9e7fec4, type: 2}
+    where: {x: 14, y: 4}
+    clockwiseRotations: 0
+  - data: {fileID: 11400000, guid: 620b189b72a8e446ba2888302ba849c0, type: 2}
+    where: {x: 14, y: 5}
+    clockwiseRotations: 0
+  - data: {fileID: 11400000, guid: 54c3d17190d634f3c85d53df4cd7010f, type: 2}
+    where: {x: 14, y: 6}
+    clockwiseRotations: 0
+  - data: {fileID: 11400000, guid: aa499361ac91646a69eae2971c60fcfa, type: 2}
+    where: {x: 14, y: 7}
+    clockwiseRotations: 0
+  - data: {fileID: 11400000, guid: 963bc5b475a164faeba9173f1835d4a8, type: 2}
+    where: {x: 17, y: 5}
+    clockwiseRotations: 0
+  - data: {fileID: 11400000, guid: 5c9e65f7f294642efa24225fd9290f5c, type: 2}
+    where: {x: 14, y: 5}
+    clockwiseRotations: 0
+  - data: {fileID: 11400000, guid: 22160e04f604d4a0eaa8368ccf40f203, type: 2}
+    where: {x: 12, y: 6}
+    clockwiseRotations: 0
+  - data: {fileID: 11400000, guid: 7e8fff3ae902d44c0aa5d985280c4b14, type: 2}
+    where: {x: 10, y: 7}
+    clockwiseRotations: 0
+  - data: {fileID: 11400000, guid: 8873916d355564dcb97a402700019154, type: 2}
+    where: {x: 8, y: 6}
+    clockwiseRotations: 0
+  - data: {fileID: 11400000, guid: 37e33bc6bfaff4678bbee070abce80ce, type: 2}
+    where: {x: 6, y: 5}
+    clockwiseRotations: 0
+  - data: {fileID: 11400000, guid: 4b17b6f66f9944a7982f1093f0a565c2, type: 2}
+    where: {x: 4, y: 4}
+    clockwiseRotations: 0
+  - data: {fileID: 11400000, guid: 8671753ec82094786858e3a889c6e301, type: 2}
+    where: {x: 2, y: 5}
+    clockwiseRotations: 0
+  - data: {fileID: 11400000, guid: 1aca49c5f0fc34a119b3228c3382501b, type: 2}
+    where: {x: 15, y: 1}
+    clockwiseRotations: 0
+  - data: {fileID: 11400000, guid: c4b858c883a834f7ea8fdd656fda6c3e, type: 2}
+    where: {x: 16, y: 6}
+    clockwiseRotations: 0
+  - data: {fileID: 11400000, guid: 83ffa6ee516f64fe1a10272a7e0eabed, type: 2}
+    where: {x: 18, y: 8}
+    clockwiseRotations: 0
+  - data: {fileID: 11400000, guid: b5ac509705afb4405bce9c942454ea30, type: 2}
+    where: {x: 18, y: 11}
+    clockwiseRotations: 0
+  - data: {fileID: 11400000, guid: e6341c92dba56464887c265b71b3070f, type: 2}
+    where: {x: 15, y: 11}
+    clockwiseRotations: 0
+  - data: {fileID: 11400000, guid: 499cc8dc5765e4e5ea3a44cfa7f6f999, type: 2}
+    where: {x: 13, y: 9}
+    clockwiseRotations: 0
+  - data: {fileID: 11400000, guid: cdbc35e9cd4b44f20b3a73472e7498e8, type: 2}
+    where: {x: 3, y: 2}
+    clockwiseRotations: 0
+  - data: {fileID: 11400000, guid: a2a0a13c912da4d05b6afffc3ac97d60, type: 2}
+    where: {x: 18, y: 2}
+    clockwiseRotations: 0
+  - data: {fileID: 11400000, guid: f15873918f3104da68bf9d5f25a26447, type: 2}
+    where: {x: 3, y: 9}
     clockwiseRotations: 0

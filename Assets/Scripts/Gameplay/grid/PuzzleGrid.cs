@@ -163,7 +163,7 @@ namespace PuzzleGrid
             }  
 
             p.PlacedGrid();
-            p.transform.position = GetFocusedGridTile().transform.position; // todo:: unsure if this should stay here
+            p.transform.position = GetFocusedGridTile().transform.position;
             p.transform.parent = transform;
             OnPiecePlacementSuccess?.Invoke(p);
 

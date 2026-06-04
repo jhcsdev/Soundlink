@@ -15,8 +15,8 @@ namespace GamePieces
 
         [SerializeField] private List<TileSpriteTypeToSprite> basicTileSprite; 
         [SerializeField] private List<TileSpriteTypeToSprite> silentTileSprites;
-        [SerializeField] private Sprite verticalSingleGlueSprite; // todo:: this means that we can have up to 4 spriteRenders for what realistically shoudl just be one; needs to be changed
-        [SerializeField] private Sprite passthroughSprite; // todo:: multiple variants of passthrough?
+        [SerializeField] private Sprite verticalSingleGlueSprite; 
+        [SerializeField] private Sprite passthroughSprite; 
         [SerializeField] private Material pieceMaterial;
         private Dictionary<PieceTileSpriteType, Sprite> tileSpriteLookup = new();
         private Dictionary<PieceTileSpriteType, Sprite> silentSpriteLookup = new();

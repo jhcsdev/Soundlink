@@ -12,7 +12,6 @@ namespace GamePieces
     {
         #region vars
         #region anim config
-        // todo:: potentially abstract these into a runtime singleton that harvests values from a scriptable object? could be easier to switch out different configs
         [Header("placement")]
         // private static float placementBetweenTileTime = 0.05f;
         private static float placementScaleupTime = 0.15f;
@@ -391,7 +390,7 @@ namespace GamePieces
         {
             // Debug.Log("link leave");
             // depending on existing sequences, need to make considerations about what is happening
-            // if ongoing join sequence -- revert it (todo:: may need to introduce some sort of state parameter that sets true in case of extended join sequence which reverts leaving)
+            // if ongoing join sequence -- revert it 
             // if ongoing leave sequence -- error, this should never happen
             // if ongoing pulse sequence -- TODO, not sure what should happen
             // otherwise, just pulse to maximum distance, set baseColor white and pulse 0 afterwards
