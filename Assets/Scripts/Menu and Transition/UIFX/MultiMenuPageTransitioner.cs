@@ -23,7 +23,6 @@ namespace UIFX
 
         public void TriggerEnter(TransitionControllerParams<IUITransitionElement> focusedElement)
         {
-            Debug.Log("Triggered enter in multi");
             var target = focusedElement.param;
             if (target == currentPage && pendingPage == null) return;
 
