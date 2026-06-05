@@ -42,7 +42,7 @@ namespace TrackSounds
             (1::ms, 20::ms, 0, 10::ms) => envHat.set;
             8000 => hpf.freq;
             8 => hpf.Q;
-            .30 => float HAT_GAIN;
+            .20 => float HAT_GAIN;
 
             // set global BPM
             (60.0 / BPM)::second => dur beat_dur;

@@ -17,6 +17,8 @@ namespace TrackSounds
 
             if (myChuck == null) Debug.Log("There is no Chuck!");
 
+            Debug.Log("Level one reference!");
+
             myChuck.RunCode( string.Format( @"
             // level one: kick, kick
             global Event playReference;
@@ -27,7 +29,7 @@ namespace TrackSounds
 
             (2::ms, 10::ms, 0, 10::ms) => envKick.set;
             150 => kick.freq;
-            1.0 => kick.gain;
+            1.2 => kick.gain;
 
             (60.0 / BPM)::second => dur beat_dur;
             beat_dur / 4.0 => dur sixteenth;
