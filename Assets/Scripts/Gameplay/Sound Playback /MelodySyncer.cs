@@ -7,35 +7,18 @@ namespace SoundPlayback
 {
     public class MelodySyncer : MonoBehaviour
     {   
-        [SerializeField] private TrackSound introductionTrackSound;
-        [SerializeField, Header("Will be (roughly) synced to grid")] private TrackSound mainSoundtrack; 
-        [SerializeField] private int introductionBeatLength;
-        [SerializeField] private float bpm;
-
-        private float secondsPerBeat;
+        [SerializeField] private TrackSound mainSoundtrack; 
 
         #region unity functions
         void Awake()
         {
-            secondsPerBeat = 60f / bpm / 4f;
         }
 
         void Start()
         {
             LinkPlaybackManager.Instance.DisableSoundPlayback();
-            StartCoroutine(PlaybackLoop());
-        }
-        #endregion
-
-        private IEnumerator PlaybackLoop()
-        {
-            WaitForSeconds beatWaitTime = new(secondsPerBeat * introductionBeatLength);
-            
-            introductionTrackSound.PlaySound();
-            yield return beatWaitTime;
-               
-            LinkPlaybackManager.Instance.ResetPlayback();
             LinkPlaybackManager.Instance.SetPlayWinSound(mainSoundtrack, true);
         }
+        #endregion
     }
 }
