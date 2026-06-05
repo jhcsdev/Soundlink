@@ -137,6 +137,7 @@ namespace GridLinks
 
             if (grabRefTrackFromLvlLoader && LevelLoader.instance.GetGridData() != null ) {
                 TrackSound referenceSound = LevelLoader.instance.GetReferencePlayback();
+                Debug.Log("Loading reference sound: " + referenceSound);
 
                 // intialize those events 
                 referenceSound?.PlaySound();
@@ -172,7 +173,6 @@ namespace GridLinks
 
             while (true)
             {
-                                Debug.Log(curBeat);
                 if (!soundPlaybackEnabled)
                 {
                     nextBeatTime = Time.time;
