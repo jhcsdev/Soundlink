@@ -28,17 +28,18 @@ namespace TrackSounds
             // shape sounds
             (2::ms, 10::ms, 0, 10::ms) => envKick.set;
             150 => kick.freq;
+            1.2 => kick.gain;
 
             (2::ms, 10::ms, 0, 5::ms) => envClap.set;
             1500 => filter.freq;
             1.5 => filter.Q;
-            .45 => float CLAP_GAIN;
+            .55 => float CLAP_GAIN;
             CLAP_GAIN => clap.gain;
 
             (1::ms, 20::ms, 0, 10::ms) => envHat.set;
             8000 => hpfHat.freq;
             8 => hpfHat.Q;
-            .025 => float HAT_GAIN;
+            .05 => float HAT_GAIN;
             HAT_GAIN => hat.gain;
 
 
