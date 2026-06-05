@@ -17,8 +17,6 @@ namespace TrackSounds
 
             if (myChuck == null) Debug.Log("There is no Chuck!");
 
-            Debug.Log("Level one reference!");
-
             myChuck.RunCode( string.Format( @"
             // level one: kick, kick
             global Event playReference;
