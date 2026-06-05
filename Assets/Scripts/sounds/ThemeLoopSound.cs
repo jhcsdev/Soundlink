@@ -21,6 +21,27 @@ namespace TrackSounds
             TriOsc synth2 => envSynth;
             TriOsc synth3 => envSynth;
             TriOsc arp => ADSR envArp => dac;
+            SinOsc kick => ADSR envKick => dac;
+            Noise clap => BPF filter => ADSR envClap => dac;
+            Noise hat => HPF hpfHat => ADSR envHat => dac;
+
+            // shape sounds
+            (2::ms, 10::ms, 0, 10::ms) => envKick.set;
+            150 => kick.freq;
+            1.2 => kick.gain;
+
+            (2::ms, 10::ms, 0, 5::ms) => envClap.set;
+            1500 => filter.freq;
+            1.5 => filter.Q;
+            .55 => float CLAP_GAIN;
+            CLAP_GAIN => clap.gain;
+
+            (1::ms, 20::ms, 0, 10::ms) => envHat.set;
+            8000 => hpfHat.freq;
+            8 => hpfHat.Q;
+            .05 => float HAT_GAIN;
+            HAT_GAIN => hat.gain;
+
 
             /* mix */
             .1 => synth1.gain;
@@ -134,12 +155,106 @@ namespace TrackSounds
                 }}
             }}
 
+            fun void playKick(float beat_note) {{    
+                // calculate hold and release times
+                beat_note * beat => dur total_time;
+                envKick.releaseTime() => dur release_time;
+                total_time - release_time => dur hold_time;
+                
+                // play sound
+                envKick.keyOn();
+                hold_time => now;
+                
+                envKick.keyOff();
+                release_time => now;
+            }}
+
+            fun void restClap(float beat_note) {{
+                beat_note * beat => dur total_time;
+                0 => clap.gain;
+                total_time => now;
+                CLAP_GAIN => clap.gain;   
+            }}
+
+            fun void playHat(float beat_note, float velocity) {{    
+                // calculate hold and release times
+                beat_note * beat => dur total_time;
+                envHat.releaseTime() => dur release_time;
+                total_time - release_time => dur hold_time;
+                
+                // play sound
+                velocity => hat.gain;
+                envHat.keyOn();
+                hold_time => now;
+                
+                envHat.keyOff();
+                release_time => now;
+            }}
+
+            fun void kickPattern() {{
+                while (true) {{
+                    playKick(.75);
+                    playKick(1.25);
+                    playKick(.75);
+                    playKick(.25);
+                    playKick(.375);
+                    playKick(.375);
+                    playKick(.25);
+                }}
+            }}
+
+            fun void clapPattern() {{
+                while (true) {{
+                    // rest for 1 beat
+                    1::beat => now; 
+                    
+                    // double hit
+                    envClap.keyOn();
+                    15::ms => now;
+                    envClap.keyOff();
+                    10::ms => now;
+                    envClap.keyOn();
+                    15::ms => now;
+                    envClap.keyOff();
+                    
+                    // fill remaining time to hit beat 4 (3 beats - 40ms used)
+                    3::beat - 40::ms => now;
+                }}
+            }}
+
+            fun void hatPattern() {{
+                while (true) {{
+                    playHat(.25, HAT_GAIN);
+                    playHat(.25, HAT_GAIN/2);
+                    playHat(.25, HAT_GAIN);
+                    playHat(.25, HAT_GAIN/2);
+                    playHat(.25, HAT_GAIN);
+                    playHat(.25, HAT_GAIN/2);
+                    playHat(.125, HAT_GAIN);
+                    playHat(.125, HAT_GAIN);
+                    playHat(.25, HAT_GAIN);
+                    playHat(.25, HAT_GAIN);
+                    playHat(.25, HAT_GAIN/2);
+                    playHat(.125, HAT_GAIN);
+                    playHat(.125, HAT_GAIN);
+                    playHat(.25, HAT_GAIN/2);
+                    playHat(.25, HAT_GAIN);
+                    playHat(.25, HAT_GAIN/2);
+                    playHat(.25, HAT_GAIN);
+                    playHat(.25, HAT_GAIN/2);
+                }}   
+            }}
+
             // -----------
-            // play the loop 
+            // play the beat (without drums)
             // -----------
 
             spork ~ Synth();
+            8::beat => now;
             spork ~ Arp();
+            spork ~ kickPattern();
+            spork ~ clapPattern();
+            spork ~ hatPattern();
 
             while (true) {{
                 16::beat => now;

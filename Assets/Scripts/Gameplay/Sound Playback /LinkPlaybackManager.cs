@@ -139,10 +139,12 @@ namespace GridLinks
                 TrackSound referenceSound = LevelLoader.instance.GetReferencePlayback();
                 Debug.Log("Loading reference sound: " + referenceSound);
 
+                // introduce delay to control race condition
+                StartCoroutine(PlayReferenceSoundNextFrame(referenceSound));
+
                 // intialize those events 
                 referenceSound?.PlaySound();
             }
-
 
             // if playback is already enabled in inspector, sync to metronome on start
             if (soundPlaybackEnabled)
@@ -152,6 +154,11 @@ namespace GridLinks
             }
         }
         #endregion
+
+        private IEnumerator PlayReferenceSoundNextFrame(TrackSound sound) {
+            yield return null;
+            sound?.PlaySound();
+         }
 
         public void SetMetronnomePlaying()
         {

@@ -56,7 +56,7 @@ namespace Inventory
 
                 for (int i = 0; i < d.clockwiseRotations; i++) pieceObjComp.RotatePieceClockwise();
 
-                Debug.Log(pieceObjComp);
+                // Debug.Log(pieceObjComp);
 
                 grid.PlaceAtFocusPositionWithPositionOverride(d.where, pieceObjComp);
             }
