@@ -104,7 +104,15 @@ namespace Player
                 if (referencedPiece != null) currentGrid.Hover(referencedPiece);
             }
 
-            if (movement != Vector2.zero) SwapGrid();
+            if (movement != Vector2.zero) {
+                if (IsCurrentGridPuzzleGrid() && referencedPiece != null)
+                {
+                    (currentGrid as PuzzleGrid.PuzzleGrid).OnPieceSentBackToInventory?.Invoke(referencedPiece);
+                    inventoryGrid.PlaceAtFocusPosition(referencedPiece);
+                    referencedPiece = null;
+                }
+                SwapGrid();
+            }
         }
 
         public void SetCurrentGrid(PlayerInteractableGrid grid)
