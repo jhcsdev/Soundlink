@@ -3528,7 +3528,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Linkbeat
+  m_text: Soundlink
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: dc36b3fdc14f47ebb36fd484a67e268a, type: 2}
   m_sharedMaterial: {fileID: 2140032, guid: dc36b3fdc14f47ebb36fd484a67e268a, type: 2}
@@ -3654,10 +3654,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cbef8df2f29834d2a9d660b34fce7d5d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  introductionTrackSound: {fileID: 11400000, guid: 9d8493e596a744e86a7061389c20dd4f, type: 2}
   mainSoundtrack: {fileID: 11400000, guid: 9f69f5000db8e44a5ae51655288f47ab, type: 2}
-  introductionBeatLength: 42
-  bpm: 90
 --- !u!4 &1307473856
 Transform:
   m_ObjectHideFlags: 0
