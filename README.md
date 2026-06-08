@@ -3,4 +3,4 @@
 
 You can download a game build [here](/BUILDS).
 
-You can also read out report [here](report.md)
+You can also read our report [here](report.md).
